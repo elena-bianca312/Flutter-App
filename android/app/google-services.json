@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "515083318716",
+    "project_id": "myproject-elena312-ec2b0",
+    "storage_bucket": "myproject-elena312-ec2b0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:515083318716:android:19a725aea92611ef6d27b9",
+        "android_client_info": {
+          "package_name": "com.example.myproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "515083318716-969u5dhaag0ro314c0a0jato621kj4up.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzNS8XEKphvfsENfG2YMNFZi_ILu6SpGk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "515083318716-969u5dhaag0ro314c0a0jato621kj4up.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
