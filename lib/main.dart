@@ -49,7 +49,6 @@ Widget build(BuildContext context) {
             } else {
               return const LoginView();
             }
-            return const Text('Done');
           default:
             return const CircularProgressIndicator();
         }
