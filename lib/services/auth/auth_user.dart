@@ -1,12 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart' show User;
 import 'package:flutter/foundation.dart';
+import 'package:firebase_auth/firebase_auth.dart' show User;
 
 @immutable
 class AuthUser {
-  final bool isEmailVerfied;
-  const AuthUser(this.isEmailVerfied);
+  final bool isEmailVerified;
+  const AuthUser({required this.isEmailVerified});
 
   factory AuthUser.fromUser(User user) {
-    return AuthUser(user.emailVerified);
+    return AuthUser(isEmailVerified: user.emailVerified);
   }
 }
