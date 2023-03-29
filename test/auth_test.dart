@@ -30,7 +30,43 @@ void main() {
       await provider.initialize();
       expect(provider.isInitialized, true);
     },
-    timeout: const Timeout(Duration(seconds: 2)));
+      timeout: const Timeout(Duration(seconds: 2)));
+
+    test('Create user should delegate to logIn function', () async {
+      final badEmailUser = provider.createUser(
+        email: 'foo@bar.com',
+        password: 'anypassword');
+      expect(badEmailUser, throwsA(const TypeMatcher<UserNotFoundAuthException>()));
+
+      final badPasswordUser = provider.createUser(
+        email: 'someone@bar.com',
+        password: 'foobar');
+
+      expect(badPasswordUser, throwsA(const TypeMatcher<WrongPasswordAuthException>()));
+
+      final user = await provider.createUser(
+        email: 'foo',
+        password: 'bar');
+
+      expect(user, provider.currentUser);
+      expect(user.isEmailVerified, false);
+    });
+
+    test('Logged in user should be able to get verified', () async {
+      provider.sendEmailVerification();
+      final user = provider.currentUser;
+      expect(user, isNotNull);
+      expect(user!.isEmailVerified, true);
+    });
+
+    test('Should be able to log out and log in again', () async {
+      await provider.logOut();
+      await provider.logIn(
+        email: 'email',
+        password: 'password');
+      final user = provider.currentUser;
+      expect(user, isNotNull);
+    });
   });
 }
 
