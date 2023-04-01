@@ -36,6 +36,7 @@ void main() {
       final badEmailUser = provider.createUser(
         email: 'foo@bar.com',
         password: 'anypassword');
+
       expect(badEmailUser, throwsA(const TypeMatcher<UserNotFoundAuthException>()));
 
       final badPasswordUser = provider.createUser(
