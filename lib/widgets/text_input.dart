@@ -6,14 +6,22 @@ class TextInput extends StatelessWidget {
     Key? key,
     required this.icon,
     required this.hint,
-    required this.inputType,
     required this.inputAction,
+    this.inputType,
+    this.controller,
+    this.enableSuggestions,
+    this.autocorrect,
+    this.obscureText,
   }) : super(key: key);
 
   final IconData icon;
   final String hint;
-  final TextInputType inputType;
   final TextInputAction inputAction;
+  final TextInputType? inputType;
+  final TextEditingController? controller;
+  final bool? enableSuggestions;
+  final bool? autocorrect;
+  final bool? obscureText;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +34,6 @@ class TextInput extends StatelessWidget {
         ),
         child: TextField(
           decoration: InputDecoration(
-            // contentPadding: const EdgeInsets.symmetric(vertical: 20),
             border: InputBorder.none,
             hintText: hint,
             prefixIcon: Padding(
@@ -42,6 +49,10 @@ class TextInput extends StatelessWidget {
           style: kBodyText,
           keyboardType: inputType,
           textInputAction: inputAction,
+          controller: controller,
+          enableSuggestions: enableSuggestions ?? true,
+          autocorrect: autocorrect ?? true,
+          obscureText: obscureText ?? false,
         ),
       ),
     );

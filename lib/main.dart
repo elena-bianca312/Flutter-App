@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:myproject/constants/routes.dart';
 import 'package:myproject/views/login_view.dart';
-import 'package:myproject/views/login_view2.dart';
 import 'package:myproject/views/register_view.dart';
 import 'package:myproject/views/notes/notes_view.dart';
 import 'package:myproject/views/verify_email_view.dart';
@@ -22,7 +20,7 @@ void main() {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        fontFamily: 'JosefinSans',
+        // fontFamily: 'JosefinSans',
       ),
       home: BlocProvider<AuthBloc>(
         create: (context) => AuthBloc(FirebaseAuthProvider()),
@@ -56,7 +54,7 @@ class HomePage extends StatelessWidget {
         } else if (state is AuthStateNeedsVerification) {
           return const VerifyEmailView();
         } else if (state is AuthStateLoggedOut) {
-          return const LoginPage();
+          return const LoginView();
         } else if (state is AuthStateForgotPassword) {
           return const ForgotPasswordView();
         } else if (state is AuthStateRegistering) {
