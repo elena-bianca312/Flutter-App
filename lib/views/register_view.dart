@@ -63,7 +63,7 @@ class _RegisterViewState extends State<RegisterView> {
                 child: Column(
                   children: [
                     const Positioned(
-                      child: FadeAnimation(2, Axis.vertical,
+                      child: FadeAnimation(1, Axis.vertical,
                         SizedBox(
                           height: 200,
                           child: Center(
@@ -75,24 +75,37 @@ class _RegisterViewState extends State<RegisterView> {
                         )
                       ),
                     ),
-                    TextInput(
-                      icon: FontAwesomeIcons.solidEnvelope,
-                      hint: 'Email',
-                      inputType: TextInputType.emailAddress,
-                      inputAction: TextInputAction.next,
-                      controller: _emailController,
-                      enableSuggestions: false,
-                      autocorrect: false,
+                    FadeAnimation(1, Axis.horizontal,
+                      TextInput(
+                        icon: FontAwesomeIcons.solidEnvelope,
+                        hint: 'Email',
+                        inputType: TextInputType.emailAddress,
+                        inputAction: TextInputAction.next,
+                        controller: _emailController,
+                        enableSuggestions: false,
+                        autocorrect: false,
+                      )
                     ),
-                    TextInput(
-                      icon: FontAwesomeIcons.lock,
-                      hint: 'Password',
-                      inputAction: TextInputAction.done,
-                      controller: _passwordController,
-                      obscureText: true,
-                      enableSuggestions: false,
-                      autocorrect: false,
+                    FadeAnimation(1.8, Axis.horizontal,
+                      TextInput(
+                        icon: FontAwesomeIcons.lock,
+                        hint: 'Password',
+                        inputAction: TextInputAction.done,
+                        controller: _passwordController,
+                        obscureText: true,
+                        enableSuggestions: false,
+                        autocorrect: false,
+                      )
                     ),
+                    // TextInput(
+                    //   icon: FontAwesomeIcons.lock,
+                    //   hint: 'Re-enter password',
+                    //   inputAction: TextInputAction.done,
+                    //   controller: _passwordController,
+                    //   obscureText: true,
+                    //   enableSuggestions: false,
+                    //   autocorrect: false,
+                    // ),
                     const SizedBox(
                       height: 120,
                     ),

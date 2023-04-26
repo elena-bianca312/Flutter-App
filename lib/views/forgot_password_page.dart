@@ -10,29 +10,29 @@ import 'package:myproject/services/auth/bloc/auth_event.dart';
 import 'package:myproject/services/auth/bloc/auth_state.dart';
 import 'package:myproject/utilities/dialogs/error_dialog.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:myproject/utilities/dialogs/password_reset_email_sent_dialog.dart';
+// ignore_for_file: use_build_context_synchronously
 
-class LoginView extends StatefulWidget {
-  const LoginView({super.key});
+
+class ForgotPasswordView extends StatefulWidget {
+  const ForgotPasswordView({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  State<ForgotPasswordView> createState() => _ForgotPasswordViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
-  late final TextEditingController _emailController;
-  late final TextEditingController _passwordController;
+class _ForgotPasswordViewState extends State<ForgotPasswordView> {
+  late final TextEditingController _controller;
 
   @override
   void initState() {
-    _emailController = TextEditingController();
-    _passwordController = TextEditingController();
+    _controller = TextEditingController();
     super.initState();
   }
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -40,13 +40,17 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) async {
-        if (state is AuthStateLoggedOut) {
-          if (state.exception is UserNotFoundAuthException) {
+        if (state is AuthStateForgotPassword) {
+          if (state.hasSentEmail) {
+            _controller.clear();
+            await showPasswordResetEmailSentDialog(context);
+          }
+          if (state.exception is InvalidEmailAuthException) {
+            await showErrorDialog(context, 'Invalid email.');
+          } else if (state.exception is UserNotFoundAuthException) {
             await showErrorDialog(context, 'No user found for that email.');
-          } else if (state.exception is WrongPasswordAuthException) {
-            await showErrorDialog(context, 'Wrong credentials.');
-          } else if (state.exception is GenericAuthException) {
-            await showErrorDialog(context, 'Authentication error.');
+          } else if (state.exception != null) {
+            await showErrorDialog(context, "We couldn't send you an email. Please try again.");
           }
         }
       },
@@ -66,12 +70,15 @@ class _LoginViewState extends State<LoginView> {
                           height: 200,
                           child: Center(
                             child: Text(
-                              'Login',
+                              'Recover Password',
                               style: kHeading,
                             ),
                           ),
                         )
                       ),
+                    ),
+                    const SizedBox(
+                      height: 60,
                     ),
                     FadeAnimation(1, Axis.horizontal,
                       TextInput(
@@ -79,18 +86,7 @@ class _LoginViewState extends State<LoginView> {
                         hint: 'Email',
                         inputType: TextInputType.emailAddress,
                         inputAction: TextInputAction.next,
-                        controller: _emailController,
-                        enableSuggestions: false,
-                        autocorrect: false,
-                      )
-                    ),
-                    FadeAnimation(1.8, Axis.horizontal,
-                      TextInput(
-                        icon: FontAwesomeIcons.lock,
-                        hint: 'Password',
-                        inputAction: TextInputAction.done,
-                        controller: _passwordController,
-                        obscureText: true,
+                        controller: _controller,
                         enableSuggestions: false,
                         autocorrect: false,
                       )
@@ -106,45 +102,33 @@ class _LoginViewState extends State<LoginView> {
                       ),
                       child: TextButton(
                         onPressed: () async {
-                          final email = _emailController.text;
-                          final password = _passwordController.text;
-                          context.read<AuthBloc>().add(AuthEventLogin(email, password));
+                          context.read<AuthBloc>().add(AuthEventForgotPassword(email: _controller.text));
                         },
                         child: const Padding(
                           padding: EdgeInsets.symmetric(vertical: 6.0),
                           child: Text(
-                            'Login',
+                            'Send me password reset link',
                             style: kBodyText,
                           ),
                         ),
                       ),
                     ),
                     const SizedBox(
-                      height: 30,
-                    ),
-                    TextButton(
-                      onPressed: () async {
-                        context.read<AuthBloc>().add(const AuthEventForgotPassword());
-                      },
-                      child: const FadeAnimation(1.3, Axis.horizontal,
-                        Text(
-                          'Forgot Password?',
-                        ),
-                      ),
+                      height: 35,
                     ),
                     TextButton(
                       onPressed: () {
-                        context.read<AuthBloc>().add(const AuthEventShouldRegister());
+                        context.read<AuthBloc>().add(const AuthEventLogout());
                       },
                       child: const FadeAnimation(1.3, Axis.horizontal,
                         Text(
-                          'Not registered yet? Register here',
+                          'Back to login page',
                           style: TextStyle(
                             decoration: TextDecoration.underline,
                           ),
                         ),
                       )
-                    )
+                    ),
                   ],
                 ),
               ),
