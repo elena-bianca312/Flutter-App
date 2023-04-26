@@ -66,7 +66,7 @@ class _LoginViewState extends State<LoginView> {
                           height: 200,
                           child: Center(
                             child: Text(
-                              'Find Shelter App',
+                              'Login',
                               style: kHeading,
                             ),
                           ),
@@ -92,7 +92,7 @@ class _LoginViewState extends State<LoginView> {
                       autocorrect: false,
                     ),
                     const SizedBox(
-                      height: 100,
+                      height: 120,
                     ),
                     Container(
                       width: double.infinity,

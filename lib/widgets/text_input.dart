@@ -12,6 +12,7 @@ class TextInput extends StatelessWidget {
     this.enableSuggestions,
     this.autocorrect,
     this.obscureText,
+    this.autofocus,
   }) : super(key: key);
 
   final IconData icon;
@@ -22,6 +23,7 @@ class TextInput extends StatelessWidget {
   final bool? enableSuggestions;
   final bool? autocorrect;
   final bool? obscureText;
+  final bool? autofocus;
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +55,7 @@ class TextInput extends StatelessWidget {
           enableSuggestions: enableSuggestions ?? true,
           autocorrect: autocorrect ?? true,
           obscureText: obscureText ?? false,
+          autofocus: autofocus ?? false,
         ),
       ),
     );
