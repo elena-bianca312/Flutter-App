@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:myproject/styles/styles.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myproject/constants/routes.dart';
-import 'package:myproject/services/auth/auth_service.dart';
+import 'package:myproject/animation/fade_animation.dart';
+import 'package:myproject/widgets/background_image.dart';
 import 'package:myproject/services/auth/bloc/auth_bloc.dart';
 import 'package:myproject/services/auth/bloc/auth_event.dart';
 
@@ -13,27 +14,90 @@ class VerifyEmailView extends StatefulWidget {
 }
 
 class _VerifyEmailViewState extends State<VerifyEmailView> {
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Verify email'),
-      ),
-      body: Column(children: [
-          const Text("We've sent you an email with a link to verify your account. Please click on the link to verify your account."),
-          const Text("If you don't see the email, press the button below to resend the email."),
-          TextButton(
-            onPressed: () {
-              context.read<AuthBloc>().add(const AuthEventSendEmailVerification());
-            }, child: const Text('Resend email verification')
+    return Stack(
+      children: [
+        const BackgroundImage(),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  const Positioned(
+                    child: FadeAnimation(1, Axis.vertical,
+                      SizedBox(
+                        height: 200,
+                        child: Center(
+                          child: Text(
+                            'Verify Email',
+                            style: kHeading,
+                          ),
+                        ),
+                      )
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 40,
+                  ),
+                  const FadeAnimation(1, Axis.horizontal,
+                    Text("We've sent you an email with a link to verify your account. Please click on the link to verify your account.",
+                      style: kBodyText,)
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  const FadeAnimation(1.3, Axis.horizontal,
+                    Text("If you don't see the email, press the button below to resend the email.",
+                      style: kBodyText,),
+                  ),
+                  const SizedBox(
+                    height: 120,
+                  ),
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: kCustomBlue,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: TextButton(
+                      onPressed: () async {
+                        context.read<AuthBloc>().add(const AuthEventSendEmailVerification());
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 6.0),
+                        child: Text(
+                          'Resend email verification',
+                          style: kBodyText,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 35,
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      context.read<AuthBloc>().add(const AuthEventLogout());
+                    },
+                    child: const FadeAnimation(1.3, Axis.horizontal,
+                      Text(
+                        'Back to login page',
+                        style: TextStyle(
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    )
+                  ),
+                ],
+              ),
+            ),
           ),
-          TextButton(
-            onPressed:() {
-              context.read<AuthBloc>().add(const AuthEventLogout());
-            }, child: const Text('Restart')
-          ),
-        ]
-      ),
+        ),
+      ]
     );
   }
 }
