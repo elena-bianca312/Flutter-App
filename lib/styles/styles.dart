@@ -11,6 +11,12 @@ const TextStyle kBodyText = TextStyle(
   color: Colors.white,
 );
 
+const TextStyle kPageText = TextStyle(
+  fontSize: 50,
+  color: Colors.white,
+  fontFamily: 'JosefinSans'
+);
+
 // const TextStyle kBlueText = TextStyle(
 //   fontSize: 15,
 //   color: kCustomBlue,

@@ -5,6 +5,7 @@ import 'package:myproject/views/login_view.dart';
 import 'package:myproject/views/register_view.dart';
 import 'package:myproject/views/notes/notes_view.dart';
 import 'package:myproject/views/verify_email_view.dart';
+import 'package:myproject/views/choose_action_view.dart';
 import 'package:myproject/views/forgot_password_page.dart';
 import 'package:myproject/services/auth/bloc/auth_bloc.dart';
 import 'package:myproject/services/auth/bloc/auth_event.dart';
@@ -50,7 +51,7 @@ class HomePage extends StatelessWidget {
       },
       builder: (context, state) {
         if (state is AuthStateLoggedIn) {
-          return const NotesView();
+          return const ChooseActionView();
         } else if (state is AuthStateNeedsVerification) {
           return const VerifyEmailView();
         } else if (state is AuthStateLoggedOut) {

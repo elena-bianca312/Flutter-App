@@ -1,0 +1,64 @@
+import 'package:lottie/lottie.dart';
+import 'package:flutter/material.dart';
+import 'package:myproject/styles/glass_box.dart';
+import 'package:myproject/services/cloud/cloud_note.dart';
+import 'package:myproject/utilities/dialogs/delete_dialog.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
+
+typedef NoteCallback = void Function(CloudNote note);
+
+class NotesListPage extends StatelessWidget {
+
+  final Iterable<CloudNote> notes;
+  final NoteCallback onDeleteNote;
+  final NoteCallback onTap;
+
+  const NotesListPage({
+    Key? key,
+    required this.notes,
+    required this.onDeleteNote,
+    required this.onTap,
+  }) : super(key: key);
+
+  Future<void> _handleRefresh() async {
+    return await Future.delayed(const Duration(seconds: 1));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LiquidPullToRefresh (
+      color: Colors.transparent,
+        height: 80,
+        backgroundColor: Colors.white,
+        onRefresh: _handleRefresh,
+        showChildOpacityTransition: false,
+      child: ListView.builder(
+        itemCount: notes.length,
+        itemBuilder: (context, index) {
+          final note = notes.elementAt(index);
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+            child: GlassBox(
+              height: 500,
+              width: 50,
+              child: ListTile(
+                onTap: () => onTap(note),
+                title: Text(note.text, maxLines: 1, softWrap: true, overflow: TextOverflow.ellipsis),
+                trailing: IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () async {
+                    final shouldDelete = await showDeleteDialog(context);
+                    if (shouldDelete) {
+                      onDeleteNote(note);
+                    }
+                  },
+                ),
+                
+              ),
+            ),
+          );
+        }
+      ),
+    );
+  }
+}
