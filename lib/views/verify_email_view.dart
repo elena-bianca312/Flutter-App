@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myproject/styles/styles.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myproject/styles/glass_box.dart';
 import 'package:myproject/animation/fade_animation.dart';
 import 'package:myproject/widgets/background_image.dart';
 import 'package:myproject/services/auth/bloc/auth_bloc.dart';
@@ -40,22 +41,44 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                       )
                     ),
                   ),
+                  GlassBox(
+                    width: 350,
+                    height: 240,
+                    child: Container(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: const [
+                          SizedBox(
+                            height: 20,
+                          ),
+                          FadeAnimation(1, Axis.horizontal,
+                            Text("We've sent you an email with a link to verify your account. Please click on the link to verify your account.",
+                              style: kBodyText,)
+                          ),
+                          SizedBox(
+                            height: 40,
+                          ),
+                          FadeAnimation(1.3, Axis.horizontal,
+                            Text("If you don't see the email, press the button below to resend the email.",
+                              style: kBodyText,),
+                          ),
+                        ]
+                      ),
+                    ),
+                  ),
+                  // const FadeAnimation(1, Axis.horizontal,
+                  //   Text("We've sent you an email with a link to verify your account. Please click on the link to verify your account.",
+                  //     style: kBodyText,)
+                  // ),
+                  // const SizedBox(
+                  //   height: 20,
+                  // ),
+                  // const FadeAnimation(1.3, Axis.horizontal,
+                  //   Text("If you don't see the email, press the button below to resend the email.",
+                  //     style: kBodyText,),
+                  // ),
                   const SizedBox(
-                    height: 40,
-                  ),
-                  const FadeAnimation(1, Axis.horizontal,
-                    Text("We've sent you an email with a link to verify your account. Please click on the link to verify your account.",
-                      style: kBodyText,)
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const FadeAnimation(1.3, Axis.horizontal,
-                    Text("If you don't see the email, press the button below to resend the email.",
-                      style: kBodyText,),
-                  ),
-                  const SizedBox(
-                    height: 120,
+                    height: 80,
                   ),
                   Container(
                     width: double.infinity,
