@@ -1,0 +1,17 @@
+class CloudShelterException implements Exception {
+  CloudShelterException();
+}
+
+// C in CRUD
+class CouldNotCreateShelterException extends CloudShelterException {}
+
+// R in CRUD
+class CouldNotGetAllSheltersException extends CloudShelterException {}
+
+// U in CRUD
+class CouldNotUpdateShelterException extends CloudShelterException {}
+
+// D` in CRUD
+class CouldNotDeleteShelterException extends CloudShelterException {}
+
+class CouldNotGetCurrentShelterException extends CloudShelterException {}

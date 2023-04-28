@@ -1,2 +1,3 @@
 const createOrUpdateNoteRoute = '/notes/new-note';
-const viewShelterRoute = '/notes/view-shelter';
+const viewShelterRoute = '/shelters/view-shelter';
+const addShelterRoute = 'shelters/new-shelter';

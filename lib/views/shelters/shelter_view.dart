@@ -2,29 +2,61 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:myproject/animation/heart.dart';
 import 'package:myproject/styles/glass_box.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:myproject/utilities/generics/get_arguments.dart';
+import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
+import 'package:myproject/services/shelter_cloud/cloud_shelter_exceptions.dart';
 
 
-class ShelterView extends StatelessWidget {
+class ShelterView extends StatefulWidget {
   const ShelterView({super.key});
+
+  @override
+  State<ShelterView> createState() => _ShelterViewState();
+}
+
+class _ShelterViewState extends State<ShelterView> {
+
+  late CloudShelterInfo _shelter;
+  // late final FirebaseCloudStorage _sheltersService;
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Stack(
-          children: [
-            SizedBox(
-              width: double.infinity,
-              child: Image.asset("assets/images/dogs.jpg"),
-            ),
-            buttonArrow(context),
-            scroll(),
-          ],
+        body: FutureBuilder(
+          future: getExistingShelter(context),
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.done:
+                return Stack(
+                  children: [
+                    SizedBox(
+                      width: double.infinity,
+                      child: Image.asset("assets/images/dogs.jpg"),
+                    ),
+                    buttonArrow(context),
+                    scroll(),
+                  ],
+                );
+              default:
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+            }
+          },
         )
       )
     );
+  }
+
+  Future<CloudShelterInfo> getExistingShelter(BuildContext context) async {
+    try {
+      final currentShelter = context.getArgument<CloudShelterInfo>()!;
+      _shelter = currentShelter;
+      return currentShelter;
+    } catch (e) {
+      throw CouldNotGetCurrentShelterException();
+    }
   }
 
   buttonArrow(BuildContext context) {
@@ -67,10 +99,7 @@ class ShelterView extends StatelessWidget {
         maxChildSize: 1.0,
         minChildSize: 0.6,
         builder: (context, scrollController) {
-          return GlassBox(
-            width: BorderSide.strokeAlignOutside,
-            height: BorderSide.strokeAlignOutside,
-            child: Container(
+          return Container(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               clipBehavior: Clip.hardEdge,
               decoration: const BoxDecoration(
@@ -98,7 +127,7 @@ class ShelterView extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "Shelter title",
+                      _shelter.title,
                       style: Theme.of(context).textTheme.displaySmall,
                     ),
                     const SizedBox(
@@ -185,8 +214,7 @@ class ShelterView extends StatelessWidget {
                   ],
                 ),
               ),
-            ),
-          );
+            );
         });
       }
 }
