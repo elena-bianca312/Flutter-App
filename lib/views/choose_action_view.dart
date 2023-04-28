@@ -94,7 +94,7 @@ class _ChooseActionViewState extends State<ChooseActionView> {
                         await _notesService.deleteNote(documentId: note.documentId);
                       },
                       onTap: (note) {
-                        Navigator.of(context).pushNamed(createOrUpdateNoteRoute, arguments: note);
+                        Navigator.of(context).pushNamed(viewShelterRoute);
                       },
                     );
                   } else {
