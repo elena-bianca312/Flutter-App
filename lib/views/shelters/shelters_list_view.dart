@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myproject/styles/glass_box.dart';
+import 'package:myproject/services/auth/auth_service.dart';
 import 'package:myproject/utilities/dialogs/delete_dialog.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
@@ -44,15 +45,16 @@ class SheltersListView extends StatelessWidget {
               child: ListTile(
                 onTap: () => onTap(shelter),
                 title: Text(shelter.title, maxLines: 1, softWrap: true, overflow: TextOverflow.ellipsis),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () async {
-                    final shouldDelete = await showDeleteDialog(context);
-                    if (shouldDelete) {
-                      onDeleteShelter(shelter);
-                    }
-                  },
-                ),
+                trailing: AuthService.firebase().currentUser!.id == shelter.ownerUserId?
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () async {
+                      final shouldDelete = await showDeleteDialog(context);
+                      if (shouldDelete) {
+                        onDeleteShelter(shelter);
+                      }
+                    },
+                  ) : null,
               ),
             ),
           );

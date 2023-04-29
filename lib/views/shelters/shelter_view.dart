@@ -134,8 +134,6 @@ class _ShelterViewState extends State<ShelterView> {
                           _shelter.title,
                           style: Theme.of(context).textTheme.displaySmall,
                         ),
-                        // TODO
-                        // add edit button available only for creator of shelter
                         if (AuthService.firebase().currentUser!.id == _shelter.ownerUserId)
                           IconButton(
                             onPressed: () {
@@ -158,7 +156,7 @@ class _ShelterViewState extends State<ShelterView> {
                     Row(
                       children: [
                         Text(
-                          _shelter.userName,
+                          AuthService.firebase().currentUser!.id == _shelter.ownerUserId ? "Posted by you" : _shelter.userName
                         ),
                         const SizedBox(
                           width: 30,

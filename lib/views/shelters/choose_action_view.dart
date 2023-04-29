@@ -21,7 +21,6 @@ class ChooseActionView extends StatefulWidget {
 
 class _ChooseActionViewState extends State<ChooseActionView> {
 
-  final _controller = PageController();
   late final FirebaseCloudStorage _sheltersService;
   String get userId => AuthService.firebase().currentUser!.id;
 
