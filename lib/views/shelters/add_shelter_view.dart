@@ -18,7 +18,7 @@ class AddShelterView extends StatefulWidget {
 class _AddShelterViewState extends State<AddShelterView> {
 
   CloudShelterInfo? _shelter;
-  late final FirebaseCloudStorage _sheltersService;
+  late final FirebaseShelterStorage _sheltersService;
   late final TextEditingController _titleController;
   late final TextEditingController _addressController;
   late final TextEditingController _photoURLController;
@@ -74,7 +74,7 @@ class _AddShelterViewState extends State<AddShelterView> {
 
   @override
   void initState() {
-    _sheltersService = FirebaseCloudStorage();
+    _sheltersService = FirebaseShelterStorage();
     _titleController = TextEditingController();
     _addressController = TextEditingController();
     _photoURLController = TextEditingController();
@@ -129,6 +129,7 @@ class _AddShelterViewState extends State<AddShelterView> {
               if (!continueEditing) {
                 // ignore: use_build_context_synchronously
                 Navigator.of(context).pop();
+                // setState(() {});
               }
             }
             // TODO: Add check for valid address
@@ -139,6 +140,7 @@ class _AddShelterViewState extends State<AddShelterView> {
               if (continueWithoutPhoto) {
                 // ignore: use_build_context_synchronously
                 Navigator.of(context).pop();
+                // setState(() {});
               }
             }
           }

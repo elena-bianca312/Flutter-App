@@ -15,3 +15,7 @@ class CouldNotUpdateShelterException extends CloudShelterException {}
 class CouldNotDeleteShelterException extends CloudShelterException {}
 
 class CouldNotGetCurrentShelterException extends CloudShelterException {}
+
+class CouldNotLikeShelterException extends CloudShelterException {}
+
+class CouldNotDislikeShelterException extends CloudShelterException {}

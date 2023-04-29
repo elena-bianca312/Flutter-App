@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:myproject/services/cloud/cloud_storage_exceptions.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_constants.dart';
+import 'package:myproject/services/shelter_cloud/cloud_shelter_exceptions.dart';
 
-class FirebaseCloudStorage {
+class FirebaseShelterStorage {
 
   // Factory constructor and singleton pattern
-  FirebaseCloudStorage._sharedInstance();
-  static final FirebaseCloudStorage _shared = FirebaseCloudStorage._sharedInstance();
-  factory FirebaseCloudStorage() {
+  FirebaseShelterStorage._sharedInstance();
+  static final FirebaseShelterStorage _shared = FirebaseShelterStorage._sharedInstance();
+  factory FirebaseShelterStorage() {
     return _shared;
   }
 
@@ -47,8 +47,14 @@ class FirebaseCloudStorage {
           (doc) => CloudShelterInfo.fromSnapshot(doc)),
       );
     } catch (e) {
-      throw CouldNotGetAllNotesException();
+      throw CouldNotGetAllSheltersException();
     }
+  }
+
+  Future<CloudShelterInfo> getShelterByDocumentID({required String documentId}) async {
+
+    return shelters.get().then((value) => value.docs.map((doc) => CloudShelterInfo.fromSnapshot(doc)).firstWhere((element) => element.documentId == documentId));
+
   }
 
   Stream<Iterable<CloudShelterInfo>> allShelters() {
@@ -82,7 +88,7 @@ class FirebaseCloudStorage {
         textFieldName: text,
       });
     } catch (e) {
-      throw CouldNotUpdateNoteException();
+      throw CouldNotUpdateShelterException();
     }
   }
 
@@ -90,7 +96,27 @@ class FirebaseCloudStorage {
     try {
       await shelters.doc(documentId).delete();
     } catch (e) {
-      throw CouldNotDeleteNoteException();
+      throw CouldNotDeleteShelterException();
+    }
+  }
+
+  Future<void> likeShelter({required String documentId, required String userId}) async {
+    try {
+      await shelters.doc(documentId).update({
+        userLikesFieldName: FieldValue.arrayUnion([userId]),
+      });
+    } catch (e) {
+      throw CouldNotLikeShelterException();
+    }
+  }
+
+  Future<void> dislikeShelter({required String documentId, required String userId}) async {
+    try {
+      await shelters.doc(documentId).update({
+        userDislikesFieldName: FieldValue.arrayUnion([userId]),
+      });
+    } catch (e) {
+      throw CouldNotDislikeShelterException();
     }
   }
 }

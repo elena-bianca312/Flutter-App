@@ -6,6 +6,7 @@ import 'package:myproject/services/auth/auth_service.dart';
 import 'package:myproject/utilities/generics/get_arguments.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_exceptions.dart';
+import 'package:myproject/services/shelter_cloud/firebase_shelter_storage.dart';
 
 
 class ShelterView extends StatefulWidget {
@@ -19,7 +20,13 @@ class _ShelterViewState extends State<ShelterView> {
 
   late CloudShelterInfo _shelter;
   var backupPhotoURL = 'assets/images/bloc1.jpg';
-  // late final FirebaseCloudStorage _sheltersService;
+  late final FirebaseShelterStorage _sheltersService;
+
+  @override
+  void initState() {
+    _sheltersService = FirebaseShelterStorage();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +73,7 @@ class _ShelterViewState extends State<ShelterView> {
       padding: const EdgeInsets.all(20.0),
       child: InkWell(
         onTap: () {
-          Navigator.pop(context);
+          Navigator.of(context).pop();
         },
         child: Container(
           clipBehavior: Clip.hardEdge,
@@ -136,38 +143,27 @@ class _ShelterViewState extends State<ShelterView> {
                         ),
                         if (AuthService.firebase().currentUser!.id == _shelter.ownerUserId)
                           IconButton(
-                            onPressed: () {
+                            onPressed: () async {
                               Navigator.of(context).pushNamed(addShelterRoute, arguments: _shelter);
+                              // TOOD: It doesnt update the shelter info after editing!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                              // Why????????????????????????
+                              _shelter = await _sheltersService.getShelterByDocumentID(documentId: _shelter.documentId);
+                              setState(() {});
                             },
                             icon: const Icon(Icons.edit, color: Colors.grey,),
                           )
                       ],
                     ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      _shelter.address,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
+                    const SizedBox(height: 10,),
+                    Text(_shelter.address, style: Theme.of(context).textTheme.bodyMedium,),
+                    const SizedBox(height: 15,),
                     Row(
                       children: [
-                        Text(
-                          AuthService.firebase().currentUser!.id == _shelter.ownerUserId ? "Posted by you" : _shelter.userName
-                        ),
-                        const SizedBox(
-                          width: 30,
-                        ),
+                        Text(AuthService.firebase().currentUser!.id == _shelter.ownerUserId ? "Posted by you" : _shelter.userName),
+                        const SizedBox(width: 30,),
                         const Heart(),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        const Text(
-                          "273 Likes",
-                        ),
+                        const SizedBox(width: 5,),
+                        const Text("69 Likes",),
                       ],
                     ),
                     const Padding(

@@ -73,6 +73,7 @@ class _HeartState extends State<Heart> with SingleTickerProviderStateMixin {
             ),
             onPressed: () {
               isFav ? _controller.reverse() : _controller.forward();
+              
             },
           );
         });

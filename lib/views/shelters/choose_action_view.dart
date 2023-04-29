@@ -21,12 +21,12 @@ class ChooseActionView extends StatefulWidget {
 
 class _ChooseActionViewState extends State<ChooseActionView> {
 
-  late final FirebaseCloudStorage _sheltersService;
+  late final FirebaseShelterStorage _sheltersService;
   String get userId => AuthService.firebase().currentUser!.id;
 
   @override
   void initState() {
-    _sheltersService = FirebaseCloudStorage();
+    _sheltersService = FirebaseShelterStorage();
     super.initState();
   }
 

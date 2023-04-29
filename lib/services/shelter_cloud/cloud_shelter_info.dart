@@ -11,8 +11,10 @@ class CloudShelterInfo {
   final String address;
   final String? photoURL;
   final String? text;
+  List<String>? userLikes;
+  List<String>? userDislikes;
 
-  const CloudShelterInfo({
+  CloudShelterInfo({
     required this.documentId,
     required this.ownerUserId,
     required this.userName,
@@ -20,6 +22,8 @@ class CloudShelterInfo {
     required this.address,
     this.photoURL,
     this.text,
+    this.userLikes,
+    this.userDislikes,
   });
 
   CloudShelterInfo.fromSnapshot(QueryDocumentSnapshot<Map<String, dynamic>> snapshot) :
@@ -29,5 +33,8 @@ class CloudShelterInfo {
     title = snapshot.data()[titleFieldName] as String,
     address = snapshot.data()[addressFieldName] as String,
     photoURL = snapshot.data()[photoURLFieldName],
-    text = snapshot.data()[textFieldName];
+    text = snapshot.data()[textFieldName],
+    userLikes = snapshot.data()[userLikesFieldName],
+    userDislikes = snapshot.data()[userDislikesFieldName];
+
 }
