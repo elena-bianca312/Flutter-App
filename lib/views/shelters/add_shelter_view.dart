@@ -3,8 +3,10 @@ import 'package:share_plus/share_plus.dart';
 import 'package:myproject/services/auth/auth_service.dart';
 import 'package:myproject/utilities/generics/get_arguments.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
+import 'package:myproject/utilities/dialogs/photo_invalid_format_dialog.dart';
 import 'package:myproject/services/shelter_cloud/firebase_shelter_storage.dart';
 import 'package:myproject/utilities/dialogs/cannot_share_empty_note_dialog.dart';
+import 'package:myproject/utilities/dialogs/cannot_save_incomplete_shelter_info_dialog.dart';
 
 class AddShelterView extends StatefulWidget {
   const AddShelterView({super.key});
@@ -24,32 +26,31 @@ class _AddShelterViewState extends State<AddShelterView> {
 
   Future<CloudShelterInfo> createOrGetExistingShelter(BuildContext context) async {
 
-    // final widgetShelter = context.getArgument<CloudShelterInfo>();
-    // // If we have a shelter passed in from the widget, use it. Otherwise, create a new one.
-    // if (widgetShelter != null) {
-    //   _shelter = widgetShelter;
-    //   _titleController.text = widgetShelter.title;
-    //   _addressController.text = widgetShelter.address!;
-    //   _photoURLController.text = widgetShelter.photoURL!;
-    //   _textController.text = widgetShelter.text!;
-    //   return widgetShelter;
-    // }
+    final widgetShelter = context.getArgument<CloudShelterInfo>();
+    // If we have a shelter passed in from the widget, use it. Otherwise, create a new one.
+    if (widgetShelter != null) {
+      _shelter = widgetShelter;
+      _titleController.text = widgetShelter.title;
+      _addressController.text = widgetShelter.address;
+      _photoURLController.text = widgetShelter.photoURL ?? '';
+      _textController.text = widgetShelter.text ?? '';
+      return widgetShelter;
+    }
 
-    // final existingShelter = _shelter;
-    // if (existingShelter != null) {
-    //   return existingShelter;
-    // }
+    final existingShelter = _shelter;
+    if (existingShelter != null) {
+      return existingShelter;
+    }
 
     final currentUser = AuthService.firebase().currentUser!;
-    final userId = currentUser.id;
-    final newShelter = await _sheltersService.createNewShelter(ownerUserId: userId);
+    final newShelter = await _sheltersService.createNewShelter(ownerUserId: currentUser.id, userName: currentUser.email);
     _shelter = newShelter;
     return newShelter;
   }
 
   void _deleteShelterIfIncomplete() {
     final shelter = _shelter;
-    if (_titleController.text.isEmpty && shelter != null) {
+    if ((_titleController.text.isEmpty || _addressController.text.isEmpty) && shelter != null) {
       _sheltersService.deleteShelter(documentId: shelter.documentId);
     }
   }
@@ -57,10 +58,16 @@ class _AddShelterViewState extends State<AddShelterView> {
   void _saveShelterIfNotEmpty() async {
     final shelter = _shelter;
     final title = _titleController.text;
-    if (shelter != null && title.isNotEmpty) {
+    final address = _addressController.text;
+    final photoURL = _photoURLController.text;
+    final text = _textController.text;
+    if (shelter != null && title.isNotEmpty && address.isNotEmpty) {
       await _sheltersService.updateShelter(
         documentId: shelter.documentId,
         title: title,
+        address: address,
+        photoURL: photoURL,
+        text: text,
       );
     }
   }
@@ -109,28 +116,33 @@ class _AddShelterViewState extends State<AddShelterView> {
     _textController.addListener(_controllerListener);
   }
 
-  // void _textControllerListener() async {
-  //   final shelter = _shelter;
-  //   if (shelter == null) {
-  //     return;
-  //   }
-  //   final text = _textController.text;
-  //   await _sheltersService.updateShelter(
-  //     documentId: shelter.documentId,
-  //     text: text,
-  //   );
-  // }
-
-  // void _setupTextControllerListener() {
-  //   _textController.removeListener(_textControllerListener);
-  //   _textController.addListener(_textControllerListener);
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Please fill in shelter info...'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () async {
+            if (_shelter == null || _titleController.text.isEmpty || _addressController.text.isEmpty) {
+              final continueEditing = await showCannotSaveIncompleteShelterInfoDialog(context);
+              if (!continueEditing) {
+                // ignore: use_build_context_synchronously
+                Navigator.of(context).pop();
+              }
+            }
+            // TODO: Add check for valid address
+            // Should also add check for valid photoURL
+            else if (_shelter == null || _photoURLController.text.isEmpty) {
+              // ignore: use_build_context_synchronously
+              final continueWithoutPhoto = await showPhotoInvalidFormatDialog(context);
+              if (continueWithoutPhoto) {
+                // ignore: use_build_context_synchronously
+                Navigator.of(context).pop();
+              }
+            }
+          }
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.share),
@@ -157,7 +169,19 @@ class _AddShelterViewState extends State<AddShelterView> {
                   TextField(
                     controller: _titleController,
                     decoration: const InputDecoration(
-                      hintText: 'Title',
+                      hintText: 'Title...',
+                    ),
+                  ),
+                  TextField(
+                    controller: _addressController,
+                    decoration: const InputDecoration(
+                      hintText: 'Address...',
+                    ),
+                  ),
+                  TextField(
+                    controller: _photoURLController,
+                    decoration: const InputDecoration(
+                      hintText: 'Upload image URL...',
                     ),
                   ),
                   TextField(

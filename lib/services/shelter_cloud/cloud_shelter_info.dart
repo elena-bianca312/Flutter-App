@@ -6,16 +6,18 @@ import 'package:myproject/services/shelter_cloud/cloud_shelter_constants.dart';
 class CloudShelterInfo {
   final String documentId;
   final String ownerUserId;
+  final String userName;
   final String title;
-  final String? address;
+  final String address;
   final String? photoURL;
   final String? text;
 
   const CloudShelterInfo({
     required this.documentId,
     required this.ownerUserId,
+    required this.userName,
     required this.title,
-    this.address,
+    required this.address,
     this.photoURL,
     this.text,
   });
@@ -23,8 +25,9 @@ class CloudShelterInfo {
   CloudShelterInfo.fromSnapshot(QueryDocumentSnapshot<Map<String, dynamic>> snapshot) :
     documentId = snapshot.id,
     ownerUserId = snapshot.data()[ownerUserIdFieldName],
+    userName = snapshot.data()[userNameFieldName],
     title = snapshot.data()[titleFieldName] as String,
-    address = snapshot.data()[addressFieldName],
+    address = snapshot.data()[addressFieldName] as String,
     photoURL = snapshot.data()[photoURLFieldName],
     text = snapshot.data()[textFieldName];
 }

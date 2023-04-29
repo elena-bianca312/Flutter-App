@@ -1,7 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:myproject/animation/heart.dart';
-import 'package:myproject/styles/glass_box.dart';
+import 'package:myproject/constants/routes.dart';
+import 'package:myproject/services/auth/auth_service.dart';
 import 'package:myproject/utilities/generics/get_arguments.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_exceptions.dart';
@@ -17,6 +18,7 @@ class ShelterView extends StatefulWidget {
 class _ShelterViewState extends State<ShelterView> {
 
   late CloudShelterInfo _shelter;
+  var backupPhotoURL = 'assets/images/bloc1.jpg';
   // late final FirebaseCloudStorage _sheltersService;
 
   @override
@@ -24,7 +26,7 @@ class _ShelterViewState extends State<ShelterView> {
     return SafeArea(
       child: Scaffold(
         body: FutureBuilder(
-          future: getExistingShelter(context),
+          future: Future.wait([getExistingShelter(context)]),
           builder: (context, snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.done:
@@ -32,7 +34,7 @@ class _ShelterViewState extends State<ShelterView> {
                   children: [
                     SizedBox(
                       width: double.infinity,
-                      child: Image.asset("assets/images/dogs.jpg"),
+                      child: Image.asset(_shelter.photoURL == null || _shelter.photoURL == '' ? backupPhotoURL : _shelter.photoURL!)
                     ),
                     buttonArrow(context),
                     scroll(),
@@ -126,36 +128,46 @@ class _ShelterViewState extends State<ShelterView> {
                         ],
                       ),
                     ),
-                    Text(
-                      _shelter.title,
-                      style: Theme.of(context).textTheme.displaySmall,
+                    Row(
+                      children: [
+                        Text(
+                          _shelter.title,
+                          style: Theme.of(context).textTheme.displaySmall,
+                        ),
+                        // TODO
+                        // add edit button available only for creator of shelter
+                        if (AuthService.firebase().currentUser!.id == _shelter.ownerUserId)
+                          IconButton(
+                            onPressed: () {
+                              Navigator.of(context).pushNamed(addShelterRoute, arguments: _shelter);
+                            },
+                            icon: const Icon(Icons.edit, color: Colors.grey,),
+                          )
+                      ],
                     ),
                     const SizedBox(
                       height: 10,
                     ),
                     Text(
-                      "Address: Univ Politehnica",
+                      _shelter.address,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     const SizedBox(
                       height: 15,
                     ),
                     Row(
-                      children: const [
-                        SizedBox(
-                          width: 5,
-                        ),
+                      children: [
                         Text(
-                          "Name of person that posted this",
+                          _shelter.userName,
                         ),
-                        SizedBox(
+                        const SizedBox(
+                          width: 30,
+                        ),
+                        const Heart(),
+                        const SizedBox(
                           width: 5,
                         ),
-                        Heart(),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Text(
+                        const Text(
                           "273 Likes",
                         ),
                       ],

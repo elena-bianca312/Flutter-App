@@ -39,7 +39,7 @@ class _ChooseActionViewState extends State<ChooseActionView> {
         Scaffold(
           backgroundColor: Colors.transparent,
           appBar: AppBar(
-            title: const FadeAnimation(2, Axis.horizontal, Text('Welcome, back!')),
+            title: FadeAnimation(2, Axis.horizontal, Text('Welcome back, ${AuthService.firebase().currentUser!.email}!', style: const TextStyle(height: 0, fontSize: 14))),
             backgroundColor: Colors.transparent,
             actions: [
               FadeAnimation(2, Axis.vertical,

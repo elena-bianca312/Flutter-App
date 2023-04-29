@@ -16,9 +16,10 @@ class FirebaseCloudStorage {
   final shelters = FirebaseFirestore.instance.collection('shelters');
 
   // Create new shelter function
- Future<CloudShelterInfo> createNewShelter({required String ownerUserId}) async {
+ Future<CloudShelterInfo> createNewShelter({required String ownerUserId, required String userName}) async {
     final document = await shelters.add({
       ownerUserIdFieldName: ownerUserId,
+      userNameFieldName: userName,
       titleFieldName: '',
       textFieldName: '',
       addressFieldName: '',
@@ -28,6 +29,7 @@ class FirebaseCloudStorage {
     return CloudShelterInfo(
       documentId: fetchedShelter.id,
       ownerUserId: ownerUserId,
+      userName: userName,
       title: '',
       text: '',
       address: '',
@@ -67,7 +69,7 @@ class FirebaseCloudStorage {
 
   Future<void> updateShelter({
     required String documentId,
-    required String title,
+    String? title,
     String? address,
     String? photoURL,
     String? text,
@@ -75,7 +77,7 @@ class FirebaseCloudStorage {
     try {
       await shelters.doc(documentId).update({
         titleFieldName: title,
-        addressFieldName: address ?? '',
+        addressFieldName: address,
         photoURLFieldName: photoURL,
         textFieldName: text,
       });
