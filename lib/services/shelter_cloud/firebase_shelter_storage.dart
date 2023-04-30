@@ -51,10 +51,11 @@ class FirebaseShelterStorage {
     }
   }
 
-  Future<CloudShelterInfo> getShelterByDocumentID({required String documentId}) async {
+  Future<CloudShelterInfo> getShelterByDocumentID({required String documentId}) {
 
-    return shelters.get().then((value) => value.docs.map((doc) => CloudShelterInfo.fromSnapshot(doc)).firstWhere((element) => element.documentId == documentId));
-
+    var x = shelters.get().then((value) => value.docs.map((doc) => CloudShelterInfo.fromSnapshot(doc)).firstWhere((element) => element.documentId == documentId));
+    // print(x.documentId);
+    return x;
   }
 
   Stream<Iterable<CloudShelterInfo>> allShelters() {

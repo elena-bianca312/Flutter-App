@@ -24,6 +24,7 @@ class _ShelterViewState extends State<ShelterView> {
 
   @override
   void initState() {
+    // _shelter = getExistingShelter(context) as CloudShelterInfo;
     _sheltersService = FirebaseShelterStorage();
     super.initState();
   }
@@ -33,7 +34,7 @@ class _ShelterViewState extends State<ShelterView> {
     return SafeArea(
       child: Scaffold(
         body: FutureBuilder(
-          future: Future.wait([getExistingShelter(context)]),
+          future: getExistingShelter(context),
           builder: (context, snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.done:
@@ -60,7 +61,9 @@ class _ShelterViewState extends State<ShelterView> {
 
   Future<CloudShelterInfo> getExistingShelter(BuildContext context) async {
     try {
-      final currentShelter = context.getArgument<CloudShelterInfo>()!;
+      final id = context.getArgument<CloudShelterInfo>()!.documentId;
+      final currentShelter = await _sheltersService.getShelterByDocumentID(documentId: id);
+      // final currentShelter = context.getArgument<CloudShelterInfo>()!;
       _shelter = currentShelter;
       return currentShelter;
     } catch (e) {
@@ -144,11 +147,10 @@ class _ShelterViewState extends State<ShelterView> {
                         if (AuthService.firebase().currentUser!.id == _shelter.ownerUserId)
                           IconButton(
                             onPressed: () async {
-                              Navigator.of(context).pushNamed(addShelterRoute, arguments: _shelter);
+                              Navigator.of(context).pushNamed(addShelterRoute, arguments: _shelter).then((_) => setState(() {getExistingShelter(context);}));
+
                               // TOOD: It doesnt update the shelter info after editing!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                               // Why????????????????????????
-                              _shelter = await _sheltersService.getShelterByDocumentID(documentId: _shelter.documentId);
-                              setState(() {});
                             },
                             icon: const Icon(Icons.edit, color: Colors.grey,),
                           )
