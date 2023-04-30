@@ -142,6 +142,9 @@ class _AddShelterViewState extends State<AddShelterView> {
                 Navigator.of(context).pop();
                 // setState(() {});
               }
+            } else {
+              // ignore: use_build_context_synchronously
+              Navigator.of(context).pop();
             }
           }
         ),
@@ -164,7 +167,6 @@ class _AddShelterViewState extends State<AddShelterView> {
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
-              // _setupControllerListener();
               _setupControllerListener();
               return Column(
                 children: [
