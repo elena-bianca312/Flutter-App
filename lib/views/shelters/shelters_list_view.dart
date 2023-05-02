@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:myproject/utilities/utils.dart';
 import 'package:myproject/styles/glass_box.dart';
 import 'package:myproject/services/auth/auth_service.dart';
+import 'package:myproject/views/shelters/shelter_view.dart';
 import 'package:myproject/utilities/dialogs/delete_dialog.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
 
 typedef ShelterCallback = void Function(CloudShelterInfo shelter);
+typedef ViewShelterCallback = ShelterView Function(CloudShelterInfo shelter);
 
 class SheltersListView extends StatelessWidget {
 

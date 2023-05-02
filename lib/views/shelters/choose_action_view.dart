@@ -5,6 +5,7 @@ import 'package:myproject/enums/menu_action.dart';
 import 'package:myproject/animation/fade_animation.dart';
 import 'package:myproject/widgets/background_image.dart';
 import 'package:myproject/services/auth/auth_service.dart';
+import 'package:myproject/views/shelters/shelter_view.dart';
 import 'package:myproject/services/auth/bloc/auth_bloc.dart';
 import 'package:myproject/services/auth/bloc/auth_event.dart';
 import 'package:myproject/utilities/dialogs/logout_dialog.dart';
@@ -87,7 +88,23 @@ class _ChooseActionViewState extends State<ChooseActionView> {
                         await _sheltersService.deleteShelter(documentId: shelter.documentId);
                       },
                       onTap: (shelter) {
-                        Navigator.of(context).pushNamed(viewShelterRoute, arguments: shelter);
+                        //Navigator.of(context).pushNamed(viewShelterRoute, arguments: shelter);
+                        // TODO
+                        // Here I have to change the method call to pass the actual user id
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ShelterView(
+                              onLike: () async {
+                                await _sheltersService.likeShelter(documentId: shelter.documentId, userId: shelter.documentId);
+                              },
+                              onDislike: () async {
+                                await _sheltersService.dislikeShelter(documentId: shelter.documentId, userId: shelter.documentId);
+                              },
+                              shelter: shelter,
+                            ),
+                          ),
+                        );
                       },
                     );
                   } else {

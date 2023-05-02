@@ -24,8 +24,8 @@ class FirebaseShelterStorage {
       textFieldName: '',
       addressFieldName: '',
       photoURLFieldName: '',
-      // userLikesFieldName: [],
-      // userDislikesFieldName: [],
+      userLikesFieldName: [],
+      userDislikesFieldName: [],
     });
     final fetchedShelter = await document.get();
     return CloudShelterInfo(
@@ -36,8 +36,8 @@ class FirebaseShelterStorage {
       text: '',
       address: '',
       photoURL: '',
-      // userLikes: const [],
-      // userDislikes: const [],
+      userLikes: const [],
+      userDislikes: const [],
     );
   }
 

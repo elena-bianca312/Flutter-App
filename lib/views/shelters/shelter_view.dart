@@ -9,9 +9,14 @@ import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_exceptions.dart';
 import 'package:myproject/services/shelter_cloud/firebase_shelter_storage.dart';
 
+typedef LikeCallback = void Function();
 
 class ShelterView extends StatefulWidget {
-  const ShelterView({super.key});
+
+  final LikeCallback onLike;
+  final LikeCallback onDislike;
+  final CloudShelterInfo shelter;
+  const ShelterView({super.key, required this.shelter, required this.onLike, required this.onDislike});
 
   @override
   State<ShelterView> createState() => _ShelterViewState();
@@ -19,7 +24,7 @@ class ShelterView extends StatefulWidget {
 
 class _ShelterViewState extends State<ShelterView> {
 
-  late CloudShelterInfo _shelter;
+  late CloudShelterInfo _shelter = widget.shelter;
   late final FirebaseShelterStorage _sheltersService;
 
   @override
@@ -31,44 +36,17 @@ class _ShelterViewState extends State<ShelterView> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: FutureBuilder(
-          future: _sheltersService.getShelters(),
-          builder: (context, snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.done:
-                if (snapshot.hasData) {
-                  final id = context.getArgument<CloudShelterInfo>()!.documentId;
-                  print(id);
-                  print(snapshot.data!.map((e) => e.documentId == id).toList());
-                  _shelter = snapshot.data!.firstWhere((element) => element.documentId == id);
-                  print(_shelter.documentId);
-
-                  return Stack(
-                    children: [
-                      SizedBox(
-                        width: double.infinity,
-                        child: _shelter.photoURL == null || _shelter.photoURL == '' ? Image.asset(backupPhotoURL) : Image.network(_shelter.photoURL!)
-                      ),
-                      buttonArrow(context),
-                      scroll(),
-                    ],
-                  );
-                } else {
-                  return const Center(
-                    child: Text('No data found'),
-                  );
-                }
-
-              default:
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-            }
-          },
+    return Scaffold(
+      body:
+        Stack(children: [
+            SizedBox(
+              width: double.infinity,
+              child: _shelter.photoURL == null || _shelter.photoURL == '' ? Image.asset(backupPhotoURL) : Image.network(_shelter.photoURL!)
+            ),
+            buttonArrow(context),
+            scroll(),
+          ],
         )
-      )
     );
   }
 
@@ -117,6 +95,15 @@ class _ShelterViewState extends State<ShelterView> {
       ),
     );
   }
+
+  // Future<void> like_animation() async {
+  //   IconButton(
+  //     onPressed: {
+  //       await _sheltersService.likeShelter(documentId: _shelter.documentId, userId: AuthService.firebase().currentUser!.id)
+  //     },
+  //     icon: const Icon(Icons.person_outline),
+  //   );
+  // }
 
   scroll() {
     return DraggableScrollableSheet(
