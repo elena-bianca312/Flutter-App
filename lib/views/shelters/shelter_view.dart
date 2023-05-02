@@ -1,15 +1,16 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:myproject/animation/heart.dart';
 import 'package:myproject/utilities/utils.dart';
 import 'package:myproject/constants/routes.dart';
 import 'package:myproject/services/auth/auth_service.dart';
+import 'package:myproject/animation/likedislikeanimation.dart';
 import 'package:myproject/utilities/generics/get_arguments.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_exceptions.dart';
 import 'package:myproject/services/shelter_cloud/firebase_shelter_storage.dart';
 
 typedef LikeCallback = void Function();
+typedef CheckLikeCallback = bool Function();
 
 class ShelterView extends StatefulWidget {
 
@@ -18,13 +19,17 @@ class ShelterView extends StatefulWidget {
   final LikeCallback onRemoveLike;
   final LikeCallback onRemoveDislike;
   final CloudShelterInfo shelter;
+  final CheckLikeCallback checkIfLiked;
+  final CheckLikeCallback checkIfDisliked;
   const ShelterView({
     super.key,
     required this.shelter,
     required this.onLike,
     required this.onDislike,
     required this.onRemoveLike,
-    required this.onRemoveDislike
+    required this.onRemoveDislike,
+    required this.checkIfLiked,
+    required this.checkIfDisliked
   });
 
   @override
@@ -39,7 +44,6 @@ class _ShelterViewState extends State<ShelterView> {
 
   @override
   void initState() {
-    // _shelter = getExistingShelter(context) as CloudShelterInfo;
     _sheltersService = FirebaseShelterStorage();
     super.initState();
   }
@@ -171,21 +175,37 @@ class _ShelterViewState extends State<ShelterView> {
                     Text("Address: ${_shelter.address}", style: Theme.of(context).textTheme.bodyMedium,),
                     const SizedBox(height: 15,),
                     Text(AuthService.firebase().currentUser!.id == _shelter.ownerUserId ? "Posted by you" : "Posted by ${_shelter.userName}"),
-                    const SizedBox(width: 30,),
-                    Row(
+                    Column(
                       children: [
-                        Heart(onLike: widget.onLike, onDislike: widget.onDislike, onRemoveLike: widget.onRemoveLike, onRemoveDislike: widget.onRemoveDislike),
+                        LikeDislikeAnimation(
+                          onLike: widget.onLike,
+                          onDislike: widget.onDislike,
+                          onRemoveLike: widget.onRemoveLike,
+                          onRemoveDislike: widget.onRemoveDislike,
+                          checkIfLiked: widget.checkIfLiked,
+                          checkIfDisliked: widget.checkIfDisliked,
+                        ),
                         FutureBuilder(
-                          future: _sheltersService.getShelterLikes(documentId: _shelter.documentId),
+                          future: Future.wait([
+                            _sheltersService.getShelterLikes(documentId: _shelter.documentId),
+                            _sheltersService.getShelterDislikes(documentId: _shelter.documentId)
+                          ]),
                           builder: (context, snapshot) {
+                            int noLikes, noDislikes;
                             if (snapshot.hasData) {
-                              if (snapshot.data!.length == 1) {
-                                return const Text("1 Like");
-                              }
-                              return Text("${snapshot.data!.length} Likes");
+                              noLikes = snapshot.data![0].length;
+                              noDislikes = snapshot.data![1].length;
                             } else {
-                              return const Text("0 Likes");
+                              noLikes = 0;
+                              noDislikes = 0;
                             }
+                            return Row(
+                              children: [
+                                Text("${noLikes.toString()} Likes"),
+                                const SizedBox(width: 25,),
+                                Text("${noDislikes.toString()} Dislikes"),
+                              ],
+                            );
                           }
                         ),
                       ],

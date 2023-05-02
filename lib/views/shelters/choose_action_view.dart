@@ -88,24 +88,29 @@ class _ChooseActionViewState extends State<ChooseActionView> {
                         await _sheltersService.deleteShelter(documentId: shelter.documentId);
                       },
                       onTap: (shelter) {
-                        //Navigator.of(context).pushNamed(viewShelterRoute, arguments: shelter);
-                        // TODO
-                        // Here I have to change the method call to pass the actual user id
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => ShelterView(
                               onLike: () async {
-                                await _sheltersService.likeShelter(documentId: shelter.documentId, userId: shelter.documentId);
+                                await _sheltersService.likeShelter(documentId: shelter.documentId, userId: AuthService.firebase().currentUser!.id);
                               },
                               onDislike: () async {
-                                await _sheltersService.dislikeShelter(documentId: shelter.documentId, userId: shelter.documentId);
+                                await _sheltersService.dislikeShelter(documentId: shelter.documentId, userId: AuthService.firebase().currentUser!.id);
                               },
                               onRemoveLike: () async {
-                                await _sheltersService.removeLikeShelter(documentId: shelter.documentId, userId: shelter.documentId);
+                                await _sheltersService.removeLikeShelter(documentId: shelter.documentId, userId: AuthService.firebase().currentUser!.id);
                               },
                               onRemoveDislike: () async {
-                                await _sheltersService.removeDislikeShelter(documentId: shelter.documentId, userId: shelter.documentId);
+                                await _sheltersService.removeDislikeShelter(documentId: shelter.documentId, userId: AuthService.firebase().currentUser!.id);
+                              },
+                              checkIfLiked: () {
+                                _sheltersService.checkIfLiked(documentId: shelter.documentId, userId: AuthService.firebase().currentUser!.id);
+                                return false;
+                              },
+                              checkIfDisliked: () {
+                                _sheltersService.checkIfDisliked(documentId: shelter.documentId, userId: AuthService.firebase().currentUser!.id);
+                                return false;
                               },
                               shelter: shelter,
                             ),

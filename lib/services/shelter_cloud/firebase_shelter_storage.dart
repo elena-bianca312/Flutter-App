@@ -139,6 +139,16 @@ class FirebaseShelterStorage {
     }
   }
 
+  Future<bool> checkIfLiked({required String documentId, required String userId}) async {
+    // print(userId);
+    // print(shelters.doc(documentId).get().then((value) => value.get(userLikesFieldName).contains(userId)));
+    try {
+      return await shelters.doc(documentId).get().then((value) => value.get(userLikesFieldName).contains(userId));
+    } catch (e) {
+      throw CouldNotCheckIfLikedException();
+    }
+  }
+
   Future<void> dislikeShelter({required String documentId, required String userId}) async {
     try {
       await shelters.doc(documentId).update({
@@ -159,6 +169,14 @@ class FirebaseShelterStorage {
     }
   }
 
+  Future<bool> checkIfDisliked({required String documentId, required String userId}) async {
+    try {
+      return await shelters.doc(documentId).get().then((value) => value.get(userDislikesFieldName).contains(userId));
+    } catch (e) {
+      throw CouldNotCheckIfDislikedException();
+    }
+  }
+
   Future<List> getShelterLikes({required String documentId}) async {
     try {
       return await shelters.doc(documentId).get().then((value) => value.get(userLikesFieldName));
@@ -167,7 +185,7 @@ class FirebaseShelterStorage {
     }
   }
 
-    Future<List> getShelterDislikes({required String documentId}) async {
+  Future<List> getShelterDislikes({required String documentId}) async {
     try {
       return await shelters.doc(documentId).get().then((value) => value.get(userDislikesFieldName));
     } catch (e) {

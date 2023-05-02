@@ -21,3 +21,7 @@ class CouldNotLikeShelterException extends CloudShelterException {}
 class CouldNotDislikeShelterException extends CloudShelterException {}
 
 class CouldNotGetShelterLikesException extends CloudShelterException {}
+
+class  CouldNotCheckIfLikedException extends CloudShelterException {}
+
+class  CouldNotCheckIfDislikedException extends CloudShelterException {}
