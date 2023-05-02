@@ -1,5 +1,7 @@
 import 'package:flutter/services.dart';
 
+String backupPhotoURL = 'assets/images/bloc1.jpg';
+
 Future<String?> loadAsset(String? assetPath) async {
   try {
     if (assetPath == null) {

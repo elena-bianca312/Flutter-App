@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myproject/utilities/utils.dart';
 import 'package:myproject/styles/glass_box.dart';
 import 'package:myproject/services/auth/auth_service.dart';
 import 'package:myproject/utilities/dialogs/delete_dialog.dart';
@@ -34,17 +35,24 @@ class SheltersListView extends StatelessWidget {
         onRefresh: _handleRefresh,
         showChildOpacityTransition: false,
       child: ListView.builder(
+        scrollDirection: Axis.vertical,
         itemCount: shelters.length,
         itemBuilder: (context, index) {
           final shelter = shelters.elementAt(index);
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
             child: GlassBox(
-              height: 50,
-              width: 50,
+              height: 200,
+              width: 100,
               child: ListTile(
                 onTap: () => onTap(shelter),
                 title: Text(shelter.title, maxLines: 1, softWrap: true, overflow: TextOverflow.ellipsis),
+                subtitle: Text("Address: ${shelter.address}", maxLines: 1, softWrap: true, overflow: TextOverflow.ellipsis),
+                leading:  SizedBox(
+                  height: 100,
+                  width: 100, // fixed width and height
+                  child: shelter.photoURL == null || shelter.photoURL == '' ? Image.asset(backupPhotoURL) : Image.network(shelter.photoURL!)
+                ),
                 trailing: AuthService.firebase().currentUser!.id == shelter.ownerUserId?
                   IconButton(
                     icon: const Icon(Icons.delete),
@@ -56,6 +64,80 @@ class SheltersListView extends StatelessWidget {
                     },
                   ) : null,
               ),
+              // child: Container(
+              //   margin: EdgeInsets.all(10),
+              //   width: 210,
+              //   child: Stack(
+              //     alignment: Alignment.topCenter,
+              //     children: <Widget>[
+              //       Positioned(
+              //         bottom: 15,
+              //         child: Container(
+              //           height: 120,
+              //           width: 200,
+              //           decoration: BoxDecoration(
+              //             borderRadius: BorderRadius.circular(10),
+              //             color: Colors.white,
+              //           ),
+              //           child: Padding(
+              //             padding: EdgeInsets.all(10),
+              //             child: Column(
+              //               mainAxisAlignment: MainAxisAlignment.end,
+              //               crossAxisAlignment: CrossAxisAlignment.start,
+              //               children: <Widget>[
+              //                 Text(shelter.title, style: Theme.of(context).textTheme.bodyMedium,),
+              //                 Text(shelter.address, style: Theme.of(context).textTheme.bodyMedium,),
+              //               ],
+              //             ),
+              //           ),
+              //         ),
+              //       ),
+              //       Container(
+              //         decoration: BoxDecoration(
+              //           color: Colors.white,
+              //           borderRadius: BorderRadius.circular(20),
+              //           boxShadow: const [
+              //             BoxShadow(
+              //               color: Colors.black26,
+              //               offset: Offset(0.0, 2.0),
+              //               blurRadius: 6.0
+              //             )
+              //           ],
+              //         ),
+              //         child: Stack(
+              //           children: <Widget>[
+              //             ClipRRect(
+              //               borderRadius: BorderRadius.circular(20),
+              //               child: Image(
+              //                 height: 180,
+              //                 width: 180,
+              //                 image: AssetImage(backupPhotoURL),
+              //                 fit: BoxFit.cover,
+              //               ),
+              //             ),
+              //             Positioned(
+              //               left: 10,
+              //               bottom: 10,
+              //               child: Column(
+              //                 crossAxisAlignment: CrossAxisAlignment.start,
+              //                 children: <Widget>[
+              //                   Text(shelter.title, style: Theme.of(context).textTheme.bodyMedium,),
+              //                   Row(
+              //                     children: <Widget>[
+              //                       Icon(Icons.location_on, size: 10, color: Colors.white,),
+              //                       SizedBox(width: 5,),
+              //                       Text(shelter.address, style: Theme.of(context).textTheme.bodyMedium,),
+              //                     ],
+              //                   ),
+              //                 ],
+              //               ),
+              //             )
+              //           ],
+              //         ),
+              //       )
+              //     ],
+              //   )
+              // ),
             ),
           );
         }

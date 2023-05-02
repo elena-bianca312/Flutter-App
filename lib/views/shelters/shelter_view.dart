@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:myproject/animation/heart.dart';
+import 'package:myproject/utilities/utils.dart';
 import 'package:myproject/constants/routes.dart';
 import 'package:myproject/services/auth/auth_service.dart';
 import 'package:myproject/utilities/generics/get_arguments.dart';
@@ -19,7 +20,6 @@ class ShelterView extends StatefulWidget {
 class _ShelterViewState extends State<ShelterView> {
 
   late CloudShelterInfo _shelter;
-  var backupPhotoURL = 'assets/images/bloc1.jpg';
   late final FirebaseShelterStorage _sheltersService;
 
   @override
@@ -192,6 +192,10 @@ class _ShelterViewState extends State<ShelterView> {
                       "Description",
                       style: Theme.of(context).textTheme.displaySmall,
                     ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    if (_shelter.text != null && _shelter.text != '') Text(_shelter.text!),
                     const SizedBox(
                       height: 10,
                     ),

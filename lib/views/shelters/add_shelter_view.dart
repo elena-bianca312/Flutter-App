@@ -263,12 +263,6 @@ class _AddShelterViewState extends State<AddShelterView> {
                         hintText: 'Type text...',
                       ),
                     ),
-                    TextField(
-                      controller: _photoURLController,
-                      decoration: const InputDecoration(
-                        hintText: 'Upload image URL...',
-                      ),
-                    ),
 
                     ElevatedButton(
                       onPressed: selectFile,
