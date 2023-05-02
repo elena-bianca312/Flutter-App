@@ -34,20 +34,33 @@ class _ShelterViewState extends State<ShelterView> {
     return SafeArea(
       child: Scaffold(
         body: FutureBuilder(
-          future: getExistingShelter(context),
+          future: _sheltersService.getShelters(),
           builder: (context, snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.done:
-                return Stack(
-                  children: [
-                    SizedBox(
-                      width: double.infinity,
-                      child: Image.asset(_shelter.photoURL == null || _shelter.photoURL == '' ? backupPhotoURL : _shelter.photoURL!)
-                    ),
-                    buttonArrow(context),
-                    scroll(),
-                  ],
-                );
+                if (snapshot.hasData) {
+                  final id = context.getArgument<CloudShelterInfo>()!.documentId;
+                  print(id);
+                  print(snapshot.data!.map((e) => e.documentId == id).toList());
+                  _shelter = snapshot.data!.firstWhere((element) => element.documentId == id);
+                  print(_shelter.documentId);
+
+                  return Stack(
+                    children: [
+                      SizedBox(
+                        width: double.infinity,
+                        child: _shelter.photoURL == null || _shelter.photoURL == '' ? Image.asset(backupPhotoURL) : Image.network(_shelter.photoURL!)
+                      ),
+                      buttonArrow(context),
+                      scroll(),
+                    ],
+                  );
+                } else {
+                  return const Center(
+                    child: Text('No data found'),
+                  );
+                }
+
               default:
                 return const Center(
                   child: CircularProgressIndicator(),
@@ -147,7 +160,8 @@ class _ShelterViewState extends State<ShelterView> {
                         if (AuthService.firebase().currentUser!.id == _shelter.ownerUserId)
                           IconButton(
                             onPressed: () async {
-                              Navigator.of(context).pushNamed(addShelterRoute, arguments: _shelter).then((_) => setState(() {getExistingShelter(context);}));
+                              setState(() {_sheltersService.getShelters();});
+                              Navigator.of(context).pushNamed(addShelterRoute, arguments: _shelter);
 
                               // TOOD: It doesnt update the shelter info after editing!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                               // Why????????????????????????

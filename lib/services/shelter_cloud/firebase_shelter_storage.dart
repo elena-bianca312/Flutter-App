@@ -24,6 +24,8 @@ class FirebaseShelterStorage {
       textFieldName: '',
       addressFieldName: '',
       photoURLFieldName: '',
+      // userLikesFieldName: [],
+      // userDislikesFieldName: [],
     });
     final fetchedShelter = await document.get();
     return CloudShelterInfo(
@@ -34,13 +36,29 @@ class FirebaseShelterStorage {
       text: '',
       address: '',
       photoURL: '',
+      // userLikes: const [],
+      // userDislikes: const [],
     );
   }
 
   // Map the shelters to a CloudShelterInfo object
-  Future<Iterable<CloudShelterInfo>> getShelters({required String ownerUserId}) async {
+  Future<Iterable<CloudShelterInfo>> getSheltersByUserID({required String ownerUserId}) async {
     try {
       return await shelters.where(ownerUserIdFieldName, isEqualTo: ownerUserId)
+      .get().
+      then(
+        (value) => value.docs.map(
+          (doc) => CloudShelterInfo.fromSnapshot(doc)),
+      );
+    } catch (e) {
+      throw CouldNotGetAllSheltersException();
+    }
+  }
+
+  // Map the shelters to a CloudShelterInfo object
+  Future<Iterable<CloudShelterInfo>> getShelters() async {
+    try {
+      return await shelters
       .get().
       then(
         (value) => value.docs.map(

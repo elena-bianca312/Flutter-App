@@ -54,6 +54,8 @@ dependencies:
   liquid_pull_to_refresh: ^3.0.1
   lottie: ^2.3.2
   smooth_page_indicator: ^1.1.0
+  file_picker: ^5.2.10
+  firebase_storage: ^11.1.1
 
 dev_dependencies:
   flutter_test:

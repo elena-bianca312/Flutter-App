@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:myproject/services/auth/auth_service.dart';
 import 'package:myproject/utilities/generics/get_arguments.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
@@ -7,6 +10,7 @@ import 'package:myproject/utilities/dialogs/photo_invalid_format_dialog.dart';
 import 'package:myproject/services/shelter_cloud/firebase_shelter_storage.dart';
 import 'package:myproject/utilities/dialogs/cannot_share_empty_note_dialog.dart';
 import 'package:myproject/utilities/dialogs/cannot_save_incomplete_shelter_info_dialog.dart';
+
 
 class AddShelterView extends StatefulWidget {
   const AddShelterView({super.key});
@@ -23,6 +27,8 @@ class _AddShelterViewState extends State<AddShelterView> {
   late final TextEditingController _addressController;
   late final TextEditingController _photoURLController;
   late final TextEditingController _textController;
+  PlatformFile? _pickedFile;
+  UploadTask? uploadTask;
 
   Future<CloudShelterInfo> createOrGetExistingShelter(BuildContext context) async {
 
@@ -116,11 +122,76 @@ class _AddShelterViewState extends State<AddShelterView> {
     _textController.addListener(_controllerListener);
   }
 
+  Future selectFile() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'png'],
+    );
+
+    if (result == null) return;
+
+    setState(() {
+      _pickedFile = result.files.first;
+    });
+  }
+
+  Future uploadFile() async {
+    if (_pickedFile == null) return;
+
+    final path = 'files/${_pickedFile!.name}';
+    final file = File(_pickedFile!.path!);
+
+    final ref = FirebaseStorage.instance.ref().child(path);
+    setState(() {
+      uploadTask = ref.putFile(file);
+      // Future.delayed(const Duration(seconds: 10), () => setState(() {}));
+    });
+
+    final snapshot = await uploadTask!.whenComplete(() {});
+    // ignore: unused_local_variable
+    final downloadURL = await snapshot.ref.getDownloadURL();
+
+    setState(() {
+      _photoURLController.text = downloadURL;
+      uploadTask = null;
+    });
+  }
+
+  Widget buildProgress() => StreamBuilder<TaskSnapshot>(
+    stream: uploadTask?.snapshotEvents,
+    builder: (context, snapshot) {
+      if (snapshot.hasData) {
+        double progress = snapshot.data!.bytesTransferred / snapshot.data!.totalBytes;
+        return SizedBox(
+          height: 50,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              LinearProgressIndicator(
+                value: progress,
+                backgroundColor: Colors.grey,
+                color: Colors.green,
+              ),
+              Center(
+                child: Text(
+                  '${(progress * 100).roundToDouble()} %',
+                  style: const TextStyle(color: Colors.white),
+              )),
+            ],
+          )
+        );
+      } else {
+        return const SizedBox(height: 70,);
+      }
+    }
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Please fill in shelter info...'),
+        // backgroundColor: Colors.transparent,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () async {
@@ -168,35 +239,62 @@ class _AddShelterViewState extends State<AddShelterView> {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
               _setupControllerListener();
-              return Column(
-                children: [
-                  TextField(
-                    controller: _titleController,
-                    decoration: const InputDecoration(
-                      hintText: 'Title...',
+              return Container(
+                color: Colors.grey[350],
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: _titleController,
+                      decoration: const InputDecoration(
+                        hintText: 'Title...',
+                      ),
                     ),
-                  ),
-                  TextField(
-                    controller: _addressController,
-                    decoration: const InputDecoration(
-                      hintText: 'Address...',
+                    TextField(
+                      controller: _addressController,
+                      decoration: const InputDecoration(
+                        hintText: 'Address...',
+                      ),
                     ),
-                  ),
-                  TextField(
-                    controller: _photoURLController,
-                    decoration: const InputDecoration(
-                      hintText: 'Upload image URL...',
+                    TextField(
+                      controller: _textController,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      decoration: const InputDecoration(
+                        hintText: 'Type text...',
+                      ),
                     ),
-                  ),
-                  TextField(
-                    controller: _textController,
-                    keyboardType: TextInputType.multiline,
-                    maxLines: null,
-                    decoration: const InputDecoration(
-                      hintText: 'Type text...',
+                    TextField(
+                      controller: _photoURLController,
+                      decoration: const InputDecoration(
+                        hintText: 'Upload image URL...',
+                      ),
                     ),
-                  ),
-                ],
+
+                    ElevatedButton(
+                      onPressed: selectFile,
+                      child: const Text("Select file")
+                    ),
+
+                    ElevatedButton(
+                      onPressed: uploadFile,
+                      child: const Text("Upload file")
+                    ),
+
+                    // buildProgress(),
+
+                    if (_pickedFile != null)
+                      Expanded(
+                        child: Container(
+                          color: Colors.blue[100],
+                          child: Image.file(
+                            File(_pickedFile!.path!),
+                            fit: BoxFit.cover,
+                          )
+                        ),
+                      ),
+
+                  ],
+                ),
               );
             default:
               return const Center(child: CircularProgressIndicator());
