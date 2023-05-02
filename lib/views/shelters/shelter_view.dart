@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:myproject/utilities/utils.dart';
 import 'package:myproject/constants/routes.dart';
 import 'package:myproject/services/auth/auth_service.dart';
-import 'package:myproject/animation/likedislikeanimation.dart';
+import 'package:myproject/animation/like_dislike_animation.dart';
 import 'package:myproject/utilities/generics/get_arguments.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_exceptions.dart';
@@ -201,9 +201,9 @@ class _ShelterViewState extends State<ShelterView> {
                             }
                             return Row(
                               children: [
-                                Text("${noLikes.toString()} Likes"),
+                                (noLikes == 1) ? const Text("1 Like") : Text("${noLikes.toString()} Likes"),
                                 const SizedBox(width: 25,),
-                                Text("${noDislikes.toString()} Dislikes"),
+                                (noDislikes == 1) ? const Text("1 Dislike") : Text("${noDislikes.toString()} Dislikes"),
                               ],
                             );
                           }

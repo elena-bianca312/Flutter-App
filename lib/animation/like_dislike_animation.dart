@@ -58,6 +58,13 @@ class _LikeDislikeAnimationState extends State<LikeDislikeAnimation> with Ticker
     _likeCurve = CurvedAnimation(parent: _likeController, curve: Curves.slowMiddle);
     _dislikeCurve = CurvedAnimation(parent: _dislikeController, curve: Curves.slowMiddle);
 
+    // TODO
+    // Both print false, but why??????? It shouldnt be like this
+    // Probably because of the functions widget.checkIfLiked() and widget.checkIfDisliked()
+    // So, review implementation of these functions
+    print(isLiked);
+    print(isDisliked);
+
     _likeColorAnimation = isLiked ?
       ColorTween(begin: Colors.blue, end: Colors.grey[400]).animate(_likeCurve) :
       ColorTween(begin: Colors.grey[400], end: Colors.blue).animate(_likeCurve);
