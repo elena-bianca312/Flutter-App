@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
+typedef LikeCallback = void Function();
+
 class Heart extends StatefulWidget {
-  const Heart({super.key});
+
+  final LikeCallback onLike;
+  final LikeCallback onDislike;
+  final LikeCallback onRemoveLike;
+  final LikeCallback onRemoveDislike;
+  const Heart({super.key, required this.onLike, required this.onDislike, required this.onRemoveLike, required this.onRemoveDislike});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -73,7 +80,13 @@ class _HeartState extends State<Heart> with SingleTickerProviderStateMixin {
             ),
             onPressed: () {
               isFav ? _controller.reverse() : _controller.forward();
-              
+              isFav ? {
+                widget.onDislike(),
+                widget.onRemoveLike()
+              } : {
+                widget.onLike(),
+                widget.onRemoveDislike()
+              };
             },
           );
         });

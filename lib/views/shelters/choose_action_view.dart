@@ -101,6 +101,12 @@ class _ChooseActionViewState extends State<ChooseActionView> {
                               onDislike: () async {
                                 await _sheltersService.dislikeShelter(documentId: shelter.documentId, userId: shelter.documentId);
                               },
+                              onRemoveLike: () async {
+                                await _sheltersService.removeLikeShelter(documentId: shelter.documentId, userId: shelter.documentId);
+                              },
+                              onRemoveDislike: () async {
+                                await _sheltersService.removeDislikeShelter(documentId: shelter.documentId, userId: shelter.documentId);
+                              },
                               shelter: shelter,
                             ),
                           ),

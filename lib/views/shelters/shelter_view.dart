@@ -15,8 +15,17 @@ class ShelterView extends StatefulWidget {
 
   final LikeCallback onLike;
   final LikeCallback onDislike;
+  final LikeCallback onRemoveLike;
+  final LikeCallback onRemoveDislike;
   final CloudShelterInfo shelter;
-  const ShelterView({super.key, required this.shelter, required this.onLike, required this.onDislike});
+  const ShelterView({
+    super.key,
+    required this.shelter,
+    required this.onLike,
+    required this.onDislike,
+    required this.onRemoveLike,
+    required this.onRemoveDislike
+  });
 
   @override
   State<ShelterView> createState() => _ShelterViewState();
@@ -26,6 +35,7 @@ class _ShelterViewState extends State<ShelterView> {
 
   late CloudShelterInfo _shelter = widget.shelter;
   late final FirebaseShelterStorage _sheltersService;
+  int numberOfLikes = 0;
 
   @override
   void initState() {
@@ -96,14 +106,14 @@ class _ShelterViewState extends State<ShelterView> {
     );
   }
 
-  // Future<void> like_animation() async {
-  //   IconButton(
-  //     onPressed: {
-  //       await _sheltersService.likeShelter(documentId: _shelter.documentId, userId: AuthService.firebase().currentUser!.id)
-  //     },
-  //     icon: const Icon(Icons.person_outline),
-  //   );
-  // }
+  Future<void> likeAnimation() async {
+    IconButton(
+      onPressed: () async {
+        await _sheltersService.likeShelter(documentId: _shelter.documentId, userId: AuthService.firebase().currentUser!.id);
+      },
+      icon: const Icon(Icons.person_outline),
+    );
+  }
 
   scroll() {
     return DraggableScrollableSheet(
@@ -158,15 +168,26 @@ class _ShelterViewState extends State<ShelterView> {
                       ],
                     ),
                     const SizedBox(height: 10,),
-                    Text(_shelter.address, style: Theme.of(context).textTheme.bodyMedium,),
+                    Text("Address: ${_shelter.address}", style: Theme.of(context).textTheme.bodyMedium,),
                     const SizedBox(height: 15,),
+                    Text(AuthService.firebase().currentUser!.id == _shelter.ownerUserId ? "Posted by you" : "Posted by ${_shelter.userName}"),
+                    const SizedBox(width: 30,),
                     Row(
                       children: [
-                        Text(AuthService.firebase().currentUser!.id == _shelter.ownerUserId ? "Posted by you" : _shelter.userName),
-                        const SizedBox(width: 30,),
-                        const Heart(),
-                        const SizedBox(width: 5,),
-                        const Text("69 Likes",),
+                        Heart(onLike: widget.onLike, onDislike: widget.onDislike, onRemoveLike: widget.onRemoveLike, onRemoveDislike: widget.onRemoveDislike),
+                        FutureBuilder(
+                          future: _sheltersService.getShelterLikes(documentId: _shelter.documentId),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              if (snapshot.data!.length == 1) {
+                                return const Text("1 Like");
+                              }
+                              return Text("${snapshot.data!.length} Likes");
+                            } else {
+                              return const Text("0 Likes");
+                            }
+                          }
+                        ),
                       ],
                     ),
                     const Padding(

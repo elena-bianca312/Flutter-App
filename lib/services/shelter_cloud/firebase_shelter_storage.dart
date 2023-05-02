@@ -129,6 +129,16 @@ class FirebaseShelterStorage {
     }
   }
 
+  Future<void> removeLikeShelter({required String documentId, required String userId}) async {
+    try {
+      await shelters.doc(documentId).update({
+        userLikesFieldName: FieldValue.arrayRemove([userId]),
+      });
+    } catch (e) {
+      throw CouldNotLikeShelterException();
+    }
+  }
+
   Future<void> dislikeShelter({required String documentId, required String userId}) async {
     try {
       await shelters.doc(documentId).update({
@@ -136,6 +146,32 @@ class FirebaseShelterStorage {
       });
     } catch (e) {
       throw CouldNotDislikeShelterException();
+    }
+  }
+
+  Future<void> removeDislikeShelter({required String documentId, required String userId}) async {
+    try {
+      await shelters.doc(documentId).update({
+        userDislikesFieldName: FieldValue.arrayRemove([userId]),
+      });
+    } catch (e) {
+      throw CouldNotDislikeShelterException();
+    }
+  }
+
+  Future<List> getShelterLikes({required String documentId}) async {
+    try {
+      return await shelters.doc(documentId).get().then((value) => value.get(userLikesFieldName));
+    } catch (e) {
+      throw CouldNotGetShelterLikesException();
+    }
+  }
+
+    Future<List> getShelterDislikes({required String documentId}) async {
+    try {
+      return await shelters.doc(documentId).get().then((value) => value.get(userDislikesFieldName));
+    } catch (e) {
+      throw CouldNotGetShelterLikesException();
     }
   }
 }
