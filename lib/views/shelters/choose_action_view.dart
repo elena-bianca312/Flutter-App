@@ -104,14 +104,6 @@ class _ChooseActionViewState extends State<ChooseActionView> {
                               onRemoveDislike: () async {
                                 await _sheltersService.removeDislikeShelter(documentId: shelter.documentId, userId: AuthService.firebase().currentUser!.id);
                               },
-                              checkIfLiked: () {
-                                _sheltersService.checkIfLiked(documentId: shelter.documentId, userId: AuthService.firebase().currentUser!.id);
-                                return false;
-                              },
-                              checkIfDisliked: () {
-                                _sheltersService.checkIfDisliked(documentId: shelter.documentId, userId: AuthService.firebase().currentUser!.id);
-                                return false;
-                              },
                               shelter: shelter,
                             ),
                           ),

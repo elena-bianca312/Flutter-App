@@ -4,13 +4,10 @@ import 'package:myproject/utilities/utils.dart';
 import 'package:myproject/constants/routes.dart';
 import 'package:myproject/services/auth/auth_service.dart';
 import 'package:myproject/animation/like_dislike_animation.dart';
-import 'package:myproject/utilities/generics/get_arguments.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
-import 'package:myproject/services/shelter_cloud/cloud_shelter_exceptions.dart';
 import 'package:myproject/services/shelter_cloud/firebase_shelter_storage.dart';
 
 typedef LikeCallback = void Function();
-typedef CheckLikeCallback = bool Function();
 
 class ShelterView extends StatefulWidget {
 
@@ -19,8 +16,6 @@ class ShelterView extends StatefulWidget {
   final LikeCallback onRemoveLike;
   final LikeCallback onRemoveDislike;
   final CloudShelterInfo shelter;
-  final CheckLikeCallback checkIfLiked;
-  final CheckLikeCallback checkIfDisliked;
   const ShelterView({
     super.key,
     required this.shelter,
@@ -28,8 +23,6 @@ class ShelterView extends StatefulWidget {
     required this.onDislike,
     required this.onRemoveLike,
     required this.onRemoveDislike,
-    required this.checkIfLiked,
-    required this.checkIfDisliked
   });
 
   @override
@@ -40,7 +33,6 @@ class _ShelterViewState extends State<ShelterView> {
 
   late CloudShelterInfo _shelter = widget.shelter;
   late final FirebaseShelterStorage _sheltersService;
-  int numberOfLikes = 0;
 
   @override
   void initState() {
@@ -74,18 +66,6 @@ class _ShelterViewState extends State<ShelterView> {
     );
   }
 
-  Future<CloudShelterInfo> getExistingShelter(BuildContext context) async {
-    try {
-      final id = context.getArgument<CloudShelterInfo>()!.documentId;
-      final currentShelter = await _sheltersService.getShelterByDocumentID(documentId: id);
-      // final currentShelter = context.getArgument<CloudShelterInfo>()!;
-      _shelter = currentShelter;
-      return currentShelter;
-    } catch (e) {
-      throw CouldNotGetCurrentShelterException();
-    }
-  }
-
   buttonArrow(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(20.0),
@@ -117,15 +97,6 @@ class _ShelterViewState extends State<ShelterView> {
           ),
         ),
       ),
-    );
-  }
-
-  Future<void> likeAnimation() async {
-    IconButton(
-      onPressed: () async {
-        await _sheltersService.likeShelter(documentId: _shelter.documentId, userId: AuthService.firebase().currentUser!.id);
-      },
-      icon: const Icon(Icons.person_outline),
     );
   }
 
@@ -185,41 +156,44 @@ class _ShelterViewState extends State<ShelterView> {
                     Text("Address: ${_shelter.address}", style: Theme.of(context).textTheme.bodyMedium,),
                     const SizedBox(height: 15,),
                     Text(AuthService.firebase().currentUser!.id == _shelter.ownerUserId ? "Posted by you" : "Posted by ${_shelter.userName}"),
-                    Column(
-                      children: [
-                        LikeDislikeAnimation(
-                          onLike: widget.onLike,
-                          onDislike: widget.onDislike,
-                          onRemoveLike: widget.onRemoveLike,
-                          onRemoveDislike: widget.onRemoveDislike,
-                          checkIfLiked: widget.checkIfLiked,
-                          checkIfDisliked: widget.checkIfDisliked,
-                        ),
-                        FutureBuilder(
-                          future: Future.wait([
-                            _sheltersService.getShelterLikes(documentId: _shelter.documentId),
-                            _sheltersService.getShelterDislikes(documentId: _shelter.documentId)
-                          ]),
-                          builder: (context, snapshot) {
-                            int noLikes, noDislikes;
-                            if (snapshot.hasData) {
-                              noLikes = snapshot.data![0].length;
-                              noDislikes = snapshot.data![1].length;
-                            } else {
-                              noLikes = 0;
-                              noDislikes = 0;
-                            }
-                            return Row(
-                              children: [
-                                (noLikes == 1) ? const Text("1 Like") : Text("${noLikes.toString()} Likes"),
-                                const SizedBox(width: 25,),
-                                (noDislikes == 1) ? const Text("1 Dislike") : Text("${noDislikes.toString()} Dislikes"),
-                              ],
-                            );
-                          }
-                        ),
-                      ],
+
+                    // Display ike and dislike
+                    FutureBuilder(
+                      future: Future.wait([
+                        _sheltersService.checkIfLiked(documentId: _shelter.documentId, userId: AuthService.firebase().currentUser!.id),
+                        _sheltersService.checkIfDisliked(documentId: _shelter.documentId, userId: AuthService.firebase().currentUser!.id),
+                        _sheltersService.getShelterLikes(documentId: _shelter.documentId),
+                        _sheltersService.getShelterDislikes(documentId: _shelter.documentId)
+                      ]),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return const SizedBox();
+                        } else {
+                          int noLikes = (snapshot.data![2] as List).length;
+                          int noDislikes = (snapshot.data![3] as List).length;
+                          return Column(
+                            children: [
+                              LikeDislikeAnimation(
+                                onLike: widget.onLike,
+                                onDislike: widget.onDislike,
+                                onRemoveLike: widget.onRemoveLike,
+                                onRemoveDislike: widget.onRemoveDislike,
+                                checkIfLiked: snapshot.data![0] as bool,
+                                checkIfDisliked: snapshot.data![1] as bool,
+                              ),
+                              Row(
+                                children: [
+                                  (noLikes == 1) ? const Text("1 Like") : Text("${noLikes.toString()} Likes"),
+                                  const SizedBox(width: 25,),
+                                  (noDislikes == 1) ? const Text("1 Dislike") : Text("${noDislikes.toString()} Dislikes"),
+                                ],
+                              ),
+                            ],
+                          );
+                        }
+                      }
                     ),
+
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: 15),
                       child: Divider(

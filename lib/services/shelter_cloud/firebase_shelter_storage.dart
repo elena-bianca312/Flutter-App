@@ -69,13 +69,6 @@ class FirebaseShelterStorage {
     }
   }
 
-  Future<CloudShelterInfo> getShelterByDocumentID({required String documentId}) {
-
-    var x = shelters.get().then((value) => value.docs.map((doc) => CloudShelterInfo.fromSnapshot(doc)).firstWhere((element) => element.documentId == documentId));
-    // print(x.documentId);
-    return x;
-  }
-
   Stream<Iterable<CloudShelterInfo>> allShelters() {
     final allShelters = shelters
         .snapshots()
@@ -140,8 +133,6 @@ class FirebaseShelterStorage {
   }
 
   Future<bool> checkIfLiked({required String documentId, required String userId}) async {
-    // print(userId);
-    // print(shelters.doc(documentId).get().then((value) => value.get(userLikesFieldName).contains(userId)));
     try {
       return await shelters.doc(documentId).get().then((value) => value.get(userLikesFieldName).contains(userId));
     } catch (e) {
