@@ -50,17 +50,27 @@ class _ShelterViewState extends State<ShelterView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body:
-        Stack(children: [
-            SizedBox(
-              width: double.infinity,
-              child: _shelter.photoURL == null || _shelter.photoURL == '' ? Image.asset(backupPhotoURL) : Image.network(_shelter.photoURL!)
-            ),
-            buttonArrow(context),
-            scroll(),
-          ],
-        )
+    return StreamBuilder(
+      stream: _sheltersService.allShelters(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          _shelter = snapshot.data!.firstWhere((element) => element.documentId == _shelter.documentId);
+          return Scaffold(
+            body:
+              Stack(children: [
+                  SizedBox(
+                    width: double.infinity,
+                    child: _shelter.photoURL == null || _shelter.photoURL == '' ? Image.asset(backupPhotoURL) : Image.network(_shelter.photoURL!)
+                  ),
+                  buttonArrow(context),
+                  scroll(),
+                ],
+              )
+          );
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+      }
     );
   }
 

@@ -33,13 +33,15 @@ class _LikeDislikeAnimationState extends State<LikeDislikeAnimation> with Ticker
   late AnimationController _dislikeController;
   late Animation<Color?> _likeColorAnimation;
   late Animation<Color?> _dislikeColorAnimation;
-  late Animation<double> _likeSizeAnimation;
-  late Animation<double> _dislikeSizeAnimation;
+  late Animation<double> _likeSizeAnimation = Tween<double>(begin: defaultSize, end: defaultSize).animate(_likeCurve);
+  late Animation<double> _dislikeSizeAnimation = Tween<double>(begin: defaultSize, end: defaultSize).animate(_dislikeCurve);
   late CurvedAnimation _likeCurve;
   late CurvedAnimation _dislikeCurve;
   double defaultSize = 30;
   double increasedSize = 50;
   int animationDurationInMilliseconds = 200;
+  late Animation<double> _likeSizeAnimationResponsive;
+  late Animation<double> _dislikeSizeAnimationResponsive;
 
   @override
   void initState() {
@@ -73,7 +75,8 @@ class _LikeDislikeAnimationState extends State<LikeDislikeAnimation> with Ticker
       ColorTween(begin: Colors.blue, end: Colors.grey[400]).animate(_dislikeCurve) :
       ColorTween(begin: Colors.grey[400], end: Colors.blue).animate(_dislikeCurve);
 
-    _likeSizeAnimation = TweenSequence(<TweenSequenceItem<double>>[
+    _likeSizeAnimationResponsive =
+      TweenSequence(<TweenSequenceItem<double>>[
       TweenSequenceItem<double>(
         tween: Tween<double>(begin: defaultSize, end: increasedSize),
         weight: 50,
@@ -82,23 +85,25 @@ class _LikeDislikeAnimationState extends State<LikeDislikeAnimation> with Ticker
         tween: Tween<double>(begin: defaultSize, end: defaultSize),
         weight: 50,
       ),
-    ]).animate(_likeCurve);
+    ]).animate(_likeCurve) ;
 
-    _dislikeSizeAnimation = TweenSequence(<TweenSequenceItem<double>>[
-      TweenSequenceItem<double>(
-        tween: Tween<double>(begin: defaultSize, end: increasedSize),
-        weight: 50,
-      ),
-      TweenSequenceItem<double>(
-        tween: isLiked ? Tween<double>(begin: increasedSize, end: defaultSize) : Tween<double>(begin: defaultSize, end: defaultSize),
-        weight: 50,
-      ),
-    ]).animate(_dislikeCurve);
+    _dislikeSizeAnimationResponsive =
+      TweenSequence(<TweenSequenceItem<double>>[
+        TweenSequenceItem<double>(
+          tween: Tween<double>(begin: defaultSize, end: increasedSize),
+          weight: 50,
+        ),
+        TweenSequenceItem<double>(
+          tween: Tween<double>(begin: increasedSize, end: defaultSize),
+          weight: 50,
+        ),
+      ]).animate(_dislikeCurve);
 
     _likeController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         setState(() {
           isLiked = true;
+          isDisliked = false;
         });
       }
       if (status == AnimationStatus.dismissed) {
@@ -112,6 +117,7 @@ class _LikeDislikeAnimationState extends State<LikeDislikeAnimation> with Ticker
       if (status == AnimationStatus.completed) {
         setState(() {
           isDisliked = true;
+          isLiked = false;
         });
       }
       if (status == AnimationStatus.dismissed) {
@@ -147,11 +153,16 @@ class _LikeDislikeAnimationState extends State<LikeDislikeAnimation> with Ticker
                   isLiked ? {
                     _likeController.reverse(),
                     widget.onRemoveLike(),
+                    _dislikeSizeAnimation = Tween<double>(begin: defaultSize, end: defaultSize).animate(_dislikeCurve)
                   } : {
                     _dislikeController.reverse(),
                     _likeController.forward(),
                     widget.onRemoveDislike(),
                     widget.onLike(),
+                    _dislikeSizeAnimation = isDisliked ?
+                      Tween<double>(begin: defaultSize, end: defaultSize).animate(_dislikeCurve) :
+                      _dislikeSizeAnimationResponsive,
+                    _likeSizeAnimation = _likeSizeAnimationResponsive,
                   };
                 },
               ),
@@ -166,11 +177,16 @@ class _LikeDislikeAnimationState extends State<LikeDislikeAnimation> with Ticker
                   isDisliked ? {
                     _dislikeController.reverse(),
                     widget.onRemoveDislike(),
+                    _likeSizeAnimation = Tween<double>(begin: defaultSize, end: defaultSize).animate(_likeCurve)
                   } : {
                     _likeController.reverse(),
                     _dislikeController.forward(),
                     widget.onRemoveLike(),
                     widget.onDislike(),
+                    _likeSizeAnimation = isLiked ?
+                      Tween<double>(begin: defaultSize, end: defaultSize).animate(_likeCurve) :
+                      _likeSizeAnimationResponsive,
+                    _dislikeSizeAnimation = _dislikeSizeAnimationResponsive,
                   };
                 }
               ),
