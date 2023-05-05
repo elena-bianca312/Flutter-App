@@ -35,29 +35,15 @@ class _DonationPageState extends State<DonationPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Shelter\nName',
+                          'Support those\nin need',
                           style: header,
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          'nuj ce scriu aici',
+                          '.....',
                           style: small,
                         ),
                       ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 30),
-                Row(
-                  children: [
-                    Text(
-                      '\$100,000',
-                      style: price,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      '/an',
-                      style: small,
                     ),
                   ],
                 ),
@@ -73,6 +59,20 @@ class _DonationPageState extends State<DonationPage> {
                     Text(
                       'Your donation can provide temporary shelter, food, and clean water to those affected by the earthquake. It can help provide medical aid to those who have been injured, and support relief efforts to ensure that necessary supplies reach those who need them the most. Your generosity can go a long way in providing hope and a brighter future for those who have been affected by this disaster.',
                       style: p,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 30),
+                Row(
+                  children: [
+                    Text(
+                      '\$100,000',
+                      style: price,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      '/an',
+                      style: small,
                     ),
                   ],
                 ),

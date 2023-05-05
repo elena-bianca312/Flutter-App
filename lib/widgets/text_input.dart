@@ -13,6 +13,8 @@ class TextInput extends StatelessWidget {
     this.autocorrect,
     this.obscureText,
     this.autofocus,
+    this.width,
+    this.height,
   }) : super(key: key);
 
   final IconData icon;
@@ -24,14 +26,17 @@ class TextInput extends StatelessWidget {
   final bool? autocorrect;
   final bool? obscureText;
   final bool? autofocus;
+  final double? width;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: Container(
+        width: width ?? 500,
         decoration: BoxDecoration(
-          color: Colors.grey[600]?.withOpacity(0.5),
+          color: Colors.grey[600]?.withOpacity(0.3),
           borderRadius: BorderRadius.circular(16),
         ),
         child: TextField(
@@ -39,7 +44,7 @@ class TextInput extends StatelessWidget {
             border: InputBorder.none,
             hintText: hint,
             prefixIcon: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20,),
               child: Icon(
                 icon,
                 color: Colors.white,

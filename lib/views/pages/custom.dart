@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 TextStyle price = GoogleFonts.inter(
   color: yellow,
-  fontSize: 28,
+  fontSize: 15,
   fontWeight: FontWeight.w700,
 );
 

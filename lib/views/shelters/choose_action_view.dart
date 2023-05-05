@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myproject/constants/routes.dart';
 import 'package:myproject/enums/menu_action.dart';
@@ -51,6 +52,12 @@ class _ChooseActionViewState extends State<ChooseActionView> {
                 )
               ),
               FadeAnimation(2, Axis.vertical,
+                IconButton(
+                  icon: SvgPicture.asset("assets/icons/notification.svg"),
+                  onPressed: () {},
+                )
+              ),
+              FadeAnimation(2, Axis.vertical,
                 PopupMenuButton<MenuAction>(
                   onSelected: (action) async {
                     switch (action) {
@@ -70,7 +77,7 @@ class _ChooseActionViewState extends State<ChooseActionView> {
                     )
                   ],
                 )
-              )
+              ),
             ],
           ),
 
