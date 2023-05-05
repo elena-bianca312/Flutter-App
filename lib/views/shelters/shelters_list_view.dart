@@ -51,14 +51,13 @@ class SheltersListView extends StatelessWidget {
               width: 330,
             ),
             const SizedBox(height: 10),
-            ElevatedButton(
-              style: buttonPrimary,
+            TextButton(
               onPressed: () {
                 Navigator.of(context).pushNamed(makeDonationRoute);
               },
-              child: Text(
+              child: const Text(
                 'Make a donation',
-                style: labelPrimary,
+                style: TextStyle(color: Colors.white, fontSize: 20, decoration: TextDecoration.underline),
               ),
             ),
             const SizedBox(height: 20),
@@ -73,80 +72,108 @@ class SheltersListView extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     child: Card(
-                      color: Colors.transparent,
+                      color: Colors.black,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20.0),
                               side: const BorderSide(
-                          color: Colors.white,
+                          color: Colors.grey,
                         ),
                       ),
-                      child: Column(
-                        children: [
-                          ListTile(
-                            leading: Icon(Icons.arrow_drop_down_circle, color: yellow,),
-                            title: Text(shelter.title, style: header),
-                            subtitle: Text(
-                              "Address: ${shelter.address}",
-                              style: subheader,
-                            ),
+                      child: Container(
+                        // borderRadius: BorderRadius.circular(20.0),
+                        height: 300,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20.0),
+                          image: DecorationImage(
+                            image: shelter.photoURL == null || shelter.photoURL == '' ?
+                                AssetImage(backupPhotoURL) as ImageProvider :
+                                NetworkImage(shelter.photoURL!,),
+                            colorFilter: const ColorFilter.mode(Colors.black54, BlendMode.darken),
+                            fit: BoxFit.cover,
+                            alignment: Alignment.topCenter,
                           ),
-                          shelter.text == null || shelter.text == "" ?
-                            const SizedBox() :
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  shelter.text!,
-                                  style: p,
+                        ),
+                        child: Column(
+                          children: [
+                            GlassBox(
+                              height: 80,
+                              width: 400,
+                              child: ListTile(
+                                leading: Icon(Icons.arrow_drop_down_circle, color: black,),
+                                title: Text(shelter.title, style: blackheader),
+                                subtitle: Text(
+                                  "Address: ${shelter.address}",
                                 ),
                               ),
                             ),
-                          ButtonBar(
-                            alignment: MainAxisAlignment.start,
-                            children: [
-                              TextButton(
-                                child: Text('View', style: price,),
-                                onPressed: () {
-                                  onTap(shelter);
-                                },
-                              ),
-                              AuthService.firebase().currentUser!.id == shelter.ownerUserId ?
-                                IconButton(
-                                  icon: Icon(Icons.delete, color: yellow,),
-                                  onPressed: () async {
-                                    final shouldDelete = await showDeleteDialog(context);
-                                    if (shouldDelete) {
-                                      onDeleteShelter(shelter);
-                                    }
-                                  },
-                                ) :
-                                const SizedBox(),
-                            ],
-                          ),
-                          // ClipRRect(
-                          //   borderRadius: const BorderRadius.only(
-                          //     bottomLeft: Radius.circular(20.0),
-                          //     bottomRight: Radius.circular(20.0)),
-                          //   child: shelter.photoURL == null || shelter.photoURL == '' ? Image.asset(backupPhotoURL, fit: BoxFit.cover) : Image.network(shelter.photoURL!,)
-                          // ),
-
-                          // Container(
-                          //   height: 100.0,
-                          //   width: 70.0,
-                          //   decoration: BoxDecoration(
-                          //     borderRadius: BorderRadius.only(
-                          //       bottomLeft: Radius.circular(5),
-                          //       topLeft: Radius.circular(5)
-                          //     ),
-                          //     image: DecorationImage(
-                          //       fit: BoxFit.cover,
-                          //       image: NetworkImage("https://is2-ssl.mzstatic.com/image/thumb/Video2/v4/e1/69/8b/e1698bc0-c23d-2424-40b7-527864c94a8e/pr_source.lsr/268x0w.png")
-                          //     )
-                          //   ),
-                          // ),
-
-                        ],
+                            // shelter.text == null || shelter.text == "" ?
+                            //   const SizedBox() :
+                            //   Padding(
+                            //     padding: const EdgeInsets.all(16.0),
+                            //     child: Align(
+                            //       alignment: Alignment.centerLeft,
+                            //       child: Text(
+                            //         shelter.text!,
+                            //         style: p,
+                            //       ),
+                            //     ),
+                            //   ),
+                            const SizedBox(height: 160),
+                            ButtonBar(
+                              alignment: MainAxisAlignment.start,
+                              buttonAlignedDropdown: true,
+                              children: [
+                                GlassBox(
+                                  height: 40,
+                                  width: 90,
+                                  child: TextButton(
+                                    child: Text('View', style: labelPrimary,),
+                                    onPressed: () {
+                                      onTap(shelter);
+                                    },
+                                  ),
+                                ),
+                                AuthService.firebase().currentUser!.id == shelter.ownerUserId ?
+                                  GlassBox(
+                                    height: 40,
+                                    width: 50,
+                                    child: IconButton(
+                                      icon: const Icon(Icons.delete, color: Colors.black,),
+                                      onPressed: () async {
+                                        final shouldDelete = await showDeleteDialog(context);
+                                        if (shouldDelete) {
+                                          onDeleteShelter(shelter);
+                                        }
+                                      },
+                                    ),
+                                  ) :
+                                  const SizedBox(),
+                              ],
+                            ),
+                            // ClipRRect(
+                            //   borderRadius: const BorderRadius.only(
+                            //     bottomLeft: Radius.circular(20.0),
+                            //     bottomRight: Radius.circular(20.0)),
+                            //   child: shelter.photoURL == null || shelter.photoURL == '' ? Image.asset(backupPhotoURL, fit: BoxFit.cover) : Image.network(shelter.photoURL!,)
+                            // ),
+                      
+                            // Container(
+                            //   height: 100.0,
+                            //   width: 70.0,
+                            //   decoration: BoxDecoration(
+                            //     borderRadius: BorderRadius.only(
+                            //       bottomLeft: Radius.circular(5),
+                            //       topLeft: Radius.circular(5)
+                            //     ),
+                            //     image: DecorationImage(
+                            //       fit: BoxFit.cover,
+                            //       image: NetworkImage("https://is2-ssl.mzstatic.com/image/thumb/Video2/v4/e1/69/8b/e1698bc0-c23d-2424-40b7-527864c94a8e/pr_source.lsr/268x0w.png")
+                            //     )
+                            //   ),
+                            // ),
+                      
+                          ],
+                        ),
                       ),
                     ),
                   );

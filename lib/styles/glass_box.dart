@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 // ignore_for_file: use_key_in_widget_constructors, prefer_typing_uninitialized_variables
 
 
-final _borderRadius = BorderRadius.circular(30);
+final _borderRadius = BorderRadius.circular(20);
 
 class GlassBox extends StatelessWidget {
 

@@ -1,6 +1,8 @@
+import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:myproject/styles/styles.dart';
 import 'package:myproject/views/pages/custom.dart';
+import 'package:myproject/widgets/text_input.dart';
 
 
 class DonationPage extends StatefulWidget {
@@ -29,7 +31,7 @@ class _DonationPageState extends State<DonationPage> {
                 const SizedBox(height: 20),
                 Row(
                   children: [
-                    Image.asset('assets/images/ui/dogs.jpg', height: 100),
+                    Lottie.asset("assets/lottie/donate.json", width: 100, height: 100),
                     const SizedBox(width: 16),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,15 +67,31 @@ class _DonationPageState extends State<DonationPage> {
                 const SizedBox(height: 30),
                 Row(
                   children: [
-                    Text(
-                      '\$100,000',
-                      style: price,
+                    // Text(
+                    //   '\$100,000',
+                    //   style: price,
+                    // ),
+                    Expanded(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(color: yellow)
+                          ),
+                          hintText: 'Enter Amount',
+                          prefixIcon: const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20,),
+                            // child: Icon(
+                            //   icon,
+                            //   color: Colors.white,
+                            //   size: 20,
+                            // ),
+                          ),
+                          hintStyle: p,
+                        ),
+                        style: price,
+                      ),
                     ),
                     const SizedBox(width: 6),
-                    Text(
-                      '/an',
-                      style: small,
-                    ),
                   ],
                 ),
                 const SizedBox(height: 30),

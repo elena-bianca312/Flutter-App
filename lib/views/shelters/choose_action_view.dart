@@ -38,7 +38,9 @@ class _ChooseActionViewState extends State<ChooseActionView> {
       children: [
         const BackgroundImage(),
         Scaffold(
+          // backgroundColor: Colors.black.withOpacity(0.9),
           backgroundColor: Colors.transparent,
+          // backgroundColor: Colors.white,
           appBar: AppBar(
             title: FadeAnimation(2, Axis.horizontal, Text('Welcome back, ${AuthService.firebase().currentUser!.email}!', style: const TextStyle(height: 0, fontSize: 14))),
             backgroundColor: Colors.transparent,

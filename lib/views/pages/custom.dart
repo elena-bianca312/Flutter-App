@@ -8,8 +8,20 @@ TextStyle price = GoogleFonts.inter(
   fontWeight: FontWeight.w700,
 );
 
+TextStyle superheader = GoogleFonts.inter(
+  color: white,
+  fontSize: 26,
+  // fontWeight: FontWeight.w700,
+);
+
 TextStyle header = GoogleFonts.inter(
   color: white,
+  fontSize: 20,
+  fontWeight: FontWeight.w700,
+);
+
+TextStyle blackheader = GoogleFonts.inter(
+  color: black,
   fontSize: 20,
   fontWeight: FontWeight.w700,
 );
@@ -59,7 +71,7 @@ TextStyle labelSecondary = GoogleFonts.inter(
 
 final ButtonStyle buttonPrimary = ElevatedButton.styleFrom(
   minimumSize: const Size(327, 50),
-  backgroundColor: yellow,
+  backgroundColor: kCustomBlue,
   elevation: 0,
   shape: const RoundedRectangleBorder(
     borderRadius: BorderRadius.all(

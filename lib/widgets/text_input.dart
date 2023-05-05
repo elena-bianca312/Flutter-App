@@ -4,28 +4,32 @@ import 'package:myproject/styles/styles.dart';
 class TextInput extends StatelessWidget {
   const TextInput({
     Key? key,
-    required this.icon,
-    required this.hint,
-    required this.inputAction,
+    this.hint,
+    this.inputAction,
+    this.icon,
     this.inputType,
     this.controller,
     this.enableSuggestions,
     this.autocorrect,
     this.obscureText,
     this.autofocus,
+    this.keyboardType,
+    this.maxLines,
     this.width,
     this.height,
   }) : super(key: key);
 
-  final IconData icon;
-  final String hint;
-  final TextInputAction inputAction;
+  final String? hint;
+  final TextInputAction? inputAction;
   final TextInputType? inputType;
+  final IconData? icon;
   final TextEditingController? controller;
   final bool? enableSuggestions;
   final bool? autocorrect;
   final bool? obscureText;
   final bool? autofocus;
+  final TextInputType? keyboardType;
+  final int? maxLines;
   final double? width;
   final double? height;
 
@@ -61,6 +65,7 @@ class TextInput extends StatelessWidget {
           autocorrect: autocorrect ?? true,
           obscureText: obscureText ?? false,
           autofocus: autofocus ?? false,
+          maxLines: maxLines ?? 1,
         ),
       ),
     );

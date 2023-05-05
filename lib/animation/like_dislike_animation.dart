@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myproject/styles/styles.dart';
 
 typedef LikeCallback = void Function();
 
@@ -66,10 +67,10 @@ class _LikeDislikeAnimationState extends State<LikeDislikeAnimation> with Ticker
     _likeCurve = CurvedAnimation(parent: _likeController, curve: Curves.slowMiddle);
     _dislikeCurve = CurvedAnimation(parent: _dislikeController, curve: Curves.slowMiddle);
 
-    _likeColorAnimationGreyToBlue = ColorTween(begin: Colors.grey[400], end: Colors.blue).animate(_likeCurve);
-    _likeColorAnimationBlueToGrey = ColorTween(begin: Colors.blue, end: Colors.grey[400]).animate(_likeCurve);
-    _dislikeColorAnimationGreyToBlue = ColorTween(begin: Colors.grey[400], end: Colors.blue).animate(_dislikeCurve);
-    _dislikeColorAnimationBlueToGrey = ColorTween(begin: Colors.blue, end: Colors.grey[400]).animate(_dislikeCurve);
+    _likeColorAnimationGreyToBlue = ColorTween(begin: Colors.grey[400], end: kCustomBlue).animate(_likeCurve);
+    _likeColorAnimationBlueToGrey = ColorTween(begin: kCustomBlue, end: Colors.grey[400]).animate(_likeCurve);
+    _dislikeColorAnimationGreyToBlue = ColorTween(begin: Colors.grey[400], end: kCustomBlue).animate(_dislikeCurve);
+    _dislikeColorAnimationBlueToGrey = ColorTween(begin: kCustomBlue, end: Colors.grey[400]).animate(_dislikeCurve);
     _likeColorAnimation = isLiked ? _likeColorAnimationBlueToGrey : _likeColorAnimationGreyToBlue;
     _dislikeColorAnimation = isDisliked ? _dislikeColorAnimationBlueToGrey : _dislikeColorAnimationGreyToBlue;
 

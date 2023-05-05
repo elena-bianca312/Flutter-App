@@ -1,7 +1,10 @@
 import 'dart:ui';
+import 'dart:ffi';
 import 'package:flutter/material.dart';
+import 'package:myproject/styles/styles.dart';
 import 'package:myproject/utilities/utils.dart';
 import 'package:myproject/constants/routes.dart';
+import 'package:myproject/views/pages/custom.dart';
 import 'package:myproject/services/auth/auth_service.dart';
 import 'package:myproject/animation/like_dislike_animation.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
@@ -48,6 +51,7 @@ class _ShelterViewState extends State<ShelterView> {
         if (snapshot.hasData) {
           _shelter = snapshot.data!.firstWhere((element) => element.documentId == _shelter.documentId);
           return Scaffold(
+            backgroundColor: Colors.black.withOpacity(0.9),
             body:
               Stack(children: [
                   SizedBox(
@@ -91,7 +95,7 @@ class _ShelterViewState extends State<ShelterView> {
               child: const Icon(
                 Icons.arrow_back_ios,
                 size: 20,
-                color: Colors.white,
+                color: Colors.black,
               ),
             ),
           ),
@@ -104,14 +108,14 @@ class _ShelterViewState extends State<ShelterView> {
     return DraggableScrollableSheet(
         initialChildSize: 0.6,
         maxChildSize: 1.0,
-        minChildSize: 0.6,
+        minChildSize: 0.2,
         builder: (context, scrollController) {
           return Container(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               clipBehavior: Clip.hardEdge,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.95),
+                borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20)),
               ),
@@ -121,14 +125,14 @@ class _ShelterViewState extends State<ShelterView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(top: 10, bottom: 25),
+                      padding: const EdgeInsets.only(top: 20, bottom: 25),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
                             height: 5,
                             width: 35,
-                            color: Colors.black12,
+                            color: Colors.white,
                           ),
                         ],
                       ),
@@ -137,7 +141,7 @@ class _ShelterViewState extends State<ShelterView> {
                       children: [
                         Text(
                           _shelter.title,
-                          style: Theme.of(context).textTheme.displaySmall,
+                          style: superheader,
                         ),
                         if (AuthService.firebase().currentUser!.id == _shelter.ownerUserId)
                           IconButton(
@@ -145,15 +149,17 @@ class _ShelterViewState extends State<ShelterView> {
                               setState(() {_sheltersService.getShelters();});
                               Navigator.of(context).pushNamed(addShelterRoute, arguments: _shelter);
                             },
-                            icon: const Icon(Icons.edit, color: Colors.grey,),
+                            icon: const Icon(Icons.edit, color: Colors.white24,),
                           )
                       ],
                     ),
                     const SizedBox(height: 10,),
-                    Text("Address: ${_shelter.address}", style: Theme.of(context).textTheme.bodyMedium,),
+                    Text("Address: ${_shelter.address}", style: subheader,),
                     const SizedBox(height: 15,),
-                    Text(AuthService.firebase().currentUser!.id == _shelter.ownerUserId ? "Posted by you" : "Posted by ${_shelter.userName}"),
-
+                    Text(AuthService.firebase().currentUser!.id == _shelter.ownerUserId ?
+                      "Posted by you" : "Posted by ${_shelter.userName}",
+                      style: small,
+                    ),
                     // Display like and dislike
                     FutureBuilder(
                       future: Future.wait([
@@ -180,9 +186,13 @@ class _ShelterViewState extends State<ShelterView> {
                               ),
                               Row(
                                 children: [
-                                  (noLikes == 1) ? const Text("1 Like") : Text("${noLikes.toString()} Likes"),
+                                  (noLikes == 1) ?
+                                    Text("1 Like", style: p,) :
+                                    Text("${noLikes.toString()} Likes", style: p),
                                   const SizedBox(width: 25,),
-                                  (noDislikes == 1) ? const Text("1 Dislike") : Text("${noDislikes.toString()} Dislikes"),
+                                  (noDislikes == 1) ?
+                                    Text("1 Dislike", style: p,) :
+                                    Text("${noDislikes.toString()} Dislikes", style: p),
                                 ],
                               ),
                             ],
@@ -194,29 +204,31 @@ class _ShelterViewState extends State<ShelterView> {
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: 15),
                       child: Divider(
+                        color: Colors.white24,
                         height: 4,
                       ),
                     ),
                     Text(
                       "Description",
-                      style: Theme.of(context).textTheme.displaySmall,
+                      style: superheader,
                     ),
                     const SizedBox(
                       height: 10,
                     ),
-                    if (_shelter.text != null && _shelter.text != '') Text(_shelter.text!),
+                    if (_shelter.text != null && _shelter.text != '') Text(_shelter.text!, style: p,),
                     const SizedBox(
                       height: 10,
                     ),
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: 15),
                       child: Divider(
+                        color: Colors.white24,
                         height: 4,
                       ),
                     ),
                     Text(
                       "Available Items",
-                      style: Theme.of(context).textTheme.displaySmall,
+                      style: superheader,
                     ),
                     const SizedBox(
                       height: 10,
@@ -230,12 +242,13 @@ class _ShelterViewState extends State<ShelterView> {
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: 15),
                       child: Divider(
+                        color: Colors.white24,
                         height: 4,
                       ),
                     ),
                     Text(
                       "Google Maps",
-                      style: Theme.of(context).textTheme.displaySmall,
+                      style: superheader,
                     ),
                     const SizedBox(
                       height: 10,

@@ -2,7 +2,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:myproject/views/pages/custom.dart';
+import 'package:myproject/widgets/text_input.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:myproject/animation/fade_animation.dart';
 import 'package:myproject/services/auth/auth_service.dart';
 import 'package:myproject/utilities/generics/get_arguments.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
@@ -189,8 +192,11 @@ class _AddShelterViewState extends State<AddShelterView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: const Text('Please fill in shelter info...'),
+        backgroundColor: Colors.transparent,
+        title: const FadeAnimation(1, Axis.vertical,
+          Text('Please fill in shelter info...')),
         // backgroundColor: Colors.transparent,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -220,16 +226,18 @@ class _AddShelterViewState extends State<AddShelterView> {
           }
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.share),
-            onPressed: () async {
-              final text = _textController.text;
-              if (_shelter == null || text.isEmpty) {
-                await showCannotShareEmptyNoteDialog(context);
-              } else {
-                Share.share(text);
-              }
-            },
+          FadeAnimation(1, Axis.vertical,
+            IconButton(
+              icon: const Icon(Icons.share),
+              onPressed: () async {
+                final text = _textController.text;
+                if (_shelter == null || text.isEmpty) {
+                  await showCannotShareEmptyNoteDialog(context);
+                } else {
+                  Share.share(text);
+                }
+              },
+            )
           ),
         ],
       ),
@@ -240,56 +248,69 @@ class _AddShelterViewState extends State<AddShelterView> {
             case ConnectionState.done:
               _setupControllerListener();
               return Container(
-                color: Colors.grey[350],
-                child: Column(
-                  children: [
-                    TextField(
-                      controller: _titleController,
-                      decoration: const InputDecoration(
-                        hintText: 'Title...',
+                  color: Colors.black,
+                  alignment: Alignment.center,
+                  child: Column(
+                    children: [
+                      FadeAnimation(1, Axis.horizontal,
+                        TextInput(
+                          controller: _titleController,
+                          hint: 'Title...',
+                          icon: Icons.title,
+                          inputAction: TextInputAction.none,
+                          width: 350,
+                        )
                       ),
-                    ),
-                    TextField(
-                      controller: _addressController,
-                      decoration: const InputDecoration(
-                        hintText: 'Address...',
+                      FadeAnimation(1.8, Axis.horizontal,
+                        TextInput(
+                          controller: _addressController,
+                          hint: 'Address...',
+                          icon: Icons.location_city,
+                          inputAction: TextInputAction.none,
+                          width: 350,
+                        )
                       ),
-                    ),
-                    TextField(
-                      controller: _textController,
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                      decoration: const InputDecoration(
-                        hintText: 'Type text...',
-                      ),
-                    ),
-
-                    ElevatedButton(
-                      onPressed: selectFile,
-                      child: const Text("Select file")
-                    ),
-
-                    ElevatedButton(
-                      onPressed: uploadFile,
-                      child: const Text("Upload file")
-                    ),
-
-                    // buildProgress(),
-
-                    if (_pickedFile != null)
-                      Expanded(
-                        child: Container(
-                          color: Colors.blue[100],
-                          child: Image.file(
-                            File(_pickedFile!.path!),
-                            fit: BoxFit.cover,
-                          )
+                      FadeAnimation(2.6, Axis.horizontal,
+                        TextInput(
+                          controller: _textController,
+                          keyboardType: TextInputType.multiline,
+                          hint: 'Type text...',
+                          icon: Icons.text_fields,
+                          width: 350,
+                          maxLines: null,
                         ),
                       ),
-
-                  ],
-                ),
-              );
+                      const SizedBox(height: 30,),
+                      ElevatedButton(
+                        onPressed: selectFile,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white, // Background color
+                        ),
+                        child: const Text("Select file", style: TextStyle(color: Colors.black)),
+                      ),
+                      const SizedBox(height: 20,),
+                      ElevatedButton(
+                        onPressed: uploadFile,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white, // Background color
+                        ),
+                        child: const Text("Upload file", style: TextStyle(color: Colors.black))
+                      ),
+                      uploadTask != null ? buildProgress() : Container(),
+                      if (_pickedFile != null)
+                        Expanded(
+                          child: Container(
+                            color: Colors.blue[100],
+                            child: Image.file(
+                              File(_pickedFile!.path!),
+                              fit: BoxFit.cover,
+                            )
+                          ),
+                        ),
+                    ],
+                  ),
+                );
+              // );
             default:
               return const Center(child: CircularProgressIndicator());
         }
