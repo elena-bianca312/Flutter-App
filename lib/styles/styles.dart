@@ -17,10 +17,10 @@ const TextStyle kPageText = TextStyle(
   fontFamily: 'JosefinSans'
 );
 
-// const TextStyle kBlueText = TextStyle(
-//   fontSize: 15,
-//   color: kCustomBlue,
-// );
+Color black = const Color(0xff010518);
+Color yellow = const Color(0xffFCAD00);
+Color white = const Color(0xffFFFFFF);
+Color grey = const Color(0xff8B8FA0);
 
 const Color kCustomBlue = Color.fromARGB(255, 61, 128, 183);
 

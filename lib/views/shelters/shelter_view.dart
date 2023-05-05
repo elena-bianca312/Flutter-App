@@ -144,9 +144,6 @@ class _ShelterViewState extends State<ShelterView> {
                             onPressed: () async {
                               setState(() {_sheltersService.getShelters();});
                               Navigator.of(context).pushNamed(addShelterRoute, arguments: _shelter);
-
-                              // TOOD: It doesnt update the shelter info after editing!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                              // Why????????????????????????
                             },
                             icon: const Icon(Icons.edit, color: Colors.grey,),
                           )
@@ -157,7 +154,7 @@ class _ShelterViewState extends State<ShelterView> {
                     const SizedBox(height: 15,),
                     Text(AuthService.firebase().currentUser!.id == _shelter.ownerUserId ? "Posted by you" : "Posted by ${_shelter.userName}"),
 
-                    // Display ike and dislike
+                    // Display like and dislike
                     FutureBuilder(
                       future: Future.wait([
                         _sheltersService.checkIfLiked(documentId: _shelter.documentId, userId: AuthService.firebase().currentUser!.id),

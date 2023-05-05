@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myproject/utilities/utils.dart';
 
 class BackgroundImage extends StatelessWidget {
   const BackgroundImage({
@@ -15,11 +16,11 @@ class BackgroundImage extends StatelessWidget {
       ).createShader(bounds),
       blendMode: BlendMode.darken,
       child: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/bloc1.jpg'),
+            image: AssetImage(backupPhotoURL),
             fit: BoxFit.cover,
-            colorFilter: ColorFilter.mode(Colors.black45, BlendMode.darken),
+            colorFilter: const ColorFilter.mode(Colors.black45, BlendMode.darken),
           ),
         ),
       ),
