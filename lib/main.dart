@@ -5,7 +5,6 @@ import 'package:myproject/views/auth/login_view.dart';
 import 'package:myproject/google_maps/google_maps.dart';
 import 'package:myproject/views/auth/register_view.dart';
 import 'package:myproject/views/pages/donation_page.dart';
-import 'package:myproject/views/shelters/shelter_tile.dart';
 import 'package:myproject/views/auth/verify_email_view.dart';
 import 'package:myproject/services/auth/bloc/auth_bloc.dart';
 import 'package:myproject/services/auth/bloc/auth_event.dart';
@@ -56,9 +55,8 @@ class HomePage extends StatelessWidget {
       },
       builder: (context, state) {
         if (state is AuthStateLoggedIn) {
-          // return const GoogleMaps();
-          // return const ShelterTile();
-          return const ChooseActionView();
+          return const MapPage();
+          // return const ChooseActionView();
         } else if (state is AuthStateNeedsVerification) {
           return const VerifyEmailView();
         } else if (state is AuthStateLoggedOut) {
