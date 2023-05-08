@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:myproject/views/pages/custom.dart';
-import 'package:myproject/widgets/text_input.dart';
 import 'package:myproject/google_maps/location_service.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -30,7 +29,7 @@ class _MapPageState extends State<MapPage> {
 
   final Completer<GoogleMapController> _controller = Completer();
   final TextEditingController _originController = TextEditingController();
-  final TextEditingController _destinationController = TextEditingController();
+  late final TextEditingController _destinationController = TextEditingController(text: shelter.address);
 
   final Set<Marker> _markers = {};
   final Set<Polygon> _polygons = {};
@@ -92,79 +91,106 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.greenAccent,
       appBar: AppBar(
         title: const Text('Google Maps'),
-        // backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
       ),
-      body: Column(
+      body: Stack(
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  children: [
-                    TextInput(
-                      controller: _originController,
-                      hint: 'Search'
-                    ),
-                    // TextFormField(
-                    //   controller: _originController,
-                    //   textCapitalization: TextCapitalization.words,
-                    //   decoration: const InputDecoration(
-                    //     hintText: 'Search',
-                    //     border: InputBorder.none,
-                    //   ),
-                    //   onChanged: (value) {},
-                    // ),
-                    // TextFormField(
-                    //   controller: _destinationController,
-                    //   textCapitalization: TextCapitalization.words,
-                    //   decoration: const InputDecoration(
-                    //     hintText: 'Search',
-                    //     border: InputBorder.none,
-                    //   ),
-                    //   onChanged: (value) {},
-                    // ),
-                  ],
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.search),
-                onPressed: () async {
-                  _refreshState();
-                  var directions = await LocationService().getDirections(_originController.text, widget.shelter.address);
-                  _goToPlace(
-                    directions['start_location']['lat'],
-                    directions['start_location']['lng'],
-                    directions['bounds_ne'],
-                    directions['bounds_sw'],
-                    directions['end_location']['lat'],
-                    directions['end_location']['lng'],
-                  );
-                  _setPolyline(directions['polyline']);
-                }
-              ),
-            ],
+
+          GoogleMap(
+            mapType: MapType.normal,
+            markers: _markers,
+            polygons: _polygons,
+            polylines: _polylines,
+            initialCameraPosition: _kMapCenter,
+            onMapCreated: (GoogleMapController controller) {
+              _controller.complete(controller);
+            },
+            onTap: (LatLng point) {
+              setState(() {
+                _polygonLatLngs.add(point);
+                _setPolygon();
+              });
+            },
           ),
 
-          Expanded(
-            child: GoogleMap(
-              mapType: MapType.normal,
-              markers: _markers,
-              polygons: _polygons,
-              polylines: _polylines,
-              initialCameraPosition: _kMapCenter,
-              onMapCreated: (GoogleMapController controller) {
-                _controller.complete(controller);
-              },
-              onTap: (LatLng point) {
-                setState(() {
-                  _polygonLatLngs.add(point);
-                  _setPolygon();
-                });
-              },
-            ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[600]?.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: TextFormField(
+                          controller: _originController,
+                          textCapitalization: TextCapitalization.words,
+                          decoration: InputDecoration(
+                            hintText: 'Search',
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                            hintStyle: subheader,
+                            border: InputBorder.none,
+                            suffixIcon: IconButton(
+                              onPressed: () async {
+                                if (_originController.text == '' || _destinationController.text == '') return;
+                                _refreshState();
+                                var directions = await LocationService().getDirections(_originController.text, widget.shelter.address);
+                                _drawLine(
+                                  directions['start_location']['lat'],
+                                  directions['start_location']['lng'],
+                                  directions['bounds_ne'],
+                                  directions['bounds_sw'],
+                                  directions['end_location']['lat'],
+                                  directions['end_location']['lng'],
+                                );
+                                _setPolyline(directions['polyline']);
+                              },
+                              icon: const Icon(Icons.search)
+                            ),
+                          ),
+                          style: subheader,
+                          onChanged: (value) {},
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[600]?.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: TextFormField(
+                          controller: _destinationController,
+                          textCapitalization: TextCapitalization.words,
+                          decoration: InputDecoration(
+                            // hintText: 'Search',
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                            hintStyle: subheader,
+                            border: InputBorder.none,
+                            suffixIcon: IconButton(
+                              onPressed: () async {
+                                if (_destinationController.text == '') return;
+                                _refreshState();
+                                var place = await LocationService().getPlace(_destinationController.text);
+                                _goToPlace(place);
+                              },
+                              icon: const Icon(Icons.pin_drop)
+                            ),
+                          ),
+                          style: subheader,
+                          onChanged: (value) {},
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            )
           ),
         ],
       ),
@@ -177,8 +203,7 @@ class _MapPageState extends State<MapPage> {
     _polylines.clear();
   }
 
-  Future<void> _goToPlace(
-    // Map<String, dynamic> place
+  Future<void> _drawLine(
     double sourceLat,
     double sourceLng,
     Map<String, dynamic> boundsNe,
@@ -204,7 +229,19 @@ class _MapPageState extends State<MapPage> {
       50.0
     ));
 
-    _setMarker(point: LatLng(sourceLat, sourceLng), markerId: MarkerId(_originController.text));
+    // _setMarker(point: LatLng(sourceLat, sourceLng), markerId: MarkerId(_originController.text));
     _setMarker(point: LatLng(destinationLat, destinationLng), markerId: MarkerId(_destinationController.text));
+  }
+
+  Future<void> _goToPlace(Map<String, dynamic> place) async {
+    final double lat = place['geometry']['location']['lat'];
+    final double lng = place['geometry']['location']['lng'];
+
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(
+      CameraPosition(target: LatLng(lat, lng), zoom: 16, tilt: cameraTilt, bearing: cameraBearing)
+    ));
+
+    _setMarker(point: LatLng(lat, lng), markerId: MarkerId(shelter.title));
   }
 }
