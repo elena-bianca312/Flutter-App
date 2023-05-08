@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:myproject/views/pages/custom.dart';
+import 'package:myproject/widgets/text_input.dart';
 import 'package:myproject/google_maps/location_service.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
 
 const LatLng initialLocation = LatLng(44.439663, 26.096306);
 const double cameraZoom = 12;
@@ -10,17 +13,24 @@ const double cameraTilt = 0;
 const double cameraBearing = 0;
 
 class MapPage extends StatefulWidget {
-  const MapPage({super.key});
+
+  final CloudShelterInfo shelter;
+  const MapPage({
+    super.key,
+    required this.shelter
+  });
 
   @override
   State<MapPage> createState() => _MapPageState();
 }
 
 class _MapPageState extends State<MapPage> {
+
+  late CloudShelterInfo shelter = widget.shelter;
+
   final Completer<GoogleMapController> _controller = Completer();
   final TextEditingController _originController = TextEditingController();
   final TextEditingController _destinationController = TextEditingController();
-
 
   final Set<Marker> _markers = {};
   final Set<Polygon> _polygons = {};
@@ -34,7 +44,8 @@ class _MapPageState extends State<MapPage> {
   void initState() {
     super.initState();
 
-    _setMarker(point: initialLocation, markerId: const MarkerId('marker_1'));
+    // _setMarker(point: initialLocation, markerId: const MarkerId('marker_1'));
+    // _setMarker(point: initialLocation, markerId: const MarkerId('marker_1'));
   }
 
   void _setMarker({required LatLng point, MarkerId? markerId}) {
@@ -81,8 +92,10 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         title: const Text('Google Maps'),
+        // backgroundColor: Colors.white,
       ),
       body: Column(
         children: [
@@ -91,24 +104,28 @@ class _MapPageState extends State<MapPage> {
               Expanded(
                 child: Column(
                   children: [
-                    TextFormField(
+                    TextInput(
                       controller: _originController,
-                      textCapitalization: TextCapitalization.words,
-                      decoration: const InputDecoration(
-                        hintText: 'Search',
-                        border: InputBorder.none,
-                      ),
-                      onChanged: (value) {},
+                      hint: 'Search'
                     ),
-                    TextFormField(
-                      controller: _destinationController,
-                      textCapitalization: TextCapitalization.words,
-                      decoration: const InputDecoration(
-                        hintText: 'Search',
-                        border: InputBorder.none,
-                      ),
-                      onChanged: (value) {},
-                    ),
+                    // TextFormField(
+                    //   controller: _originController,
+                    //   textCapitalization: TextCapitalization.words,
+                    //   decoration: const InputDecoration(
+                    //     hintText: 'Search',
+                    //     border: InputBorder.none,
+                    //   ),
+                    //   onChanged: (value) {},
+                    // ),
+                    // TextFormField(
+                    //   controller: _destinationController,
+                    //   textCapitalization: TextCapitalization.words,
+                    //   decoration: const InputDecoration(
+                    //     hintText: 'Search',
+                    //     border: InputBorder.none,
+                    //   ),
+                    //   onChanged: (value) {},
+                    // ),
                   ],
                 ),
               ),
@@ -116,7 +133,7 @@ class _MapPageState extends State<MapPage> {
                 icon: const Icon(Icons.search),
                 onPressed: () async {
                   _refreshState();
-                  var directions = await LocationService().getDirections(_originController.text, _destinationController.text);
+                  var directions = await LocationService().getDirections(_originController.text, widget.shelter.address);
                   _goToPlace(
                     directions['start_location']['lat'],
                     directions['start_location']['lng'],

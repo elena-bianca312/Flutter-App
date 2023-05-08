@@ -7,18 +7,23 @@ final _borderRadius = BorderRadius.circular(20);
 
 class GlassBox extends StatelessWidget {
 
-  final double height;
-  final double width;
+  final double? height;
+  final double? width;
+  final Color? color;
+  double? addedOpacity;
   final child;
 
-  const GlassBox({
-    required this.width,
-    required this.height,
+  GlassBox({
+    this.width,
+    this.height,
+    this.color,
+    this.addedOpacity,
     required this.child
   });
 
   @override
   Widget build(BuildContext context) {
+    addedOpacity ??= 0;
     return ClipRRect(
       borderRadius: _borderRadius,
       child: SizedBox(
@@ -38,14 +43,14 @@ class GlassBox extends StatelessWidget {
             // gradient effect
             Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.white.withOpacity(0.1)),
+                border: Border.all(color: color != null ? color!.withOpacity(0.1) : Colors.white.withOpacity(0.1 + addedOpacity!)),
                 borderRadius: _borderRadius,
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Colors.white.withOpacity(0.4),
-                    Colors.white.withOpacity(0.1),
+                    color != null ? color!.withOpacity(0.4 + addedOpacity!) : Colors.white.withOpacity(0.4 + addedOpacity!),
+                    color != null ? color!.withOpacity(0.1 + addedOpacity!) : Colors.white.withOpacity(0.1 + addedOpacity!),
                   ],
                 ),
               ),

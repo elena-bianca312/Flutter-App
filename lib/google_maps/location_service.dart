@@ -47,4 +47,13 @@ class LocationService {
     print(results);
     return results;
   }
+
+  // void makePointFromLocationName (String location) {
+  //   final String url = 'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$key';
+  //   final response = http.get(Uri.parse(url));
+  //   var json = convert.jsonDecode(response.body);
+  //   var placeId = json['candidates'][0]['place_id'];
+
+
+  // }
 }

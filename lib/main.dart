@@ -55,8 +55,8 @@ class HomePage extends StatelessWidget {
       },
       builder: (context, state) {
         if (state is AuthStateLoggedIn) {
-          return const MapPage();
-          // return const ChooseActionView();
+          // return const MapPage();
+          return const ChooseActionView();
         } else if (state is AuthStateNeedsVerification) {
           return const VerifyEmailView();
         } else if (state is AuthStateLoggedOut) {

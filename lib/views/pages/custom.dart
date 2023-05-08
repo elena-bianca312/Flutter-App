@@ -14,6 +14,13 @@ TextStyle superheader = GoogleFonts.inter(
   // fontWeight: FontWeight.w700,
 );
 
+TextStyle blacksuperheader = GoogleFonts.inter(
+  color: black,
+  fontSize: 26,
+  // fontWeight: FontWeight.w700,
+);
+
+
 TextStyle header = GoogleFonts.inter(
   color: white,
   fontSize: 20,
@@ -28,6 +35,12 @@ TextStyle blackheader = GoogleFonts.inter(
 
 TextStyle subheader = GoogleFonts.inter(
   color: white,
+  fontSize: 16,
+  fontWeight: FontWeight.w500,
+);
+
+TextStyle blacksubheader = GoogleFonts.inter(
+  color: black,
   fontSize: 16,
   fontWeight: FontWeight.w500,
 );

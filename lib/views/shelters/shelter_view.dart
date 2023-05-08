@@ -1,10 +1,12 @@
 import 'dart:ui';
 import 'dart:ffi';
+import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:myproject/styles/styles.dart';
 import 'package:myproject/utilities/utils.dart';
 import 'package:myproject/constants/routes.dart';
 import 'package:myproject/views/pages/custom.dart';
+import 'package:myproject/google_maps/google_maps.dart';
 import 'package:myproject/services/auth/auth_service.dart';
 import 'package:myproject/animation/like_dislike_animation.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
@@ -154,7 +156,24 @@ class _ShelterViewState extends State<ShelterView> {
                       ],
                     ),
                     const SizedBox(height: 10,),
-                    Text("Address: ${_shelter.address}", style: subheader,),
+                    Row(
+                        children: [
+                          Text("Address:\n${_shelter.address}", style: subheader,),
+                          const SizedBox(width: 100,),
+                          InkWell(
+                            onTap: () {
+
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                builder: (context) => MapPage(shelter: _shelter,)
+                              ));
+
+                            },
+                            child: Lottie.asset("assets/lottie/google-icons-maps.json", width: 100, height: 100)
+                          ),
+                        ],
+                      ),
                     const SizedBox(height: 15,),
                     Text(AuthService.firebase().currentUser!.id == _shelter.ownerUserId ?
                       "Posted by you" : "Posted by ${_shelter.userName}",
@@ -246,19 +265,6 @@ class _ShelterViewState extends State<ShelterView> {
                         height: 4,
                       ),
                     ),
-                    Text(
-                      "Google Maps",
-                      style: superheader,
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    // ListView.builder(
-                    //   physics: NeverScrollableScrollPhysics(),
-                    //   shrinkWrap: true,
-                    //   itemCount: 3,
-                    //   itemBuilder: (context, index) => steps(context, index),
-                    // ),
                   ],
                 ),
               ),
