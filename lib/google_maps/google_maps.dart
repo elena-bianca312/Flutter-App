@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:myproject/views/pages/custom.dart';
+import 'package:custom_info_window/custom_info_window.dart';
 import 'package:myproject/google_maps/location_service.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -24,14 +25,17 @@ class MapPage extends StatefulWidget {
   State<MapPage> createState() => _MapPageState();
 }
 
-class _MapPageState extends State<MapPage> {
+class _MapPageState extends State<MapPage> with
+AutomaticKeepAliveClientMixin<MapPage> {
 
   late CloudShelterInfo shelter = widget.shelter;
   late final FirebaseShelterStorage _sheltersService;
 
-  final Completer<GoogleMapController> _controller = Completer();
+  Completer<GoogleMapController> _controller = Completer();
   final TextEditingController _originController = TextEditingController();
   late final TextEditingController _destinationController = TextEditingController(text: shelter.address);
+
+  CustomInfoWindowController _customInfoWindowController = CustomInfoWindowController();
 
   final Set<Marker> _markers = {};
   final Set<Polygon> _polygons = {};
@@ -45,13 +49,18 @@ class _MapPageState extends State<MapPage> {
   void initState() {
     super.initState();
     _sheltersService = FirebaseShelterStorage();
-
-    // _setMarker(point: initialLocation, markerId: const MarkerId('marker_1'));
-    // _setMarker(point: initialLocation, markerId: const MarkerId('marker_1'));
     _setShelters();
   }
 
+  @override
+  void dispose() {
+    _customInfoWindowController.dispose();
+    _controller = Completer();
+    super.dispose();
+  }
+
   void _setMarker({required LatLng point, MarkerId? markerId}) {
+    if (!mounted) return;
     setState(() {
       _markers.add(Marker(
         markerId: markerId ?? MarkerId('marker$_polygonIdCounter'),
@@ -116,8 +125,10 @@ class _MapPageState extends State<MapPage> {
                   initialCameraPosition: _kMapCenter,
                   onMapCreated: (GoogleMapController controller) {
                     _controller.complete(controller);
+                    _customInfoWindowController.googleMapController = controller;
                   },
                   onTap: (LatLng point) {
+                    if (!mounted) return;
                     setState(() {
                       _polygonLatLngs.add(point);
                       _setPolygon();
@@ -268,4 +279,7 @@ class _MapPageState extends State<MapPage> {
       });
     });
   }
+
+  @override
+  bool get wantKeepAlive => false;
 }
