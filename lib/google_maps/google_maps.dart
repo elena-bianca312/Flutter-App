@@ -5,6 +5,7 @@ import 'package:myproject/google_maps/location_service.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
+import 'package:myproject/services/shelter_cloud/firebase_shelter_storage.dart';
 
 const LatLng initialLocation = LatLng(44.439663, 26.096306);
 const double cameraZoom = 12;
@@ -26,6 +27,7 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> {
 
   late CloudShelterInfo shelter = widget.shelter;
+  late final FirebaseShelterStorage _sheltersService;
 
   final Completer<GoogleMapController> _controller = Completer();
   final TextEditingController _originController = TextEditingController();
@@ -42,9 +44,11 @@ class _MapPageState extends State<MapPage> {
   @override
   void initState() {
     super.initState();
+    _sheltersService = FirebaseShelterStorage();
 
     // _setMarker(point: initialLocation, markerId: const MarkerId('marker_1'));
     // _setMarker(point: initialLocation, markerId: const MarkerId('marker_1'));
+    _setShelters();
   }
 
   void _setMarker({required LatLng point, MarkerId? markerId}) {
@@ -90,115 +94,124 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.greenAccent,
-      appBar: AppBar(
-        title: const Text('Google Maps'),
-        backgroundColor: Colors.transparent,
-      ),
-      body: Stack(
-        children: [
-
-          GoogleMap(
-            mapType: MapType.normal,
-            markers: _markers,
-            polygons: _polygons,
-            polylines: _polylines,
-            initialCameraPosition: _kMapCenter,
-            onMapCreated: (GoogleMapController controller) {
-              _controller.complete(controller);
-            },
-            onTap: (LatLng point) {
-              setState(() {
-                _polygonLatLngs.add(point);
-                _setPolygon();
-              });
-            },
-          ),
-
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-            child: Row(
+    return StreamBuilder<Object>(
+      stream: _sheltersService.allShelters(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          // var shelters = snapshot.data!;
+          // _setShelters();
+          return Scaffold(
+            backgroundColor: Colors.greenAccent,
+            appBar: AppBar(
+              title: const Text('Google Maps'),
+              backgroundColor: Colors.transparent,
+            ),
+            body: Stack(
               children: [
-                Expanded(
-                  child: Column(
+                GoogleMap(
+                  mapType: MapType.normal,
+                  markers: _markers,
+                  polygons: _polygons,
+                  polylines: _polylines,
+                  initialCameraPosition: _kMapCenter,
+                  onMapCreated: (GoogleMapController controller) {
+                    _controller.complete(controller);
+                  },
+                  onTap: (LatLng point) {
+                    setState(() {
+                      _polygonLatLngs.add(point);
+                      _setPolygon();
+                    });
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                  child: Row(
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey[600]?.withOpacity(0.6),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: TextFormField(
-                          controller: _originController,
-                          textCapitalization: TextCapitalization.words,
-                          decoration: InputDecoration(
-                            hintText: 'Search',
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                            hintStyle: subheader,
-                            border: InputBorder.none,
-                            suffixIcon: IconButton(
-                              onPressed: () async {
-                                if (_originController.text == '' || _destinationController.text == '') return;
-                                _refreshState();
-                                var directions = await LocationService().getDirections(_originController.text, widget.shelter.address);
-                                _drawLine(
-                                  directions['start_location']['lat'],
-                                  directions['start_location']['lng'],
-                                  directions['bounds_ne'],
-                                  directions['bounds_sw'],
-                                  directions['end_location']['lat'],
-                                  directions['end_location']['lng'],
-                                );
-                                _setPolyline(directions['polyline']);
-                              },
-                              icon: const Icon(Icons.search)
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.grey[600]?.withOpacity(0.6),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: TextFormField(
+                                controller: _originController,
+                                textCapitalization: TextCapitalization.words,
+                                decoration: InputDecoration(
+                                  hintText: 'Search',
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                                  hintStyle: subheader,
+                                  border: InputBorder.none,
+                                  suffixIcon: IconButton(
+                                    onPressed: () async {
+                                      if (_originController.text == '' || _destinationController.text == '') return;
+                                      _refreshState();
+                                      var directions = await LocationService().getDirections(_originController.text, widget.shelter.address);
+                                      _drawLine(
+                                        directions['start_location']['lat'],
+                                        directions['start_location']['lng'],
+                                        directions['bounds_ne'],
+                                        directions['bounds_sw'],
+                                        directions['end_location']['lat'],
+                                        directions['end_location']['lng'],
+                                      );
+                                      _setPolyline(directions['polyline']);
+                                    },
+                                    icon: const Icon(Icons.search)
+                                  ),
+                                ),
+                                style: subheader,
+                                onChanged: (value) {},
+                              ),
                             ),
-                          ),
-                          style: subheader,
-                          onChanged: (value) {},
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey[600]?.withOpacity(0.6),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: TextFormField(
-                          controller: _destinationController,
-                          textCapitalization: TextCapitalization.words,
-                          decoration: InputDecoration(
-                            // hintText: 'Search',
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                            hintStyle: subheader,
-                            border: InputBorder.none,
-                            suffixIcon: IconButton(
-                              onPressed: () async {
-                                if (_destinationController.text == '') return;
-                                _refreshState();
-                                var place = await LocationService().getPlace(_destinationController.text);
-                                _goToPlace(place);
-                              },
-                              icon: const Icon(Icons.pin_drop)
+                            const SizedBox(height: 10),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.grey[600]?.withOpacity(0.6),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: TextFormField(
+                                controller: _destinationController,
+                                textCapitalization: TextCapitalization.words,
+                                decoration: InputDecoration(
+                                  // hintText: 'Search',
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                                  hintStyle: subheader,
+                                  border: InputBorder.none,
+                                  suffixIcon: IconButton(
+                                    onPressed: () async {
+                                      if (_destinationController.text == '') return;
+                                      _refreshState();
+                                      var place = await LocationService().getPlace(_destinationController.text);
+                                      _goToPlace(place: place);
+                                    },
+                                    icon: const Icon(Icons.pin_drop)
+                                  ),
+                                ),
+                                style: subheader,
+                                onChanged: (value) {},
+                              ),
                             ),
-                          ),
-                          style: subheader,
-                          onChanged: (value) {},
+                          ],
                         ),
                       ),
                     ],
-                  ),
+                  )
                 ),
               ],
-            )
-          ),
-        ],
-      ),
+            ),
+          );
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+      }
     );
   }
 
   void _refreshState() {
-    _markers.clear();
+    // _markers.clear();
     _polygons.clear();
     _polylines.clear();
   }
@@ -233,7 +246,7 @@ class _MapPageState extends State<MapPage> {
     _setMarker(point: LatLng(destinationLat, destinationLng), markerId: MarkerId(_destinationController.text));
   }
 
-  Future<void> _goToPlace(Map<String, dynamic> place) async {
+  Future<void> _goToPlace({required Map<String, dynamic> place, String? markerId}) async {
     final double lat = place['geometry']['location']['lat'];
     final double lng = place['geometry']['location']['lng'];
 
@@ -242,6 +255,17 @@ class _MapPageState extends State<MapPage> {
       CameraPosition(target: LatLng(lat, lng), zoom: 16, tilt: cameraTilt, bearing: cameraBearing)
     ));
 
-    _setMarker(point: LatLng(lat, lng), markerId: MarkerId(shelter.title));
+    _setMarker(point: LatLng(lat, lng), markerId: markerId != null ? MarkerId(markerId) : MarkerId(shelter.title));
+  }
+
+  Future<void> _setShelters() async {
+    var streamShelters = _sheltersService.allShelters();
+    streamShelters.forEach((shelters) {
+      // ignore: avoid_function_literals_in_foreach_calls
+      shelters.forEach((shelter) async {
+        var place = await LocationService().getPlace(shelter.address);
+        _goToPlace(place: place, markerId: shelter.title);
+      });
+    });
   }
 }
