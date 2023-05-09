@@ -15,7 +15,7 @@ class LocationService {
     var json = convert.jsonDecode(response.body);
     var placeId = json['candidates'][0]['place_id'];
 
-    print(placeId);
+    // print(placeId);
     return placeId;
   }
 
@@ -27,7 +27,7 @@ class LocationService {
     var json = convert.jsonDecode(response.body);
     var results = json['result'] as Map<String, dynamic>;
 
-    print(results);
+    // print(results);
     return results;
   }
 
@@ -44,7 +44,7 @@ class LocationService {
       'polyline': PolylinePoints().decodePolyline(json['routes'][0]['overview_polyline']['points']),
     };
 
-    print(results);
+    // print(results);
     return results;
   }
 
