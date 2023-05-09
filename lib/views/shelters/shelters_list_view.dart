@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:myproject/styles/styles.dart';
 import 'package:myproject/utilities/utils.dart';
 import 'package:myproject/constants/routes.dart';
 import 'package:myproject/styles/glass_box.dart';
 import 'package:myproject/views/pages/custom.dart';
-import 'package:myproject/widgets/text_input.dart';
 import 'package:myproject/services/auth/auth_service.dart';
 import 'package:myproject/views/shelters/shelter_view.dart';
 import 'package:myproject/utilities/dialogs/delete_dialog.dart';
@@ -21,7 +21,6 @@ class SheltersListView extends StatefulWidget {
   final ShelterCallback onDeleteShelter;
   final ShelterCallback onTap;
 
-
   const SheltersListView({
     Key? key,
     required this.shelters,
@@ -34,8 +33,35 @@ class SheltersListView extends StatefulWidget {
 }
 
 class _SheltersListViewState extends State<SheltersListView> {
+
+  late Iterable<CloudShelterInfo> shelters = widget.shelters;
+
+  @override
+  void initState() {
+    super.initState();
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
+  }
+
   Future<void> _handleRefresh() async {
     return await Future.delayed(const Duration(seconds: 1));
+  }
+
+  void _runFilter(String enteredKeyword) {
+
+    Iterable<CloudShelterInfo> results = [];
+    if (enteredKeyword.isEmpty) {
+      results = widget.shelters;
+    } else {
+      results = widget.shelters
+          .where((shelter) =>
+              (shelter.title.toLowerCase().contains(enteredKeyword.toLowerCase())) || shelter.address.toLowerCase().contains(enteredKeyword.toLowerCase()))
+          .toList();
+    }
+
+    // Refresh the UI
+    setState(() {
+      shelters = results;
+    });
   }
 
   @override
@@ -49,12 +75,26 @@ class _SheltersListViewState extends State<SheltersListView> {
         showChildOpacityTransition: false,
         child: Column(
           children: [
-            const TextInput(
-              icon: Icons.search,
-              hint: "Search",
-              inputAction: TextInputAction.search,
-              width: 330,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[600]?.withOpacity(0.4),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: TextField(
+                  style: subheader,
+                  onChanged: (value) => _runFilter(value),
+                  decoration: InputDecoration(
+                      hintText: 'Search',
+                      hintStyle: subheader,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      suffixIcon: const Icon(Icons.search, color: Colors.white,),
+                    ),
+                ),
+              ),
             ),
+
             const SizedBox(height: 10),
             TextButton(
               onPressed: () {
@@ -71,9 +111,9 @@ class _SheltersListViewState extends State<SheltersListView> {
                 physics: const AlwaysScrollableScrollPhysics(),
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
-                itemCount: widget.shelters.length,
+                itemCount: shelters.length,
                 itemBuilder: (context, index) {
-                  final shelter = widget.shelters.elementAt(index);
+                  final shelter = shelters.elementAt(index);
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     child: Card(
@@ -143,26 +183,6 @@ class _SheltersListViewState extends State<SheltersListView> {
                                   const SizedBox(),
                               ],
                             ),
-                            // ClipRRect(
-                            //   borderRadius: const BorderRadius.only(
-                            //     bottomLeft: Radius.circular(20.0),
-                            //     bottomRight: Radius.circular(20.0)),
-                            //   child: shelter.photoURL == null || shelter.photoURL == '' ? Image.asset(backupPhotoURL, fit: BoxFit.cover) : Image.network(shelter.photoURL!,)
-                            // ),
-                            // Container(
-                            //   height: 100.0,
-                            //   width: 70.0,
-                            //   decoration: BoxDecoration(
-                            //     borderRadius: BorderRadius.only(
-                            //       bottomLeft: Radius.circular(5),
-                            //       topLeft: Radius.circular(5)
-                            //     ),
-                            //     image: DecorationImage(
-                            //       fit: BoxFit.cover,
-                            //       image: NetworkImage("https://is2-ssl.mzstatic.com/image/thumb/Video2/v4/e1/69/8b/e1698bc0-c23d-2424-40b7-527864c94a8e/pr_source.lsr/268x0w.png")
-                            //     )
-                            //   ),
-                            // ),
                           ],
                         ),
                       ),
