@@ -16,9 +16,11 @@ const double cameraBearing = 0;
 class MapPage extends StatefulWidget {
 
   final CloudShelterInfo shelter;
+  final int shelterNumber;
   const MapPage({
     super.key,
-    required this.shelter
+    required this.shelter,
+    required this.shelterNumber,
   });
 
   @override
@@ -28,7 +30,7 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> with
 AutomaticKeepAliveClientMixin<MapPage> {
 
-  late CloudShelterInfo _shelter = widget.shelter;
+  late final CloudShelterInfo _shelter = widget.shelter;
   late final FirebaseShelterStorage _sheltersService;
 
   Completer<GoogleMapController> _controller = Completer();
@@ -50,7 +52,6 @@ AutomaticKeepAliveClientMixin<MapPage> {
     super.initState();
     _sheltersService = FirebaseShelterStorage();
     _setShelters();
-    _setCurrentShelter();
   }
 
   @override
@@ -105,13 +106,7 @@ AutomaticKeepAliveClientMixin<MapPage> {
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return StreamBuilder<Object>(
-      stream: _sheltersService.allShelters(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          // var shelters = snapshot.data!;
-          // _setShelters();
-          return Scaffold(
+    return Scaffold(
             backgroundColor: Colors.greenAccent,
             appBar: AppBar(
               title: const Text('Google Maps'),
@@ -216,11 +211,6 @@ AutomaticKeepAliveClientMixin<MapPage> {
               ],
             ),
           );
-        } else {
-          return const Center(child: CircularProgressIndicator());
-        }
-      }
-    );
   }
 
   void _refreshState() {
@@ -256,10 +246,10 @@ AutomaticKeepAliveClientMixin<MapPage> {
     ));
 
     // _setMarker(point: LatLng(sourceLat, sourceLng), markerId: MarkerId(_originController.text));
-    _setMarker(point: LatLng(destinationLat, destinationLng), markerId: MarkerId(_destinationController.text));
+    // _setMarker(point: LatLng(destinationLat, destinationLng), markerId: MarkerId(_destinationController.text));
   }
 
-  Future<void> _goToPlace({required Map<String, dynamic> place, String? markerId}) async {
+  Future<void> _goToPlace({required Map<String, dynamic> place}) async {
     final double lat = place['geometry']['location']['lat'];
     final double lng = place['geometry']['location']['lng'];
 
@@ -267,25 +257,26 @@ AutomaticKeepAliveClientMixin<MapPage> {
     controller.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(target: LatLng(lat, lng), zoom: 16, tilt: cameraTilt, bearing: cameraBearing)
     ));
+  }
+
+  Future<void> _setShelterMarker({required Map<String, dynamic> place, String? markerId}) async {
+    final double lat = place['geometry']['location']['lat'];
+    final double lng = place['geometry']['location']['lng'];
 
     _setMarker(point: LatLng(lat, lng), markerId: markerId != null ? MarkerId(markerId) : MarkerId(_shelter.title));
   }
 
   Future<void> _setShelters() async {
-    var streamShelters = _sheltersService.allShelters();
-
-    streamShelters.forEach((shelters) {
-      // ignore: avoid_function_literals_in_foreach_calls
-      shelters.forEach((shelter) async {
+    var shelters = await _sheltersService.getShelters();
+    // ignore: avoid_function_literals_in_foreach_calls
+    shelters.forEach((shelter) async {
+      if (shelter.address != '') {
         var place = await LocationService().getPlace(shelter.address);
-        _goToPlace(place: place, markerId: shelter.title);
-      });
+        _setShelterMarker(place: place, markerId: shelter.title);
+      }
     });
-  }
-
-  Future<void> _setCurrentShelter() async {
     var place = await LocationService().getPlace(_shelter.address);
-    _goToPlace(place: place, markerId: _shelter.title);
+    _goToPlace(place: place);
   }
 
   @override

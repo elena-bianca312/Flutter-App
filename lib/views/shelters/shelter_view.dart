@@ -38,6 +38,7 @@ class _ShelterViewState extends State<ShelterView> {
 
   late CloudShelterInfo _shelter = widget.shelter;
   late final FirebaseShelterStorage _sheltersService;
+  late var shelters;
 
   @override
   void initState() {
@@ -52,6 +53,7 @@ class _ShelterViewState extends State<ShelterView> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           _shelter = snapshot.data!.firstWhere((element) => element.documentId == _shelter.documentId);
+          shelters = snapshot.data;
           return Scaffold(
             backgroundColor: Colors.black.withOpacity(0.9),
             body:
@@ -166,7 +168,7 @@ class _ShelterViewState extends State<ShelterView> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                builder: (context) => MapPage(shelter: _shelter,)
+                                builder: (context) => MapPage(shelter: _shelter, shelterNumber: shelters.length)
                               ));
 
                             },
@@ -252,12 +254,6 @@ class _ShelterViewState extends State<ShelterView> {
                     const SizedBox(
                       height: 10,
                     ),
-                    // ListView.builder(
-                    //   physics: const NeverScrollableScrollPhysics(),
-                    //   shrinkWrap: true,
-                    //   itemCount: 3,
-                    //   itemBuilder: (context, index) => ingredients(context),
-                    // ),
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: 15),
                       child: Divider(

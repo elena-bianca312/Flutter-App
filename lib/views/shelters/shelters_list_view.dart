@@ -7,7 +7,6 @@ import 'package:myproject/views/pages/custom.dart';
 import 'package:myproject/widgets/text_input.dart';
 import 'package:myproject/services/auth/auth_service.dart';
 import 'package:myproject/views/shelters/shelter_view.dart';
-import 'package:myproject/views/shelters/shelter_tile.dart';
 import 'package:myproject/utilities/dialogs/delete_dialog.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
@@ -15,12 +14,13 @@ import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
 typedef ShelterCallback = void Function(CloudShelterInfo shelter);
 typedef ViewShelterCallback = ShelterView Function(CloudShelterInfo shelter);
 
-class SheltersListView extends StatelessWidget {
+class SheltersListView extends StatefulWidget {
 
   final Iterable<CloudShelterInfo> shelters;
   // I can only delete it if it was posted by the current user
   final ShelterCallback onDeleteShelter;
   final ShelterCallback onTap;
+
 
   const SheltersListView({
     Key? key,
@@ -29,6 +29,11 @@ class SheltersListView extends StatelessWidget {
     required this.onTap,
   }) : super(key: key);
 
+  @override
+  State<SheltersListView> createState() => _SheltersListViewState();
+}
+
+class _SheltersListViewState extends State<SheltersListView> {
   Future<void> _handleRefresh() async {
     return await Future.delayed(const Duration(seconds: 1));
   }
@@ -66,9 +71,9 @@ class SheltersListView extends StatelessWidget {
                 physics: const AlwaysScrollableScrollPhysics(),
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
-                itemCount: shelters.length,
+                itemCount: widget.shelters.length,
                 itemBuilder: (context, index) {
-                  final shelter = shelters.elementAt(index);
+                  final shelter = widget.shelters.elementAt(index);
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     child: Card(
@@ -106,18 +111,6 @@ class SheltersListView extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            // shelter.text == null || shelter.text == "" ?
-                            //   const SizedBox() :
-                            //   Padding(
-                            //     padding: const EdgeInsets.all(16.0),
-                            //     child: Align(
-                            //       alignment: Alignment.centerLeft,
-                            //       child: Text(
-                            //         shelter.text!,
-                            //         style: p,
-                            //       ),
-                            //     ),
-                            //   ),
                             const SizedBox(height: 160),
                             ButtonBar(
                               alignment: MainAxisAlignment.start,
@@ -129,7 +122,7 @@ class SheltersListView extends StatelessWidget {
                                   child: TextButton(
                                     child: Text('View', style: labelPrimary,),
                                     onPressed: () {
-                                      onTap(shelter);
+                                      widget.onTap(shelter);
                                     },
                                   ),
                                 ),
@@ -142,7 +135,7 @@ class SheltersListView extends StatelessWidget {
                                       onPressed: () async {
                                         final shouldDelete = await showDeleteDialog(context);
                                         if (shouldDelete) {
-                                          onDeleteShelter(shelter);
+                                          widget.onDeleteShelter(shelter);
                                         }
                                       },
                                     ),
@@ -156,7 +149,6 @@ class SheltersListView extends StatelessWidget {
                             //     bottomRight: Radius.circular(20.0)),
                             //   child: shelter.photoURL == null || shelter.photoURL == '' ? Image.asset(backupPhotoURL, fit: BoxFit.cover) : Image.network(shelter.photoURL!,)
                             // ),
-                      
                             // Container(
                             //   height: 100.0,
                             //   width: 70.0,
@@ -171,7 +163,6 @@ class SheltersListView extends StatelessWidget {
                             //     )
                             //   ),
                             // ),
-                      
                           ],
                         ),
                       ),
