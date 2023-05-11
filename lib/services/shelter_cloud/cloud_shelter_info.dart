@@ -1,6 +1,15 @@
-import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_constants.dart';
+
+class Review {
+  int numberOfStars;
+  String review;
+
+  Review({
+    required this.numberOfStars,
+    required this.review
+  });
+}
 
 class CloudShelterInfo {
   final String documentId;
@@ -12,6 +21,8 @@ class CloudShelterInfo {
   final String? text;
   List<String>? userLikes;
   List<String>? userDislikes;
+  List<Map<String, Review>>? reviews;
+  int? freeBeds;
 
   CloudShelterInfo({
     required this.documentId,
@@ -23,6 +34,8 @@ class CloudShelterInfo {
     this.text,
     this.userLikes,
     this.userDislikes,
+    this.reviews,
+    this.freeBeds,
   });
 
   CloudShelterInfo.fromSnapshot(QueryDocumentSnapshot<Map<String, dynamic>> snapshot) :
@@ -34,6 +47,7 @@ class CloudShelterInfo {
     photoURL = snapshot.data()[photoURLFieldName],
     text = snapshot.data()[textFieldName],
     userLikes = snapshot.data()[userLikesFieldName].cast<String>(),
-    userDislikes = snapshot.data()[userDislikesFieldName].cast<String>();
-
+    userDislikes = snapshot.data()[userDislikesFieldName].cast<String>(),
+    reviews = snapshot.data()[reviewsFieldName],
+    freeBeds = snapshot.data()[freeBedsFieldName];
 }

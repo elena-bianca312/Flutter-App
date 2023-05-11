@@ -6,3 +6,5 @@ const photoURLFieldName = 'photo_url';
 const textFieldName = 'text';
 const userLikesFieldName = 'user_likes';
 const userDislikesFieldName = 'user_dislikes';
+const reviewsFieldName = "reviews";
+const freeBedsFieldName = "free_beds";

@@ -26,6 +26,8 @@ class FirebaseShelterStorage {
       photoURLFieldName: '',
       userLikesFieldName: [],
       userDislikesFieldName: [],
+      reviewsFieldName: [],
+      freeBedsFieldName: 0,
     });
     final fetchedShelter = await document.get();
     return CloudShelterInfo(
@@ -38,6 +40,8 @@ class FirebaseShelterStorage {
       photoURL: '',
       userLikes: const [],
       userDislikes: const [],
+      reviews: const [],
+      freeBeds: 0,
     );
   }
 
@@ -181,6 +185,18 @@ class FirebaseShelterStorage {
       return await shelters.doc(documentId).get().then((value) => value.get(userDislikesFieldName));
     } catch (e) {
       throw CouldNotGetShelterLikesException();
+    }
+  }
+
+  Future<void> addReview({required String documentId, required String userId, required String review}) async {
+    try {
+      var map = <String, dynamic>{};
+      map[userId] = review;
+      await shelters.doc(documentId).update({
+        reviewsFieldName: FieldValue.arrayUnion([map]),
+      });
+    } catch (e) {
+      throw CouldNotAddReviewException();
     }
   }
 }

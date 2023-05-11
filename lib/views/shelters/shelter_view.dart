@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:myproject/styles/styles.dart';
 import 'package:myproject/utilities/utils.dart';
 import 'package:myproject/constants/routes.dart';
+import 'package:myproject/animation/reviews.dart';
 import 'package:myproject/views/pages/custom.dart';
 import 'package:myproject/google_maps/google_maps.dart';
 import 'package:myproject/services/auth/auth_service.dart';
@@ -109,162 +110,187 @@ class _ShelterViewState extends State<ShelterView> {
   }
 
   scroll() {
-    return DraggableScrollableSheet(
-        initialChildSize: 0.6,
-        maxChildSize: 1.0,
-        minChildSize: 0.2,
-        builder: (context, scrollController) {
-          return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              clipBehavior: Clip.hardEdge,
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.95),
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20)),
-              ),
-              child: SingleChildScrollView(
-                controller: scrollController,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20, bottom: 25),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            height: 5,
-                            width: 35,
-                            color: Colors.white,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          _shelter.title,
-                          style: superheader,
-                        ),
-                        if (AuthService.firebase().currentUser!.id == _shelter.ownerUserId)
-                          IconButton(
-                            onPressed: () async {
-                              setState(() {_sheltersService.getShelters();});
-                              Navigator.of(context).pushNamed(addShelterRoute, arguments: _shelter);
-                            },
-                            icon: const Icon(Icons.edit, color: Colors.white24,),
-                          )
-                      ],
-                    ),
-                    const SizedBox(height: 10,),
-                    Row(
-                        children: [
-                          Text("Address:\n${_shelter.address}", style: subheader,),
-                          const SizedBox(width: 100,),
-                          InkWell(
-                            onTap: () {
-
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                builder: (context) => MapPage(shelter: _shelter, shelterNumber: shelters.length)
-                              ));
-
-                            },
-                            child: Lottie.asset("assets/lottie/google-icons-maps.json", width: 100, height: 100)
-                          ),
-                        ],
-                      ),
-                    const SizedBox(height: 15,),
-                    Text(AuthService.firebase().currentUser!.id == _shelter.ownerUserId ?
-                      "Posted by you" : "Posted by ${_shelter.userName}",
-                      style: small,
-                    ),
-                    // Display like and dislike
-                    FutureBuilder(
-                      future: Future.wait([
-                        _sheltersService.checkIfLiked(documentId: _shelter.documentId, userId: AuthService.firebase().currentUser!.id),
-                        _sheltersService.checkIfDisliked(documentId: _shelter.documentId, userId: AuthService.firebase().currentUser!.id),
-                        _sheltersService.getShelterLikes(documentId: _shelter.documentId),
-                        _sheltersService.getShelterDislikes(documentId: _shelter.documentId)
-                      ]),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
-                          return const SizedBox();
-                        } else {
-                          int noLikes = (snapshot.data![2] as List).length;
-                          int noDislikes = (snapshot.data![3] as List).length;
-                          return Column(
-                            children: [
-                              LikeDislikeAnimation(
-                                onLike: widget.onLike,
-                                onDislike: widget.onDislike,
-                                onRemoveLike: widget.onRemoveLike,
-                                onRemoveDislike: widget.onRemoveDislike,
-                                checkIfLiked: snapshot.data![0] as bool,
-                                checkIfDisliked: snapshot.data![1] as bool,
-                              ),
-                              Row(
-                                children: [
-                                  (noLikes == 1) ?
-                                    Text("1 Like", style: p,) :
-                                    Text("${noLikes.toString()} Likes", style: p),
-                                  const SizedBox(width: 25,),
-                                  (noDislikes == 1) ?
-                                    Text("1 Dislike", style: p,) :
-                                    Text("${noDislikes.toString()} Dislikes", style: p),
-                                ],
-                              ),
-                            ],
-                          );
-                        }
-                      }
-                    ),
-
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 15),
-                      child: Divider(
-                        color: Colors.white24,
-                        height: 4,
-                      ),
-                    ),
-                    Text(
-                      "Description",
-                      style: superheader,
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    if (_shelter.text != null && _shelter.text != '') Text(_shelter.text!, style: p,),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 15),
-                      child: Divider(
-                        color: Colors.white24,
-                        height: 4,
-                      ),
-                    ),
-                    Text(
-                      "Available Items",
-                      style: superheader,
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 15),
-                      child: Divider(
-                        color: Colors.white24,
-                        height: 4,
-                      ),
-                    ),
-                  ],
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: DraggableScrollableSheet(
+          initialChildSize: 0.6,
+          maxChildSize: 1.0,
+          minChildSize: 0.2,
+          builder: (context, scrollController) {
+            return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                clipBehavior: Clip.hardEdge,
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.95),
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20)),
                 ),
-              ),
-            );
-        });
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20, bottom: 25),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              height: 5,
+                              width: 35,
+                              color: Colors.white,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            _shelter.title,
+                            style: superheader,
+                          ),
+                          if (AuthService.firebase().currentUser!.id == _shelter.ownerUserId)
+                            IconButton(
+                              onPressed: () async {
+                                setState(() {_sheltersService.getShelters();});
+                                Navigator.of(context).pushNamed(addShelterRoute, arguments: _shelter);
+                              },
+                              icon: const Icon(Icons.edit, color: Colors.white24,),
+                            )
+                        ],
+                      ),
+                      const SizedBox(height: 10,),
+                      Row(
+                          children: [
+                            Text("Address:\n${_shelter.address}", style: subheader,),
+                            const SizedBox(width: 100,),
+                            InkWell(
+                              onTap: () {
+    
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                  builder: (context) => MapPage(shelter: _shelter, shelterNumber: shelters.length)
+                                ));
+    
+                              },
+                              child: Lottie.asset("assets/lottie/google-icons-maps.json", width: 100, height: 100)
+                            ),
+                          ],
+                        ),
+                      const SizedBox(height: 15,),
+                      Text(AuthService.firebase().currentUser!.id == _shelter.ownerUserId ?
+                        "Posted by you" : "Posted by ${_shelter.userName}",
+                        style: small,
+                      ),
+                      // Display like and dislike
+                      FutureBuilder(
+                        future: Future.wait([
+                          _sheltersService.checkIfLiked(documentId: _shelter.documentId, userId: AuthService.firebase().currentUser!.id),
+                          _sheltersService.checkIfDisliked(documentId: _shelter.documentId, userId: AuthService.firebase().currentUser!.id),
+                          _sheltersService.getShelterLikes(documentId: _shelter.documentId),
+                          _sheltersService.getShelterDislikes(documentId: _shelter.documentId)
+                        ]),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return const SizedBox();
+                          } else {
+                            int noLikes = (snapshot.data![2] as List).length;
+                            int noDislikes = (snapshot.data![3] as List).length;
+                            return Column(
+                              children: [
+                                LikeDislikeAnimation(
+                                  onLike: widget.onLike,
+                                  onDislike: widget.onDislike,
+                                  onRemoveLike: widget.onRemoveLike,
+                                  onRemoveDislike: widget.onRemoveDislike,
+                                  checkIfLiked: snapshot.data![0] as bool,
+                                  checkIfDisliked: snapshot.data![1] as bool,
+                                ),
+                                Row(
+                                  children: [
+                                    (noLikes == 1) ?
+                                      Text("1 Like", style: p,) :
+                                      Text("${noLikes.toString()} Likes", style: p),
+                                    const SizedBox(width: 25,),
+                                    (noDislikes == 1) ?
+                                      Text("1 Dislike", style: p,) :
+                                      Text("${noDislikes.toString()} Dislikes", style: p),
+                                  ],
+                                ),
+                              ],
+                            );
+                          }
+                        }
+                      ),
+    
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 15),
+                        child: Divider(
+                          color: Colors.white24,
+                          height: 4,
+                        ),
+                      ),
+                      Text(
+                        "Description",
+                        style: superheader,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      if (_shelter.text != null && _shelter.text != '') Text(_shelter.text!, style: p,),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 15),
+                        child: Divider(
+                          color: Colors.white24,
+                          height: 4,
+                        ),
+                      ),
+                      Text(
+                        "Available Items",
+                        style: superheader,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 15),
+                        child: Divider(
+                          color: Colors.white24,
+                          height: 4,
+                        ),
+                      ),
+                      Text(
+                        "Reviews",
+                        style: superheader,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        "Add a review",
+                        style: p,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      ReviewStars(),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 15),
+                        child: Divider(
+                          color: Colors.white24,
+                          height: 4,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+          }),
+    );
       }
 }
