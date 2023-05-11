@@ -86,6 +86,7 @@ class _SheltersListViewState extends State<SheltersListView> {
                   style: subheader,
                   onChanged: (value) => _runFilter(value),
                   decoration: InputDecoration(
+                      border: InputBorder.none,
                       hintText: 'Search',
                       hintStyle: subheader,
                       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),

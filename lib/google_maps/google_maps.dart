@@ -27,8 +27,7 @@ class MapPage extends StatefulWidget {
   State<MapPage> createState() => _MapPageState();
 }
 
-class _MapPageState extends State<MapPage> with
-AutomaticKeepAliveClientMixin<MapPage> {
+class _MapPageState extends State<MapPage> {
 
   late final CloudShelterInfo _shelter = widget.shelter;
   late final FirebaseShelterStorage _sheltersService;
@@ -36,6 +35,8 @@ AutomaticKeepAliveClientMixin<MapPage> {
   Completer<GoogleMapController> _controller = Completer();
   final TextEditingController _originController = TextEditingController();
   late final TextEditingController _destinationController = TextEditingController(text: _shelter.address);
+  late String dropDownValue =  _shelter.address;
+  late Set<String> _sheltersAddresses = {};
 
   CustomInfoWindowController _customInfoWindowController = CustomInfoWindowController();
 
@@ -51,7 +52,11 @@ AutomaticKeepAliveClientMixin<MapPage> {
   void initState() {
     super.initState();
     _sheltersService = FirebaseShelterStorage();
-    _setShelters();
+    // _setShelters();
+
+    // Future.delayed(Duration.zero,() async {
+    //   _setShelters();
+    // });
   }
 
   @override
@@ -105,7 +110,8 @@ AutomaticKeepAliveClientMixin<MapPage> {
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
+    print("Addresses:\n");
+    print(_sheltersAddresses);
     return Scaffold(
             backgroundColor: Colors.greenAccent,
             appBar: AppBar(
@@ -202,6 +208,35 @@ AutomaticKeepAliveClientMixin<MapPage> {
                                 onChanged: (value) {},
                               ),
                             ),
+                            const SizedBox(height: 10),
+                            // TODO
+                            // doesnt work on reloading probably because it doesnt wait for
+                            // _setShelters() to finish so _sheltersAddresses is not complete
+                            // Container(
+                            //   decoration: BoxDecoration(
+                            //     color: Colors.grey[600]?.withOpacity(0.6),
+                            //     borderRadius: BorderRadius.circular(16),
+                            //   ),
+                            //   child: DropdownButton(
+                            //     value: dropDownValue,
+                            //     // items: <String>['Dog', 'Cat', 'Tiger', 'Lion']
+                            //     items: _sheltersAddresses
+                            //         .map<DropdownMenuItem<String>>((String value) {
+                            //       return DropdownMenuItem<String>(
+                            //         value: value,
+                            //         child: Text(
+                            //           value,
+                            //           style: const TextStyle(fontSize: 30),
+                            //         ),
+                            //       );
+                            //     }).toList(),
+                            //     onChanged: (String? newValue) {
+                            //       setState(() {
+                            //         dropDownValue = newValue!;
+                            //       });
+                            //     },
+                            //   )
+                            // ),
                           ],
                         ),
                       ),
@@ -246,7 +281,7 @@ AutomaticKeepAliveClientMixin<MapPage> {
     ));
 
     // _setMarker(point: LatLng(sourceLat, sourceLng), markerId: MarkerId(_originController.text));
-    // _setMarker(point: LatLng(destinationLat, destinationLng), markerId: MarkerId(_destinationController.text));
+    _setMarker(point: LatLng(destinationLat, destinationLng), markerId: MarkerId(_destinationController.text));
   }
 
   Future<void> _goToPlace({required Map<String, dynamic> place}) async {
@@ -273,10 +308,13 @@ AutomaticKeepAliveClientMixin<MapPage> {
       if (shelter.address != '') {
         var place = await LocationService().getPlace(shelter.address);
         _setShelterMarker(place: place, markerId: shelter.title);
+        _sheltersAddresses.add(shelter.address);
       }
     });
     var place = await LocationService().getPlace(_shelter.address);
     _goToPlace(place: place);
+    print('shelters ADDRESS');
+    print(_sheltersAddresses);
   }
 
   @override
