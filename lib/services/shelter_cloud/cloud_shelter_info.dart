@@ -2,11 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_constants.dart';
 
 class Review {
-  int numberOfStars;
+  String userId;
+  int rating;
   String review;
 
   Review({
-    required this.numberOfStars,
+    required this.userId,
+    required this.rating,
     required this.review
   });
 }
@@ -21,7 +23,7 @@ class CloudShelterInfo {
   final String? text;
   List<String>? userLikes;
   List<String>? userDislikes;
-  List<Map<String, Review>>? reviews;
+  List<Review>? reviews;
   int? freeBeds;
 
   CloudShelterInfo({

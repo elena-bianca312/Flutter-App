@@ -4,6 +4,7 @@ import 'package:myproject/styles/styles.dart';
 import 'package:myproject/views/pages/custom.dart';
 
 String backupPhotoURL = 'assets/images/ui/bloc1.jpg';
+String googleMapsPhoto = 'assets/images/ui/maps.jpg';
 
 Future<String?> loadAsset(String? assetPath) async {
   try {

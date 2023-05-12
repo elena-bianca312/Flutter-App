@@ -1,8 +1,5 @@
 import 'dart:ui';
-import 'dart:ffi';
-import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
-import 'package:myproject/styles/styles.dart';
 import 'package:myproject/utilities/utils.dart';
 import 'package:myproject/constants/routes.dart';
 import 'package:myproject/animation/reviews.dart';
@@ -160,30 +157,12 @@ class _ShelterViewState extends State<ShelterView> {
                             )
                         ],
                       ),
-                      const SizedBox(height: 10,),
-                      Row(
-                          children: [
-                            Text("Address:\n${_shelter.address}", style: subheader,),
-                            const SizedBox(width: 100,),
-                            InkWell(
-                              onTap: () {
-    
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                  builder: (context) => MapPage(shelter: _shelter, shelterNumber: shelters.length)
-                                ));
-    
-                              },
-                              child: Lottie.asset("assets/lottie/google-icons-maps.json", width: 100, height: 100)
-                            ),
-                          ],
-                        ),
                       const SizedBox(height: 15,),
                       Text(AuthService.firebase().currentUser!.id == _shelter.ownerUserId ?
                         "Posted by you" : "Posted by ${_shelter.userName}",
                         style: small,
                       ),
+                      const SizedBox(height: 15,),
                       // Display like and dislike
                       FutureBuilder(
                         future: Future.wait([
@@ -224,7 +203,6 @@ class _ShelterViewState extends State<ShelterView> {
                           }
                         }
                       ),
-    
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 15),
                         child: Divider(
@@ -242,6 +220,34 @@ class _ShelterViewState extends State<ShelterView> {
                       if (_shelter.text != null && _shelter.text != '') Text(_shelter.text!, style: p,),
                       const SizedBox(
                         height: 10,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 15),
+                        child: Divider(
+                          color: Colors.white24,
+                          height: 4,
+                        ),
+                      ),
+                      Text(
+                        "Google Maps",
+                        style: superheader,
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      Text("Address: ${_shelter.address}", style: p,),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                            builder: (context) => MapPage(shelter: _shelter, shelterNumber: shelters.length)
+                          ));
+                        },
+                        child: Image.asset(googleMapsPhoto)
                       ),
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 15),
@@ -278,7 +284,7 @@ class _ShelterViewState extends State<ShelterView> {
                       const SizedBox(
                         height: 10,
                       ),
-                      ReviewStars(),
+                      ReviewStars(shelter: _shelter,),
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 15),
                         child: Divider(

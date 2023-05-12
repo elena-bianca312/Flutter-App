@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:myproject/styles/styles.dart';
 import 'package:myproject/animation/write_review_page.dart';
+import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
+
+typedef Callback = void Function();
 
 class ReviewStars extends StatefulWidget {
-  const ReviewStars({super.key});
+
+  final CloudShelterInfo shelter;
+  const ReviewStars({
+    super.key, required this.shelter,
+  });
 
   @override
   State<ReviewStars> createState() => _ReviewStarsState();
@@ -10,6 +18,7 @@ class ReviewStars extends StatefulWidget {
 
 class _ReviewStarsState extends State<ReviewStars> {
   int _rating = 0;
+  late CloudShelterInfo _shelter = widget.shelter;
 
   @override
   Widget build(BuildContext context) {
@@ -25,13 +34,13 @@ class _ReviewStarsState extends State<ReviewStars> {
               });
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => WriteReviewPage(rating: _rating),
+                  builder: (context) => WriteReviewPage(rating: _rating, shelter: widget.shelter,),
                 ),
               );
             },
             icon: Icon(
               index < _rating ? Icons.star : Icons.star_border,
-              color: Colors.yellow,
+              color: kCustomBlue
             ),
           );
         },

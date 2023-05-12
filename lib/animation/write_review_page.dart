@@ -1,19 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:myproject/styles/styles.dart';
 import 'package:myproject/styles/glass_box.dart';
 import 'package:myproject/views/pages/custom.dart';
 import 'package:myproject/widgets/background_image.dart';
+import 'package:myproject/services/auth/auth_service.dart';
+import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
+import 'package:myproject/services/shelter_cloud/firebase_shelter_storage.dart';
 
 class WriteReviewPage extends StatefulWidget {
-  final int rating;
 
-  const WriteReviewPage({super.key, required this.rating});
+  final CloudShelterInfo shelter;
+  final int rating;
+  const WriteReviewPage({
+    super.key,
+    required this.rating,
+    required this.shelter
+  });
 
   @override
   State<WriteReviewPage> createState() => _WriteReviewPageState();
 }
 
 class _WriteReviewPageState extends State<WriteReviewPage> {
-  TextEditingController _reviewController = TextEditingController();
+
+  late final CloudShelterInfo _shelter = widget.shelter;
+  late final FirebaseShelterStorage _sheltersService;
+  final TextEditingController _reviewController = TextEditingController();
+
+  @override
+  void initState() {
+    _sheltersService = FirebaseShelterStorage();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,12 +63,12 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
                     for (int i = 0; i < widget.rating; i++)
                       const Icon(
                         Icons.star,
-                        color: Colors.yellow,
+                        color: kCustomBlue,
                       ),
                     for (int i = widget.rating; i < 5; i++)
                       const Icon(
                         Icons.star_border,
-                        color: Colors.yellow,
+                        color: kCustomBlue,
                       ),
                   ],
                 ),
@@ -82,8 +100,19 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
                   height: 40,
                   width: 80,
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       // Save review to database
+                      Review review = Review(
+                        userId: AuthService.firebase().currentUser!.id,
+                        review: _reviewController.text,
+                        rating: widget.rating,
+                      );
+                      // TODO
+                      // Eroare: momentan nu functioneaza adaugarea de review-uri
+                      await _sheltersService.addReview(documentId: _shelter.documentId, review: review);
+
+                      // Return to previous page
+                      // ignore: use_build_context_synchronously
                       Navigator.of(context).pop();
                     },
                     style: ButtonStyle(

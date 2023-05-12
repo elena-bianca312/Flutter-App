@@ -188,12 +188,10 @@ class FirebaseShelterStorage {
     }
   }
 
-  Future<void> addReview({required String documentId, required String userId, required String review}) async {
+  Future<void> addReview({required String documentId, required Review review}) async {
     try {
-      var map = <String, dynamic>{};
-      map[userId] = review;
       await shelters.doc(documentId).update({
-        reviewsFieldName: FieldValue.arrayUnion([map]),
+        reviewsFieldName: FieldValue.arrayUnion([review]),
       });
     } catch (e) {
       throw CouldNotAddReviewException();
