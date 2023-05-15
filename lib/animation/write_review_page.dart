@@ -26,11 +26,13 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
   late final CloudShelterInfo _shelter = widget.shelter;
   late final FirebaseShelterStorage _sheltersService;
   final TextEditingController _reviewController = TextEditingController();
+  late int _rating;
 
   @override
   void initState() {
     _sheltersService = FirebaseShelterStorage();
     super.initState();
+    _rating = widget.rating;
   }
 
   @override
@@ -58,19 +60,23 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
                   height: 20.0,
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    for (int i = 0; i < widget.rating; i++)
-                      const Icon(
-                        Icons.star,
-                        color: kCustomBlue,
-                      ),
-                    for (int i = widget.rating; i < 5; i++)
-                      const Icon(
-                        Icons.star_border,
-                        color: kCustomBlue,
-                      ),
-                  ],
+                  mainAxisSize: MainAxisSize.min,
+                  children: List.generate(
+                    5,
+                    (index) {
+                      return IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _rating = index + 1;
+                          });
+                        },
+                        icon: Icon(
+                          index < _rating ? Icons.star : Icons.star_border,
+                          color: kCustomBlue
+                        ),
+                      );
+                    },
+                  ),
                 ),
                 const SizedBox(
                   height: 20.0,
@@ -106,9 +112,8 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
                         userId: AuthService.firebase().currentUser!.id,
                         review: _reviewController.text,
                         rating: widget.rating,
+                        date: DateTime.now(),
                       );
-                      // TODO
-                      // Eroare: momentan nu functioneaza adaugarea de review-uri
                       await _sheltersService.addReview(documentId: _shelter.documentId, review: review);
 
                       // Return to previous page

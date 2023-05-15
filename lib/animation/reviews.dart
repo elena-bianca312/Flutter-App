@@ -18,7 +18,6 @@ class ReviewStars extends StatefulWidget {
 
 class _ReviewStarsState extends State<ReviewStars> {
   int _rating = 0;
-  late CloudShelterInfo _shelter = widget.shelter;
 
   @override
   Widget build(BuildContext context) {

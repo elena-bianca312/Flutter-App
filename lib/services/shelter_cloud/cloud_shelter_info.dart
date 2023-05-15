@@ -5,12 +5,23 @@ class Review {
   String userId;
   int rating;
   String review;
+  DateTime date;
 
   Review({
     required this.userId,
     required this.rating,
-    required this.review
+    required this.review,
+    required this.date,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'userId': userId,
+      'rating': rating,
+      'review': review,
+      'date': date.toUtc().toIso8601String(),
+    };
+  }
 }
 
 class CloudShelterInfo {
@@ -50,6 +61,6 @@ class CloudShelterInfo {
     text = snapshot.data()[textFieldName],
     userLikes = snapshot.data()[userLikesFieldName].cast<String>(),
     userDislikes = snapshot.data()[userDislikesFieldName].cast<String>(),
-    reviews = snapshot.data()[reviewsFieldName],
+    reviews = snapshot.data()[reviewsFieldName].cast<Review>(),
     freeBeds = snapshot.data()[freeBedsFieldName];
 }
