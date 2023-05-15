@@ -37,7 +37,7 @@ class _ShelterViewState extends State<ShelterView> {
 
   late CloudShelterInfo _shelter = widget.shelter;
   late final FirebaseShelterStorage _sheltersService;
-  late var shelters;
+  late dynamic shelters;
 
   @override
   void initState() {
@@ -282,14 +282,44 @@ class _ShelterViewState extends State<ShelterView> {
                       const SizedBox(
                         height: 10,
                       ),
-                      Text(
-                        "Add a review",
-                        style: p,
+                      FutureBuilder(
+                        future: Future.wait([
+                          _sheltersService.didUserSubmitReview(documentId: _shelter.documentId, userId: AuthService.firebase().currentUser!.id),
+                          _sheltersService.getUserReview(documentId: _shelter.documentId, userId: AuthService.firebase().currentUser!.id)
+                        ]),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData && snapshot.data![0] == true) {
+                            return Column(
+                              children: [
+                                Text(
+                                  "You have already submitted a review",
+                                  style: p,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                // TODO
+                                // Add initial rating and make stars uneditable
+                                ReviewStars(shelter: _shelter, oldReview: snapshot.data![1] as Review,),
+                              ],
+                            );
+                          } else {
+                            return Column(
+                              children: [
+                                Text(
+                                  "Add a review",
+                                  style: p,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                ReviewStars(shelter: _shelter,),
+                              ],
+                            );
+                          }
+                        }
                       ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      ReviewStars(shelter: _shelter,),
+                      // ReviewStars(shelter: _shelter,),
                       const SizedBox(
                         height: 10,
                       ),

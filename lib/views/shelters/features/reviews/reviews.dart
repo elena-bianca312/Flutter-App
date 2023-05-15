@@ -8,8 +8,11 @@ typedef Callback = void Function();
 class ReviewStars extends StatefulWidget {
 
   final CloudShelterInfo shelter;
+  final Review? oldReview;
   const ReviewStars({
-    super.key, required this.shelter,
+    super.key,
+    required this.shelter,
+    this.oldReview,
   });
 
   @override
@@ -17,10 +20,22 @@ class ReviewStars extends StatefulWidget {
 }
 
 class _ReviewStarsState extends State<ReviewStars> {
-  int _rating = 0;
+  late int _rating;
+
+  @override
+  void initState() {
+    super.initState();
+    _rating = widget.oldReview?.rating ?? 0;
+  }
+
 
   @override
   Widget build(BuildContext context) {
+    if (widget.oldReview != null) {
+      setState(() {
+        _rating = widget.oldReview!.rating;
+      });
+    }
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: List.generate(
@@ -33,7 +48,7 @@ class _ReviewStarsState extends State<ReviewStars> {
               });
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => WriteReviewPage(rating: _rating, shelter: widget.shelter,),
+                  builder: (context) => WriteReviewPage(rating: _rating, shelter: widget.shelter, oldReview: widget.oldReview,),
                 ),
               );
             },

@@ -34,4 +34,8 @@ class CouldNotDeleteReviewException extends CloudShelterException {}
 
 class CouldNotUpdateReviewException extends CloudShelterException {}
 
+class CouldNotGetUserReviewsException extends CloudShelterException {}
+
+class CouldNotCheckIfUserSubmittedReviewException extends CloudShelterException {}
+
 class CouldNotAddFreeBedException extends CloudShelterException {}

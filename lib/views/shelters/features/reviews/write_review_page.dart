@@ -112,9 +112,10 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
                     onPressed: () async {
                       // Save review to database
                       Review review = Review(
+                        userId: AuthService.firebase().currentUser!.id,
                         email: AuthService.firebase().currentUser!.email,
                         review: _reviewController.text,
-                        rating: widget.rating,
+                        rating: _rating,
                         date: DateTime.now(),
                       );
                       if (widget.oldReview != null) {

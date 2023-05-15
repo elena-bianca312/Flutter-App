@@ -205,10 +205,10 @@ class FirebaseShelterStorage {
   }) async {
     try {
       await shelters.doc(documentId).update({
-        reviewsFieldName: FieldValue.arrayRemove([oldReview.toJson()]),
+        reviewsFieldName: FieldValue.arrayUnion([updatedReview.toJson()]),
       });
       await shelters.doc(documentId).update({
-        reviewsFieldName: FieldValue.arrayUnion([updatedReview.toJson()]),
+        reviewsFieldName: FieldValue.arrayRemove([oldReview.toJson()]),
       });
     } catch (e) {
       throw CouldNotUpdateReviewException();
@@ -234,6 +234,28 @@ class FirebaseShelterStorage {
       });
     } catch (e) {
       throw CouldNotDeleteReviewException();
+    }
+  }
+
+  Future<Review> getUserReview({required String documentId, required String userId}) async {
+    try {
+      final snapshot = await shelters.doc(documentId).get();
+      final reviewData = snapshot.get(reviewsFieldName) as List<dynamic>;
+      final reviews = reviewData.map((json) => Review.fromJson(json as Map<String, dynamic>)).toList();
+      return reviews.firstWhere((review) => review.userId == userId);
+    } catch (e) {
+      throw CouldNotGetUserReviewsException();
+    }
+  }
+
+  Future<bool> didUserSubmitReview({required String documentId, required String userId}) async {
+    try {
+      final snapshot = await shelters.doc(documentId).get();
+      final reviewData = snapshot.get(reviewsFieldName) as List<dynamic>;
+      final reviews = reviewData.map((json) => Review.fromJson(json as Map<String, dynamic>)).toList();
+      return reviews.any((review) => review.userId == userId);
+    } catch (e) {
+      throw CouldNotCheckIfUserSubmittedReviewException();
     }
   }
 

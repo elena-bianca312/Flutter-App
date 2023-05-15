@@ -2,12 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_constants.dart';
 
 class Review {
+  String userId;
   String email;
   int rating;
   String review;
   DateTime date;
 
   Review({
+    required this.userId,
     required this.email,
     required this.rating,
     required this.review,
@@ -16,6 +18,7 @@ class Review {
 
   Map<String, dynamic> toJson() {
     return {
+      'userId': userId,
       'email': email,
       'rating': rating,
       'review': review,
@@ -25,6 +28,7 @@ class Review {
 
   factory Review.fromJson(Map<String, dynamic> json) {
     return Review(
+      userId: json['userId'],
       email: json['email'],
       rating: json['rating'],
       review: json['review'],
