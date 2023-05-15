@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myproject/styles/styles.dart';
-import 'package:myproject/animation/write_review_page.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
+import 'package:myproject/views/shelters/features/reviews/write_review_page.dart';
 
 typedef Callback = void Function();
 

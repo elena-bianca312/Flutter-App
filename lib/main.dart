@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myproject/constants/routes.dart';
 import 'package:myproject/views/auth/login_view.dart';
-import 'package:myproject/google_maps/google_maps.dart';
 import 'package:myproject/views/auth/register_view.dart';
 import 'package:myproject/views/pages/donation_page.dart';
 import 'package:myproject/views/auth/verify_email_view.dart';
@@ -15,6 +14,7 @@ import 'package:myproject/views/shelters/add_shelter_view.dart';
 import 'package:myproject/views/shelters/choose_action_view.dart';
 import 'package:myproject/views/notes/create_update_note_view.dart';
 import 'package:myproject/services/auth/firebase_auth_provider.dart';
+import 'package:myproject/views/shelters/features/google_maps/google_maps.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

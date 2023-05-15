@@ -2,11 +2,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:myproject/views/pages/custom.dart';
 import 'package:custom_info_window/custom_info_window.dart';
-import 'package:myproject/google_maps/location_service.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
 import 'package:myproject/services/shelter_cloud/firebase_shelter_storage.dart';
+import 'package:myproject/views/shelters/features/google_maps/location_service.dart';
 
 const LatLng initialLocation = LatLng(44.439663, 26.096306);
 const double cameraZoom = 12;

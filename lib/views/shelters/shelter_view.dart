@@ -2,13 +2,13 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:myproject/utilities/utils.dart';
 import 'package:myproject/constants/routes.dart';
-import 'package:myproject/animation/reviews.dart';
 import 'package:myproject/views/pages/custom.dart';
-import 'package:myproject/google_maps/google_maps.dart';
 import 'package:myproject/services/auth/auth_service.dart';
-import 'package:myproject/animation/like_dislike_animation.dart';
+import 'package:myproject/views/shelters/features/reviews/reviews.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
+import 'package:myproject/views/shelters/features/google_maps/google_maps.dart';
 import 'package:myproject/services/shelter_cloud/firebase_shelter_storage.dart';
+import 'package:myproject/views/shelters/features/like_dislike/like_dislike_animation.dart';
 
 typedef LikeCallback = void Function();
 
