@@ -197,4 +197,15 @@ class FirebaseShelterStorage {
       throw CouldNotAddReviewException();
     }
   }
+
+  Future<List<Review>> getReviews({required String documentId}) async {
+    try {
+      final snapshot = await shelters.doc(documentId).get();
+      final reviewData = snapshot.get(reviewsFieldName) as List<dynamic>;
+      final reviews = reviewData.map((json) => Review.fromJson(json as Map<String, dynamic>)).toList();
+      return reviews;
+    } catch (e) {
+      throw CouldNotGetReviewsException();
+    }
+  }
 }

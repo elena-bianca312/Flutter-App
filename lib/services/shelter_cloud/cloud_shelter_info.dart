@@ -22,6 +22,15 @@ class Review {
       'date': date.toUtc().toIso8601String(),
     };
   }
+
+  factory Review.fromJson(Map<String, dynamic> json) {
+    return Review(
+      userId: json['userId'],
+      rating: json['rating'],
+      review: json['review'],
+      date: DateTime.parse(json['date']),
+    );
+  }
 }
 
 class CloudShelterInfo {

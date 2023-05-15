@@ -6,6 +6,7 @@ import 'package:myproject/views/pages/custom.dart';
 import 'package:myproject/services/auth/auth_service.dart';
 import 'package:myproject/views/shelters/features/reviews/reviews.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
+import 'package:myproject/views/shelters/features/reviews/review_list.dart';
 import 'package:myproject/views/shelters/features/google_maps/google_maps.dart';
 import 'package:myproject/services/shelter_cloud/firebase_shelter_storage.dart';
 import 'package:myproject/views/shelters/features/like_dislike/like_dislike_animation.dart';
@@ -285,6 +286,21 @@ class _ShelterViewState extends State<ShelterView> {
                         height: 10,
                       ),
                       ReviewStars(shelter: _shelter,),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      FutureBuilder(
+                        future: Future.wait([_sheltersService.getReviews(documentId: _shelter.documentId)]),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return const SizedBox();
+                          } else {
+                            print(snapshot.data![0][0].rating);
+                            List<Review> reviews = (snapshot.data![0]);
+                            return ReviewList(reviews: reviews);
+                          }
+                        }
+                      ),
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 15),
                         child: Divider(
