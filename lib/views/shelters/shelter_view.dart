@@ -148,6 +148,7 @@ class _ShelterViewState extends State<ShelterView> {
                             _shelter.title,
                             style: superheader,
                           ),
+                          const Expanded(child: SizedBox()),
                           if (AuthService.firebase().currentUser!.id == _shelter.ownerUserId)
                             IconButton(
                               onPressed: () async {
@@ -158,7 +159,7 @@ class _ShelterViewState extends State<ShelterView> {
                             )
                         ],
                       ),
-                      const SizedBox(height: 15,),
+                      const SizedBox(height: 5,),
                       Text(AuthService.firebase().currentUser!.id == _shelter.ownerUserId ?
                         "Posted by you" : "Posted by ${_shelter.userName}",
                         style: small,
@@ -248,7 +249,10 @@ class _ShelterViewState extends State<ShelterView> {
                             builder: (context) => MapPage(shelter: _shelter, shelterNumber: shelters.length)
                           ));
                         },
-                        child: Image.asset(googleMapsPhoto)
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.asset(googleMapsPhoto)
+                        )
                       ),
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 15),
@@ -295,9 +299,11 @@ class _ShelterViewState extends State<ShelterView> {
                           if (!snapshot.hasData) {
                             return const SizedBox();
                           } else {
-                            print(snapshot.data![0][0].rating);
+                            if ((snapshot.data![0]).isEmpty) {
+                              return const SizedBox();
+                            }
                             List<Review> reviews = (snapshot.data![0]);
-                            return ReviewList(reviews: reviews);
+                            return ReviewList(shelter: _shelter, reviews: reviews);
                           }
                         }
                       ),

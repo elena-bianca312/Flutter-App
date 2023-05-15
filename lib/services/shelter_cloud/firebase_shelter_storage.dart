@@ -208,4 +208,24 @@ class FirebaseShelterStorage {
       throw CouldNotGetReviewsException();
     }
   }
+
+  Future<void> deleteReview({required String documentId, required Review review}) async {
+    try {
+      await shelters.doc(documentId).update({
+        reviewsFieldName: FieldValue.arrayRemove([review.toJson()]),
+      });
+    } catch (e) {
+      throw CouldNotDeleteReviewException();
+    }
+  }
+
+  // Future<void> addFreeBed({required String documentId}) async {
+  //   try {
+  //     await shelters.doc(documentId).update({
+  //       freeBedsFieldName: FieldValue.increment(1),
+  //     });
+  //   } catch (e) {
+  //     throw CouldNotAddFreeBedException();
+  //   }
+  // }
 }

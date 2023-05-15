@@ -29,3 +29,9 @@ class  CouldNotCheckIfDislikedException extends CloudShelterException {}
 class CouldNotAddReviewException extends CloudShelterException {}
 
 class CouldNotGetReviewsException extends CloudShelterException {}
+
+class CouldNotDeleteReviewException extends CloudShelterException {}
+
+class CouldNotUpdateReviewException extends CloudShelterException {}
+
+class CouldNotAddFreeBedException extends CloudShelterException {}
