@@ -11,10 +11,13 @@ class WriteReviewPage extends StatefulWidget {
 
   final CloudShelterInfo shelter;
   final int rating;
+  final Review? oldReview;
+
   const WriteReviewPage({
     super.key,
     required this.rating,
-    required this.shelter
+    required this.shelter,
+    this.oldReview
   });
 
   @override
@@ -25,7 +28,7 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
 
   late final CloudShelterInfo _shelter = widget.shelter;
   late final FirebaseShelterStorage _sheltersService;
-  final TextEditingController _reviewController = TextEditingController();
+  late final TextEditingController _reviewController = widget.oldReview != null ? TextEditingController(text: widget.oldReview!.review) : TextEditingController();
   late int _rating;
 
   @override
@@ -114,7 +117,11 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
                         rating: widget.rating,
                         date: DateTime.now(),
                       );
-                      await _sheltersService.addReview(documentId: _shelter.documentId, review: review);
+                      if (widget.oldReview != null) {
+                        await _sheltersService.updateReview(documentId: _shelter.documentId, oldReview: widget.oldReview!, updatedReview: review);
+                      } else {
+                        await _sheltersService.addReview(documentId: _shelter.documentId, review: review);
+                      }
 
                       // Return to previous page
                       // ignore: use_build_context_synchronously

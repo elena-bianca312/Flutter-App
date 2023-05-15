@@ -4,8 +4,10 @@ import 'package:myproject/styles/styles.dart';
 import 'package:myproject/styles/glass_box.dart';
 import 'package:myproject/services/auth/auth_service.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:myproject/utilities/dialogs/delete_dialog.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
 import 'package:myproject/services/shelter_cloud/firebase_shelter_storage.dart';
+import 'package:myproject/views/shelters/features/reviews/write_review_page.dart';
 import 'package:myproject/views/shelters/features/reviews/review_details_page.dart';
 
 
@@ -100,9 +102,26 @@ class _ReviewListState extends State<ReviewList> {
                             AuthService.firebase().currentUser!.email == review.email ?
                               IconButton(
                                 onPressed: () {
-                                  _sheltersService.deleteReview(documentId: widget.shelter.documentId, review: review);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => WriteReviewPage(rating: review.rating, shelter: widget.shelter, oldReview: review,)
+                                    ),
+                                  );
                                 },
-                                icon: const Icon(Icons.delete, color: Colors.white,),
+                                icon: const Icon(Icons.edit, color: Colors.grey,),
+                                iconSize: 20,
+                              ) :
+                              const SizedBox(),
+                            AuthService.firebase().currentUser!.email == review.email ?
+                              IconButton(
+                                onPressed: () async {
+                                  final shouldDelete = await showDeleteDialog(context);
+                                  if (shouldDelete) {
+                                    _sheltersService.deleteReview(documentId: widget.shelter.documentId, review: review);
+                                  }
+                                },
+                                icon: const Icon(Icons.delete, color: Colors.grey,),
                                 iconSize: 20,
                               ) :
                               const SizedBox(),

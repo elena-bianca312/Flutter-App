@@ -198,6 +198,24 @@ class FirebaseShelterStorage {
     }
   }
 
+  Future<void> updateReview({
+    required String documentId,
+    required Review oldReview,
+    required Review updatedReview,
+  }) async {
+    try {
+      await shelters.doc(documentId).update({
+        reviewsFieldName: FieldValue.arrayRemove([oldReview.toJson()]),
+      });
+      await shelters.doc(documentId).update({
+        reviewsFieldName: FieldValue.arrayUnion([updatedReview.toJson()]),
+      });
+    } catch (e) {
+      throw CouldNotUpdateReviewException();
+    }
+  }
+
+
   Future<List<Review>> getReviews({required String documentId}) async {
     try {
       final snapshot = await shelters.doc(documentId).get();
