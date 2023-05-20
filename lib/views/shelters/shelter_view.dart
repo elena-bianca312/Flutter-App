@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:myproject/styles/styles.dart';
 import 'package:myproject/utilities/utils.dart';
 import 'package:myproject/constants/routes.dart';
 import 'package:myproject/views/pages/custom.dart';
@@ -7,6 +8,7 @@ import 'package:myproject/services/auth/auth_service.dart';
 import 'package:myproject/views/shelters/features/reviews/reviews.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
 import 'package:myproject/views/shelters/features/reviews/review_list.dart';
+import 'package:myproject/views/shelters/features/donations/add_item_list.dart';
 import 'package:myproject/views/shelters/features/google_maps/google_maps.dart';
 import 'package:myproject/services/shelter_cloud/firebase_shelter_storage.dart';
 import 'package:myproject/views/shelters/features/like_dislike/like_dislike_animation.dart';
@@ -268,6 +270,19 @@ class _ShelterViewState extends State<ShelterView> {
                       const SizedBox(
                         height: 10,
                       ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                            builder: (context) => const AddItemPage()
+                          ));
+                        },
+                        child: const Text(
+                          'Donate Items',
+                          style: TextStyle(color: kCustomBlue, fontSize: 20, decoration: TextDecoration.underline),
+                        ),
+                      ),
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 15),
                         child: Divider(
@@ -284,31 +299,43 @@ class _ShelterViewState extends State<ShelterView> {
                       ),
                       FutureBuilder(
                         future: Future.wait([
-                          _sheltersService.didUserSubmitReview(documentId: _shelter.documentId, userId: AuthService.firebase().currentUser!.id),
-                          _sheltersService.getUserReview(documentId: _shelter.documentId, userId: AuthService.firebase().currentUser!.id)
+                          _sheltersService.didUserSubmitReview(documentId: _shelter.documentId, userId: AuthService.firebase().currentUser!.id)
                         ]),
                         builder: (context, snapshot) {
                           if (snapshot.hasData && snapshot.data![0] == true) {
-                            return Column(
-                              children: [
-                                Text(
-                                  "You have already submitted a review",
-                                  style: p,
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                // TODO
-                                // Add initial rating and make stars uneditable
-                                ReviewStars(shelter: _shelter, oldReview: snapshot.data![1] as Review,),
-                              ],
+                            return FutureBuilder(
+                              future: Future.wait([
+                                _sheltersService.didUserSubmitReview(documentId: _shelter.documentId, userId: AuthService.firebase().currentUser!.id),
+                                _sheltersService.getUserReview(documentId: _shelter.documentId, userId: AuthService.firebase().currentUser!.id),
+                              ]),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData && snapshot.data![0] == true) {
+                                  Review review = snapshot.data![1] as Review;
+                                  return Column(
+                                    children: [
+                                      Text(
+                                        "You have already submitted a review",
+                                        style: p,
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      ReviewStars(shelter: _shelter, oldReview: review,),
+                                    ],
+                                  );
+                                } else {
+                                  return const SizedBox();
+                                }
+                              }
                             );
                           } else {
                             return Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Text(
                                   "Add a review",
                                   style: p,
+                                  textAlign: TextAlign.left,
                                 ),
                                 const SizedBox(
                                   height: 10,

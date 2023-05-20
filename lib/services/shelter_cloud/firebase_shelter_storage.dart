@@ -237,14 +237,14 @@ class FirebaseShelterStorage {
     }
   }
 
-  Future<Review> getUserReview({required String documentId, required String userId}) async {
+  Future<Review?> getUserReview({required String documentId, required String userId}) async {
     try {
       final snapshot = await shelters.doc(documentId).get();
       final reviewData = snapshot.get(reviewsFieldName) as List<dynamic>;
       final reviews = reviewData.map((json) => Review.fromJson(json as Map<String, dynamic>)).toList();
       return reviews.firstWhere((review) => review.userId == userId);
     } catch (e) {
-      throw CouldNotGetUserReviewsException();
+      return null;
     }
   }
 

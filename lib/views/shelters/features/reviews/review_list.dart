@@ -38,9 +38,12 @@ class _ReviewListState extends State<ReviewList> {
   Widget build(BuildContext context) {
     return Container(
       height: 150,
-      child: ListView(
+      child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        children: widget.reviews.map((review) {
+        itemCount: widget.reviews.length,
+        itemBuilder: (BuildContext context, int index) {
+        final review = widget.reviews.reversed.toList()[index];
+        // children: widget.reviews.map((review) {
           final formattedDate = DateFormat.yMd().format(review.date);
           return Container(
             width: 300,
@@ -65,36 +68,31 @@ class _ReviewListState extends State<ReviewList> {
                         Row(
                           children: [
                             Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    AuthService.firebase().currentUser!.email == review.email ? "Posted by you" : "Posted by ${review.email}",
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey
-                                    ),
+                                Text(
+                                  AuthService.firebase().currentUser!.email == review.email ? "Posted by you" : "Posted by ${review.email}",
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey
                                   ),
                                 ),
                                 const SizedBox(height: 10,),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: RatingBar.builder(
-                                    wrapAlignment: WrapAlignment.start,
-                                    initialRating: review.rating.toDouble(),
-                                    minRating: 1,
-                                    direction: Axis.horizontal,
-                                    allowHalfRating: true,
-                                    itemCount: 5,
-                                    itemSize: 15,
-                                    itemPadding: const EdgeInsets.symmetric(horizontal: 2),
-                                    itemBuilder: (context, _) => const Icon(
-                                      Icons.star,
-                                      color: kCustomBlue,
-                                    ),
-                                    onRatingUpdate: (double value) {null;},
-                                    ignoreGestures: true,
+                                RatingBar.builder(
+                                  wrapAlignment: WrapAlignment.start,
+                                  initialRating: review.rating.toDouble(),
+                                  minRating: 1,
+                                  direction: Axis.horizontal,
+                                  allowHalfRating: true,
+                                  itemCount: 5,
+                                  itemSize: 15,
+                                  itemPadding: const EdgeInsets.symmetric(horizontal: 2),
+                                  itemBuilder: (context, _) => const Icon(
+                                    Icons.star,
+                                    color: kCustomBlue,
                                   ),
+                                  onRatingUpdate: (double value) {null;},
+                                  ignoreGestures: true,
                                 ),
                               ],
                             ),
@@ -151,8 +149,7 @@ class _ReviewListState extends State<ReviewList> {
               ),
             ),
           );
-        }).toList(),
-      ),
-    );
+        }),
+      );
   }
 }

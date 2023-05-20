@@ -127,40 +127,6 @@ class _ChooseActionViewState extends State<ChooseActionView> {
               }
             },
           )
-
-          // body: SingleChildScrollView(
-          //   child: Column(
-          //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          //     children: [
-          //       FadeAnimation(1, Axis.horizontal,
-          //         SizedBox(
-          //           height: 550,
-          //           child: PageView(
-          //             controller: _controller,
-          //             children: const [
-          //               Page1(text: "Provide Shelter", animationURL: "assets/lottie/abstract_wave.json"),
-          //               Page1(text: "Find the nearest shelter", animationURL: "assets/lottie/abstract_wave.json"),
-          //               Page1(text: "Make a donation", animationURL: "assets/lottie/abstract_wave.json"),
-          //             ],
-          //           ),
-          //         )
-          //       ),
-          //       SmoothPageIndicator(
-          //         controller: _controller,
-          //         count: 3,
-          //         effect: const WormEffect(
-          //           dotColor: Colors.grey,
-          //           activeDotColor: Colors.white,
-          //           dotHeight: 20,
-          //           dotWidth: 20,
-          //           spacing: 60,
-          //         ),
-          //       ),
-          //     ],
-          //   )
-          // ),
-
-
         ),
       ]
     );

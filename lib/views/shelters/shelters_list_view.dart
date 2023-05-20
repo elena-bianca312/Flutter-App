@@ -189,59 +189,6 @@ class _SheltersListViewState extends State<SheltersListView> {
                       ),
                     ),
                   );
-
-                // return  Card(
-                //   child: Container(
-                //     color: Colors.black,
-                //     height: 100.0,
-                //     child: Row(
-                //       children: <Widget>[
-                //         Container(
-                //           height: 100.0,
-                //           width: 70.0,
-                //           decoration: BoxDecoration(
-                //             borderRadius: const BorderRadius.only(
-                //               bottomLeft: Radius.circular(5),
-                //               topLeft: Radius.circular(5)
-                //             ),
-                //             image: DecorationImage(
-                //               fit: BoxFit.cover,
-                //               image: shelter.photoURL == null || shelter.photoURL == '' ?
-                //                 AssetImage(backupPhotoURL) as ImageProvider :
-                //                 NetworkImage(shelter.photoURL!,),
-                //             )
-                //           ),
-                //         ),
-                //         SizedBox(
-                //           height: 100,
-                //           child: Padding(
-                //             padding: const EdgeInsets.fromLTRB(10, 2, 0, 0),
-                //             child: Column(
-                //               crossAxisAlignment: CrossAxisAlignment.start,
-                //               children: <Widget>[
-                //                 Text(shelter.title, style: header),
-                //                 const Padding(padding: EdgeInsets.symmetric(vertical: 2.0)),
-                //                 Text("Address", textAlign: TextAlign.center, style: subheader),
-                //                 Padding(
-                //                   padding: const EdgeInsets.fromLTRB(0, 5, 0, 2),
-                //                     child: SizedBox(
-                //                     width: 260,
-                //                     child: shelter.text == null || shelter.text == "" ?
-                //                       const SizedBox() :
-                //                       Text(
-                //                         shelter.text!,
-                //                         style: p,
-                //                       ),
-                //                   ),
-                //                 )
-                //               ],
-                //             ),
-                //           ),
-                //         )
-                //       ],
-                //     ),
-                //   ),
-                // );
                 }
               ),
             ),
