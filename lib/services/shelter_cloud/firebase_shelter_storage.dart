@@ -28,6 +28,7 @@ class FirebaseShelterStorage {
       userDislikesFieldName: [],
       reviewsFieldName: [],
       freeBedsFieldName: 0,
+      donationsFieldName: {},
     });
     final fetchedShelter = await document.get();
     return CloudShelterInfo(
@@ -42,6 +43,7 @@ class FirebaseShelterStorage {
       userDislikes: const [],
       reviews: const [],
       freeBeds: 0,
+      donations: const {},
     );
   }
 
@@ -258,6 +260,27 @@ class FirebaseShelterStorage {
       throw CouldNotCheckIfUserSubmittedReviewException();
     }
   }
+
+
+Future<void> makeDonation({required String documentId, required String donation, required int quantity}) async {
+  try {
+    // Get a reference to the document in Firestore
+    final documentRef = shelters.doc(documentId);
+
+    // Retrieve the current hashmap field from Firestore
+    final snapshot = await documentRef.get();
+    final data = snapshot.data();
+
+    // Update the hashmap field with the new donation
+    final updatedData = {...data ?? {}, donation: (data?[donation] ?? 0) + quantity};
+
+    // Update the document with the updated hashmap field
+    await documentRef.update(updatedData);
+  } catch (e) {
+    throw CouldNotMakeDonationException();
+  }
+}
+
 
   // Future<void> addFreeBed({required String documentId}) async {
   //   try {
