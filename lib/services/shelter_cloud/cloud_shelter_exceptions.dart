@@ -39,3 +39,5 @@ class CouldNotGetUserReviewsException extends CloudShelterException {}
 class CouldNotCheckIfUserSubmittedReviewException extends CloudShelterException {}
 
 class CouldNotAddFreeBedException extends CloudShelterException {}
+
+class CouldNotMakeDonationException extends CloudShelterException {}

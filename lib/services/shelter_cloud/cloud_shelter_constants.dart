@@ -8,3 +8,4 @@ const userLikesFieldName = 'user_likes';
 const userDislikesFieldName = 'user_dislikes';
 const reviewsFieldName = "reviews";
 const freeBedsFieldName = "free_beds";
+const donationsFieldName = "donations";

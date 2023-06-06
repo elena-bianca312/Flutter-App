@@ -24,7 +24,7 @@ class ItemTile extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          color: color[100],
+          color: color[100].withOpacity(0.5),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -47,16 +47,22 @@ class ItemTile extends StatelessWidget {
               ),
             ),
 
-            MaterialButton(
-              onPressed: onPressed,
-              color: color,
-              child: const Text(
-                'Donate',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                MaterialButton(
+                  onPressed: onPressed,
+                  color: color,
+                  child: const Text(
+                    'Donate',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-              ),
+                Text(itemPrice),
+              ],
             )
           ],
         ),

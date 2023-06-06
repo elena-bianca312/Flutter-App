@@ -38,9 +38,12 @@ class CartPage extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: ListView.builder(
-                    itemCount: value.cartItems.length,
+                    itemCount: value.shopItems.length,
                     padding: const EdgeInsets.all(12),
                     itemBuilder: (context, index) {
+                      if (value.cartItemQuantities[value.shopItems[index][0]] == null) {
+                        return const SizedBox.shrink();
+                      }
                       return Padding(
                         padding: const EdgeInsets.all(12.0),
                         child: Container(
@@ -49,23 +52,39 @@ class CartPage extends StatelessWidget {
                               borderRadius: BorderRadius.circular(8)),
                           child: ListTile(
                             leading: Image.asset(
-                              value.cartItems[index][2],
+                              value.shopItems[index][2],
                               height: 36,
                             ),
                             title: Text(
-                              value.cartItems[index][0],
+                              value.shopItems[index][0],
                               style: const TextStyle(fontSize: 18),
                             ),
                             subtitle: Text(
                               // ignore: prefer_interpolation_to_compose_strings
-                              '\$' + value.cartItems[index][1],
+                              '\$' + value.shopItems[index][1],
                               style: const TextStyle(fontSize: 12),
                             ),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.cancel),
-                              onPressed: () =>
-                                  Provider.of<ItemModel>(context, listen: false)
-                                      .removeItemFromCart(index),
+                            trailing: SizedBox(
+                              width: 120,
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.remove),
+                                    onPressed: () =>
+                                        Provider.of<ItemModel>(context, listen: false)
+                                            .removeItemFromCart(value.shopItems[index][0]),
+                                  ),
+                                  Text(
+                                    value.cartItemQuantities[value.shopItems[index][0]].toString(),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.add),
+                                    onPressed: () =>
+                                        Provider.of<ItemModel>(context, listen: false)
+                                            .addItemToCart(value.shopItems[index][0]),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),

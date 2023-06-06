@@ -49,6 +49,7 @@ class CloudShelterInfo {
   List<String>? userDislikes;
   List<Review>? reviews;
   int? freeBeds;
+  Map<String, int>? donations;
 
   CloudShelterInfo({
     required this.documentId,
@@ -62,6 +63,7 @@ class CloudShelterInfo {
     this.userDislikes,
     this.reviews,
     this.freeBeds,
+    this.donations,
   });
 
   CloudShelterInfo.fromSnapshot(QueryDocumentSnapshot<Map<String, dynamic>> snapshot) :
@@ -75,5 +77,6 @@ class CloudShelterInfo {
     userLikes = snapshot.data()[userLikesFieldName].cast<String>(),
     userDislikes = snapshot.data()[userDislikesFieldName].cast<String>(),
     reviews = snapshot.data()[reviewsFieldName].cast<Review>(),
-    freeBeds = snapshot.data()[freeBedsFieldName];
+    freeBeds = snapshot.data()[freeBedsFieldName],
+    donations = snapshot.data()[donationsFieldName];
 }
