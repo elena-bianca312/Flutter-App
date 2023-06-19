@@ -84,22 +84,26 @@ class _WriteReviewPageState extends State<WriteReviewPage> {
                 const SizedBox(
                   height: 20.0,
                 ),
-                TextField(
-                  controller: _reviewController,
-                  style: const TextStyle(
-                    color: Colors.white,
-                  ),
-                  decoration: const InputDecoration(
-                    hintText: 'Write a review...',
-                    hintStyle: TextStyle(
+                Expanded(
+                  child: TextField(
+                    controller: _reviewController,
+                    style: const TextStyle(
                       color: Colors.white,
                     ),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
+                    decoration: const InputDecoration(
+                      hintText: 'Write a review...',
+                      hintStyle: TextStyle(
+                        color: Colors.white,
+                      ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                     ),
                     ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                   ),
+                    maxLines: null,
+                    expands: true,
                   ),
                 ),
                 const SizedBox(

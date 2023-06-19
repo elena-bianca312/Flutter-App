@@ -42,7 +42,7 @@ class _ChooseActionViewState extends State<ChooseActionView> {
           backgroundColor: Colors.transparent,
           // backgroundColor: Colors.white,
           appBar: AppBar(
-            title: FadeAnimation(2, Axis.horizontal, Text('Welcome back, ${AuthService.firebase().currentUser!.email}!', style: const TextStyle(height: 0, fontSize: 14))),
+            title: const FadeAnimation(2, Axis.horizontal, Text('Welcome back!', style: TextStyle(height: 0, fontSize: 14))),
             backgroundColor: Colors.transparent,
             actions: [
               FadeAnimation(2, Axis.vertical,
@@ -53,12 +53,12 @@ class _ChooseActionViewState extends State<ChooseActionView> {
                   icon: const Icon(Icons.add),
                 )
               ),
-              FadeAnimation(2, Axis.vertical,
-                IconButton(
-                  icon: SvgPicture.asset("assets/icons/notification.svg"),
-                  onPressed: () {},
-                )
-              ),
+              // FadeAnimation(2, Axis.vertical,
+              //   IconButton(
+              //     icon: SvgPicture.asset("assets/icons/notification.svg"),
+              //     onPressed: () {},
+              //   )
+              // ),
               FadeAnimation(2, Axis.vertical,
                 PopupMenuButton<MenuAction>(
                   onSelected: (action) async {
@@ -120,7 +120,7 @@ class _ChooseActionViewState extends State<ChooseActionView> {
                       },
                     );
                   } else {
-                    return const CircularProgressIndicator();
+                    return const Center(child: CircularProgressIndicator());
                   }
                 default:
                   return const Center(child: CircularProgressIndicator());

@@ -15,14 +15,14 @@ import 'package:myproject/views/shelters/add_shelter_view.dart';
 import 'package:myproject/views/shelters/choose_action_view.dart';
 import 'package:myproject/views/notes/create_update_note_view.dart';
 import 'package:myproject/services/auth/firebase_auth_provider.dart';
-import 'package:myproject/views/shelters/features/donations/item_model.dart';
+import 'package:myproject/views/shelters/features/donations/item_list.dart';
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider<ItemModel>(
-          create: (context) => ItemModel(),
+        ChangeNotifierProvider<ItemList>(
+          create: (context) => ItemList(),
         ),
       ],
       child: const MyApp(),

@@ -43,7 +43,7 @@ class FirebaseShelterStorage {
       userDislikes: const [],
       reviews: const [],
       freeBeds: 0,
-      donations: const {},
+      // donations: const {},
     );
   }
 

@@ -17,6 +17,7 @@ class TextInput extends StatelessWidget {
     this.maxLines,
     this.width,
     this.height,
+    this.expands,
   }) : super(key: key);
 
   final String? hint;
@@ -32,6 +33,7 @@ class TextInput extends StatelessWidget {
   final int? maxLines;
   final double? width;
   final double? height;
+  final bool? expands;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +67,9 @@ class TextInput extends StatelessWidget {
           autocorrect: autocorrect ?? true,
           obscureText: obscureText ?? false,
           autofocus: autofocus ?? false,
-          maxLines: maxLines ?? 1,
+          maxLines: (maxLines == 100) ? null : 1,
+          minLines: null,
+          expands: expands ?? false,
         ),
       ),
     );

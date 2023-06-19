@@ -133,6 +133,8 @@ class _AddShelterViewState extends State<AddShelterView> {
 
     if (result == null) return;
 
+    print("File selected: ${result.files.single.name}");
+
     setState(() {
       _pickedFile = result.files.first;
     });
@@ -147,12 +149,13 @@ class _AddShelterViewState extends State<AddShelterView> {
     final ref = FirebaseStorage.instance.ref().child(path);
     setState(() {
       uploadTask = ref.putFile(file);
-      // Future.delayed(const Duration(seconds: 10), () => setState(() {}));
     });
 
     final snapshot = await uploadTask!.whenComplete(() {});
     // ignore: unused_local_variable
     final downloadURL = await snapshot.ref.getDownloadURL();
+
+    print(downloadURL);
 
     setState(() {
       _photoURLController.text = downloadURL;
@@ -241,80 +244,83 @@ class _AddShelterViewState extends State<AddShelterView> {
           ),
         ],
       ),
-      body: FutureBuilder(
-        future: createOrGetExistingShelter(context),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.done:
-              _setupControllerListener();
-              return Container(
-                  color: Colors.black,
-                  alignment: Alignment.center,
-                  child: Column(
-                    children: [
-                      FadeAnimation(1, Axis.horizontal,
-                        TextInput(
-                          controller: _titleController,
-                          hint: 'Title...',
-                          icon: Icons.title,
-                          inputAction: TextInputAction.none,
-                          width: 350,
-                        )
-                      ),
-                      FadeAnimation(1.8, Axis.horizontal,
-                        TextInput(
-                          controller: _addressController,
-                          hint: 'Address...',
-                          icon: Icons.location_city,
-                          inputAction: TextInputAction.none,
-                          width: 350,
-                        )
-                      ),
-                      FadeAnimation(2.6, Axis.horizontal,
-                        TextInput(
-                          controller: _textController,
-                          keyboardType: TextInputType.multiline,
-                          hint: 'Type text...',
-                          icon: Icons.text_fields,
-                          width: 350,
-                          maxLines: null,
+      body: SingleChildScrollView(
+        child: FutureBuilder(
+          future: createOrGetExistingShelter(context),
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.done:
+                _setupControllerListener();
+                return Container(
+                    color: Colors.black,
+                    alignment: Alignment.center,
+                    child: Column(
+                      children: [
+                        FadeAnimation(1, Axis.horizontal,
+                          TextInput(
+                            controller: _titleController,
+                            hint: 'Title...',
+                            icon: Icons.title,
+                            inputAction: TextInputAction.none,
+                            width: 350,
+                          )
                         ),
-                      ),
-                      const SizedBox(height: 30,),
-                      ElevatedButton(
-                        onPressed: selectFile,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white, // Background color
+                        FadeAnimation(1.8, Axis.horizontal,
+                          TextInput(
+                            controller: _addressController,
+                            hint: 'Address...',
+                            icon: Icons.location_city,
+                            inputAction: TextInputAction.none,
+                            width: 350,
+                          )
                         ),
-                        child: const Text("Select file", style: TextStyle(color: Colors.black)),
-                      ),
-                      const SizedBox(height: 20,),
-                      ElevatedButton(
-                        onPressed: uploadFile,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white, // Background color
-                        ),
-                        child: const Text("Upload file", style: TextStyle(color: Colors.black))
-                      ),
-                      uploadTask != null ? buildProgress() : Container(),
-                      if (_pickedFile != null)
-                        Expanded(
-                          child: Container(
-                            color: Colors.blue[100],
-                            child: Image.file(
-                              File(_pickedFile!.path!),
-                              fit: BoxFit.cover,
-                            )
+                        FadeAnimation(2.6, Axis.horizontal,
+                          TextInput(
+                            controller: _textController,
+                            keyboardType: TextInputType.multiline,
+                            hint: 'Type text...',
+                            icon: Icons.text_fields,
+                            width: 350,
+                            maxLines: 100,
                           ),
                         ),
-                    ],
-                  ),
-                );
-              // );
-            default:
-              return const Center(child: CircularProgressIndicator());
-        }
-      },)
+                        const SizedBox(height: 30,),
+                        ElevatedButton(
+                          onPressed: selectFile,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white, // Background color
+                          ),
+                          child: const Text("Select file", style: TextStyle(color: Colors.black)),
+                        ),
+                        const SizedBox(height: 20,),
+                        ElevatedButton(
+                          onPressed: uploadFile,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white, // Background color
+                          ),
+                          child: const Text("Upload file", style: TextStyle(color: Colors.black))
+                        ),
+                        uploadTask != null ? buildProgress() : Container(),
+                        // if (_pickedFile != null)
+                        //   Expanded(
+                        //     child: Container(
+                        //       color: Colors.blue[100],
+                        //       child: Image.file(
+                        //         File(_pickedFile!.path!),
+                        //         fit: BoxFit.cover,
+                        //       )
+                        //     ),
+                        //   ),
+                        const SizedBox(height: 70,),
+                      ],
+                    ),
+                  );
+                // );
+              default:
+                return const Center(child: CircularProgressIndicator());
+          }
+        },),
+      )
     );
   }
 }

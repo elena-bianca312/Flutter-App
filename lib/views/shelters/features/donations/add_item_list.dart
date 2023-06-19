@@ -4,7 +4,7 @@ import 'package:myproject/views/pages/custom.dart';
 import 'package:myproject/widgets/background_image.dart';
 import 'package:myproject/views/shelters/features/donations/item_page.dart';
 import 'package:myproject/views/shelters/features/donations/item_tile.dart';
-import 'package:myproject/views/shelters/features/donations/item_model.dart';
+import 'package:myproject/views/shelters/features/donations/item_list.dart';
 import 'package:myproject/views/shelters/features/donations/category_list.dart';
 
 class AddItemPage extends StatefulWidget {
@@ -73,7 +73,7 @@ class _AddItemPageState extends State<AddItemPage> {
                 ),
               ),
 
-              Consumer<ItemModel>(
+              Consumer<ItemList>(
                 builder: (context, value, child) {
                   return GridView.builder(
                     shrinkWrap: true,
@@ -91,47 +91,13 @@ class _AddItemPageState extends State<AddItemPage> {
                         imagePath: value.shopItems[index][2],
                         color: value.shopItems[index][3],
                         onPressed: () =>
-                            Provider.of<ItemModel>(context, listen: false)
-                                .addItemToCart(value.shopItems[index][0]),
+                            Provider.of<ItemList>(context, listen: false)
+                                .addItem(value.shopItems[index][0]),
                       );
                     },
                   );
                 },
               ),
-
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              //   child: Text(
-              //     "Non-perishable Foods",
-              //     style: header,
-              //   ),
-              // ),
-
-              // Consumer<ItemModel>(
-              //   builder: (context, value, child) {
-              //     return GridView.builder(
-              //       shrinkWrap: true,
-              //       padding: const EdgeInsets.all(12),
-              //       physics: const NeverScrollableScrollPhysics(),
-              //       itemCount: value.shopItems.length,
-              //       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              //         crossAxisCount: 2,
-              //         childAspectRatio: 1 / 1.2,
-              //       ),
-              //       itemBuilder: (context, index) {
-              //         return ItemTile(
-              //           itemName: value.shopItems[index][0],
-              //           itemPrice: value.shopItems[index][1],
-              //           imagePath: value.shopItems[index][2],
-              //           color: value.shopItems[index][3],
-              //           onPressed: () =>
-              //               Provider.of<ItemModel>(context, listen: false)
-              //                   .addItemToCart(value.shopItems[index][0]),
-              //         );
-              //       },
-              //     );
-              //   },
-              // ),
             ],
           ),
         ),

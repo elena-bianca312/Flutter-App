@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ItemModel extends ChangeNotifier {
+class ItemList extends ChangeNotifier {
   // list of items on sale
   final List _shopItems = const [
     // [ itemName, itemPrice, imagePath, color ]
@@ -18,7 +18,7 @@ class ItemModel extends ChangeNotifier {
   get shopItems => _shopItems;
 
   // add item to cart
-  void addItemToCart(String itemName) {
+  void addItem(String itemName) {
 
     if (_cartItemQuantities.containsKey(itemName)) {
       _cartItemQuantities[itemName] = _cartItemQuantities[itemName]! + 1;
@@ -30,7 +30,7 @@ class ItemModel extends ChangeNotifier {
   }
 
   // remove item from cart
-  void removeItemFromCart(String itemName) {
+  void removeItem(String itemName) {
 
     if (_cartItemQuantities.containsKey(itemName)) {
       _cartItemQuantities[itemName] = _cartItemQuantities[itemName]! - 1;

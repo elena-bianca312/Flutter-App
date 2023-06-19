@@ -102,7 +102,7 @@ class _SheltersListViewState extends State<SheltersListView> {
                 Navigator.of(context).pushNamed(makeDonationRoute);
               },
               child: const Text(
-                'Make a donation',
+                'Useful Information',
                 style: TextStyle(color: Colors.white, fontSize: 20, decoration: TextDecoration.underline),
               ),
             ),
@@ -126,7 +126,6 @@ class _SheltersListViewState extends State<SheltersListView> {
                         ),
                       ),
                       child: Container(
-                        // borderRadius: BorderRadius.circular(20.0),
                         height: 300,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20.0),

@@ -1,11 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:myproject/views/shelters/features/donations/item_model.dart';
+import 'package:myproject/views/shelters/features/donations/item_list.dart';
+import 'package:myproject/services/shelter_cloud/firebase_shelter_storage.dart';
 
 
-class CartPage extends StatelessWidget {
+class CartPage extends StatefulWidget {
   const CartPage({super.key});
+
+  @override
+  State<CartPage> createState() => _CartPageState();
+}
+
+class _CartPageState extends State<CartPage> {
+
+  late final FirebaseShelterStorage _sheltersService;
+  @override
+  void initState() {
+    _sheltersService = FirebaseShelterStorage();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +31,7 @@ class CartPage extends StatelessWidget {
           color: Colors.grey[800],
         ),
       ),
-      body: Consumer<ItemModel>(
+      body: Consumer<ItemList>(
         builder: (context, value, child) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,8 +85,8 @@ class CartPage extends StatelessWidget {
                                   IconButton(
                                     icon: const Icon(Icons.remove),
                                     onPressed: () =>
-                                        Provider.of<ItemModel>(context, listen: false)
-                                            .removeItemFromCart(value.shopItems[index][0]),
+                                        Provider.of<ItemList>(context, listen: false)
+                                            .removeItem(value.shopItems[index][0]),
                                   ),
                                   Text(
                                     value.cartItemQuantities[value.shopItems[index][0]].toString(),
@@ -80,8 +94,8 @@ class CartPage extends StatelessWidget {
                                   IconButton(
                                     icon: const Icon(Icons.add),
                                     onPressed: () =>
-                                        Provider.of<ItemModel>(context, listen: false)
-                                            .addItemToCart(value.shopItems[index][0]),
+                                        Provider.of<ItemList>(context, listen: false)
+                                            .addItem(value.shopItems[index][0]),
                                   ),
                                 ],
                               ),
@@ -136,12 +150,14 @@ class CartPage extends StatelessWidget {
                         ),
                         padding: const EdgeInsets.all(12),
                         child: Row(
-                          children: const [
-                            Text(
-                              'Pay Now',
-                              style: TextStyle(color: Colors.white),
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                // _sheltersService.addDonation(documentId: _shelter.documentId, );
+                              },
+                              child: const Text('Donate Now', style: TextStyle(color: Colors.white),)
                             ),
-                            Icon(
+                            const Icon(
                               Icons.arrow_forward_ios,
                               size: 16,
                               color: Colors.white,
