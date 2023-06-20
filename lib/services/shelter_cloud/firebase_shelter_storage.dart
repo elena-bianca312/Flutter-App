@@ -28,7 +28,7 @@ class FirebaseShelterStorage {
       userDislikesFieldName: [],
       reviewsFieldName: [],
       freeBedsFieldName: 0,
-      donationsFieldName: {},
+      // donationsFieldName: {},
     });
     final fetchedShelter = await document.get();
     return CloudShelterInfo(

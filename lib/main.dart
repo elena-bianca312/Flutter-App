@@ -3,13 +3,18 @@ import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myproject/constants/routes.dart';
 import 'package:myproject/views/auth/login_view.dart';
+import 'package:myproject/views/notes/notes_view.dart';
 import 'package:myproject/views/auth/register_view.dart';
 import 'package:myproject/views/pages/donation_page.dart';
+import 'package:myproject/views/guides/first_aid_kit.dart';
+import 'package:myproject/views/guides/earthquake_plan.dart';
 import 'package:myproject/views/auth/verify_email_view.dart';
 import 'package:myproject/services/auth/bloc/auth_bloc.dart';
 import 'package:myproject/services/auth/bloc/auth_event.dart';
 import 'package:myproject/services/auth/bloc/auth_state.dart';
 import 'package:myproject/helpers/loading/loading_screen.dart';
+import 'package:myproject/views/guides/emergency_contacts.dart';
+import 'package:myproject/views/guides/useful_information.dart';
 import 'package:myproject/views/auth/forgot_password_page.dart';
 import 'package:myproject/views/shelters/add_shelter_view.dart';
 import 'package:myproject/views/shelters/choose_action_view.dart';
@@ -46,8 +51,13 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         createOrUpdateNoteRoute: (context) => const CreateUpdateNoteView(),
+        notesRoute:(context) => const NotesView(),
         addShelterRoute:(context) => const AddShelterView(),
         makeDonationRoute:(context) => const DonationPage(),
+        usefulInformationRoute:(context) => const UsefulInformationView(),
+        firstAidKitRoute:(context) => const FirstAidKitView(),
+        earthquakePlanRoute:(context) => const EarthquakePlanView(),
+        emergencyContactsRoute:(context) => const EmergencyContactsView(),
       },
     );
   }

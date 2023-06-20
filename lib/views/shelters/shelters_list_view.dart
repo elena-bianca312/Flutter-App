@@ -14,7 +14,7 @@ import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
 typedef ShelterCallback = void Function(CloudShelterInfo shelter);
 typedef ViewShelterCallback = ShelterView Function(CloudShelterInfo shelter);
 
-class SheltersListView extends StatefulWidget {
+class SheltersListView extends StatelessWidget {
 
   final Iterable<CloudShelterInfo> shelters;
   // I can only delete it if it was posted by the current user
@@ -28,20 +28,6 @@ class SheltersListView extends StatefulWidget {
     required this.onTap,
   }) : super(key: key);
 
-  @override
-  State<SheltersListView> createState() => _SheltersListViewState();
-}
-
-class _SheltersListViewState extends State<SheltersListView> {
-
-  late Iterable<CloudShelterInfo> shelters = widget.shelters;
-
-  @override
-  void initState() {
-    super.initState();
-    SystemChannels.textInput.invokeMethod('TextInput.hide');
-  }
-
   Future<void> _handleRefresh() async {
     return await Future.delayed(const Duration(seconds: 1));
   }
@@ -50,18 +36,13 @@ class _SheltersListViewState extends State<SheltersListView> {
 
     Iterable<CloudShelterInfo> results = [];
     if (enteredKeyword.isEmpty) {
-      results = widget.shelters;
+      results = shelters;
     } else {
-      results = widget.shelters
+      results = shelters
           .where((shelter) =>
               (shelter.title.toLowerCase().contains(enteredKeyword.toLowerCase())) || shelter.address.toLowerCase().contains(enteredKeyword.toLowerCase()))
           .toList();
     }
-
-    // Refresh the UI
-    setState(() {
-      shelters = results;
-    });
   }
 
   @override
@@ -99,7 +80,7 @@ class _SheltersListViewState extends State<SheltersListView> {
             const SizedBox(height: 10),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pushNamed(makeDonationRoute);
+                Navigator.of(context).pushNamed(usefulInformationRoute);
               },
               child: const Text(
                 'Useful Information',
@@ -133,7 +114,7 @@ class _SheltersListViewState extends State<SheltersListView> {
                             image: shelter.photoURL == null || shelter.photoURL == '' ?
                                 AssetImage(backupPhotoURL) as ImageProvider :
                                 NetworkImage(shelter.photoURL!,),
-                            colorFilter: const ColorFilter.mode(Colors.black54, BlendMode.darken),
+                            colorFilter: const ColorFilter.mode(Colors.black45, BlendMode.darken),
                             fit: BoxFit.cover,
                             alignment: Alignment.topCenter,
                           ),
@@ -143,6 +124,7 @@ class _SheltersListViewState extends State<SheltersListView> {
                             GlassBox(
                               height: 80,
                               width: 400,
+                              addedOpacity: 0.25,
                               child: ListTile(
                                 leading: Icon(Icons.arrow_drop_down_circle, color: black,),
                                 title: Text(shelter.title, style: blackheader),
@@ -159,10 +141,11 @@ class _SheltersListViewState extends State<SheltersListView> {
                                 GlassBox(
                                   height: 40,
                                   width: 90,
+                                  addedOpacity: 0.25,
                                   child: TextButton(
                                     child: Text('View', style: labelPrimary,),
                                     onPressed: () {
-                                      widget.onTap(shelter);
+                                      onTap(shelter);
                                     },
                                   ),
                                 ),
@@ -175,7 +158,7 @@ class _SheltersListViewState extends State<SheltersListView> {
                                       onPressed: () async {
                                         final shouldDelete = await showDeleteDialog(context);
                                         if (shouldDelete) {
-                                          widget.onDeleteShelter(shelter);
+                                          onDeleteShelter(shelter);
                                         }
                                       },
                                     ),
