@@ -1,25 +1,37 @@
 import 'package:flutter/material.dart';
 
 class ItemList extends ChangeNotifier {
-  // list of items on sale
   final List _shopItems = const [
-    // [ itemName, itemPrice, imagePath, color ]
-    ["Avocado", "4.00", "assets/images/items_list/avocado.png", Colors.green],
-    ["Banana", "2.50", "assets/images/items_list/banana.png", Colors.yellow],
-    ["Chicken", "12.80", "assets/images/items_list/chicken.png", Colors.brown],
-    ["Water", "1.00", "assets/images/items_list/water.png", Colors.blue],
+    ["Avocado"],
+    ["Banana"],
+    ["Chicken"],
+    ["Water"],
   ];
 
-  // hashmap of cart items with quantity
   final Map<String, int> _cartItemQuantities = {};
+  final Set<String> _selectedItems = {};
 
-  get cartItemQuantities => _cartItemQuantities;
+  List get shopItems => _shopItems;
 
-  get shopItems => _shopItems;
+  Map<String, int> get cartItemQuantities => _cartItemQuantities;
 
-  // add item to cart
+  Set<String> get selectedItems => _selectedItems;
+
   void addItem(String itemName) {
+    _cartItemQuantities[itemName] = 1;
 
+    _selectedItems.add(itemName);
+    notifyListeners();
+  }
+
+  void removeItem(String itemName) {
+    _cartItemQuantities.remove(itemName);
+
+    _selectedItems.remove(itemName);
+    notifyListeners();
+  }
+
+  void increaseItemQuantity(String itemName) {
     if (_cartItemQuantities.containsKey(itemName)) {
       _cartItemQuantities[itemName] = _cartItemQuantities[itemName]! + 1;
     } else {
@@ -29,20 +41,23 @@ class ItemList extends ChangeNotifier {
     notifyListeners();
   }
 
-  // remove item from cart
-  void removeItem(String itemName) {
-
+  void decreaseItemQuantity(String itemName) {
     if (_cartItemQuantities.containsKey(itemName)) {
       _cartItemQuantities[itemName] = _cartItemQuantities[itemName]! - 1;
       if (_cartItemQuantities[itemName]! <= 0) {
         _cartItemQuantities.remove(itemName);
+        _selectedItems.remove(itemName);
       }
     }
 
     notifyListeners();
   }
 
-  // calculate total price
+  // check if an item is selected
+  bool isItemSelected(String itemName) {
+    return _cartItemQuantities.containsKey(itemName);
+  }
+
   String calculateTotal() {
     double totalPrice = 0;
     for (String itemName in cartItemQuantities.keys) {
@@ -57,5 +72,4 @@ class ItemList extends ChangeNotifier {
     }
     return totalPrice.toStringAsFixed(2);
   }
-
 }

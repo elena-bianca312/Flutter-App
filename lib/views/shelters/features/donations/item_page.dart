@@ -1,179 +1,113 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:myproject/styles/glass_box.dart';
 import 'package:myproject/constants/routes.dart';
+import 'package:myproject/views/pages/custom.dart';
+import 'package:myproject/widgets/background_image.dart';
 import 'package:myproject/views/shelters/features/donations/item_list.dart';
-import 'package:myproject/services/shelter_cloud/firebase_shelter_storage.dart';
-
 
 class CartPage extends StatefulWidget {
-  const CartPage({super.key});
+  const CartPage({Key? key}) : super(key: key);
 
   @override
-  State<CartPage> createState() => _CartPageState();
+  // ignore: library_private_types_in_public_api
+  _CartPageState createState() => _CartPageState();
 }
 
 class _CartPageState extends State<CartPage> {
-
-  late final FirebaseShelterStorage _sheltersService;
-  @override
-  void initState() {
-    _sheltersService = FirebaseShelterStorage();
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        iconTheme: IconThemeData(
-          color: Colors.grey[800],
-        ),
-      ),
-      body: Consumer<ItemList>(
-        builder: (context, value, child) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    final itemList = Provider.of<ItemList>(context);
+    final selectedItems = itemList.selectedItems;
+    final cartItemQuantities = itemList.cartItemQuantities;
+
+    return Stack(
+      children: [
+        const BackgroundImage(),
+        Scaffold(
+          backgroundColor: Colors.transparent.withOpacity(0.5),
+          appBar: AppBar(
+            title: const Text('Checkout'),
+            backgroundColor: Colors.transparent,
+          ),
+          body: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Text(
-                  "My Selected Items",
-                  style: GoogleFonts.notoSerif(
-                    fontSize: 36,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-
-              // list view of cart
               Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: ListView.builder(
-                    itemCount: value.shopItems.length,
-                    padding: const EdgeInsets.all(12),
-                    itemBuilder: (context, index) {
-                      if (value.cartItemQuantities[value.shopItems[index][0]] == null) {
-                        return const SizedBox.shrink();
-                      }
-                      return Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: BorderRadius.circular(8)),
-                          child: ListTile(
-                            leading: Image.asset(
-                              value.shopItems[index][2],
-                              height: 36,
-                            ),
-                            title: Text(
-                              value.shopItems[index][0],
-                              style: const TextStyle(fontSize: 18),
-                            ),
-                            subtitle: Text(
-                              // ignore: prefer_interpolation_to_compose_strings
-                              '\$' + value.shopItems[index][1],
-                              style: const TextStyle(fontSize: 12),
-                            ),
-                            trailing: SizedBox(
-                              width: 120,
-                              child: Row(
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(Icons.remove),
-                                    onPressed: () =>
-                                        Provider.of<ItemList>(context, listen: false)
-                                            .removeItem(value.shopItems[index][0]),
-                                  ),
-                                  Text(
-                                    value.cartItemQuantities[value.shopItems[index][0]].toString(),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.add),
-                                    onPressed: () =>
-                                        Provider.of<ItemList>(context, listen: false)
-                                            .addItem(value.shopItems[index][0]),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                child: ListView.builder(
+                  itemCount: selectedItems.length,
+                  itemBuilder: (context, index) {
+                    final itemName = selectedItems.elementAt(index);
+                    final quantity = cartItemQuantities[itemName] ?? 0;
+                    return Column(
+                      children: [
+                        const Divider(
+                          color: Colors.white,
+                          thickness: 1.0,
                         ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-
-              // total amount + pay now
-
-              Padding(
-                padding: const EdgeInsets.all(36.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: Colors.green,
-                  ),
-                  padding: const EdgeInsets.all(24),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Total Price',
-                            style: TextStyle(color: Colors.green[200]),
-                          ),
-
-                          const SizedBox(height: 8),
-                          // total price
-                          Text(
-                            '\$${value.calculateTotal()}',
+                        ListTile(
+                          title: Text(
+                            itemName,
                             style: const TextStyle(
-                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                             ),
                           ),
-                        ],
-                      ),
-
-                      // pay now
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.green.shade200),
-                          borderRadius: BorderRadius.circular(28),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.remove, color: Colors.white),
+                                onPressed: () {
+                                  if (quantity > 0) {
+                                    itemList.decreaseItemQuantity(itemName);
+                                  }
+                                },
+                              ),
+                              Text(
+                                quantity.toString(),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.add, color: Colors.white),
+                                onPressed: () {
+                                  itemList.increaseItemQuantity(itemName);
+                                },
+                              ),
+                            ],
+                          ),
                         ),
-                        padding: const EdgeInsets.all(12),
-                        child: Row(
-                          children: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pushNamed(thankYouRoute);
-                              },
-                              child: const Text('Donate Now', style: TextStyle(color: Colors.white),)
-                            ),
-                            const Icon(
-                              Icons.arrow_forward_ios,
-                              size: 16,
-                              color: Colors.white,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                        if (index == selectedItems.length - 1)
+                          const Divider(
+                            color: Colors.white,
+                            thickness: 1.0,
+                          ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                child: GlassBox(
+                  height: 50,
+                  width: 300,
+                  addedOpacity: 0.3,
+                  child: TextButton(
+                    child: Text('Donate', style: labelPrimary,),
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(thankYouRoute);
+                    },
                   ),
                 ),
-              )
+              ),
+              const SizedBox(height: 50,)
             ],
-          );
-        },
-      ),
+          ),
+        ),
+      ],
     );
   }
 }
