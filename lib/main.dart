@@ -18,6 +18,7 @@ import 'package:myproject/views/guides/useful_information.dart';
 import 'package:myproject/views/auth/forgot_password_page.dart';
 import 'package:myproject/views/shelters/add_shelter_view.dart';
 import 'package:myproject/views/shelters/choose_action_view.dart';
+import 'package:myproject/views/pages/thank_you_for_donation.dart';
 import 'package:myproject/views/notes/create_update_note_view.dart';
 import 'package:myproject/services/auth/firebase_auth_provider.dart';
 import 'package:myproject/views/shelters/features/donations/item_list.dart';
@@ -58,6 +59,7 @@ class MyApp extends StatelessWidget {
         firstAidKitRoute:(context) => const FirstAidKitView(),
         earthquakePlanRoute:(context) => const EarthquakePlanView(),
         emergencyContactsRoute:(context) => const EmergencyContactsView(),
+        thankYouRoute:(context) => const ThankYouView(),
       },
     );
   }

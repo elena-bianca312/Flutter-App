@@ -4,6 +4,7 @@ import 'package:myproject/styles/styles.dart';
 import 'package:myproject/utilities/utils.dart';
 import 'package:myproject/constants/routes.dart';
 import 'package:myproject/views/pages/custom.dart';
+import 'package:myproject/views/pages/donation_page.dart';
 import 'package:myproject/services/auth/auth_service.dart';
 import 'package:myproject/views/shelters/features/reviews/reviews.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
@@ -269,6 +270,19 @@ class _ShelterViewState extends State<ShelterView> {
                       ),
                       const SizedBox(
                         height: 10,
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                            builder: (context) => const DonationPage()
+                          ));
+                        },
+                        child: const Text(
+                          'Offer Financial Support',
+                          style: TextStyle(color: kCustomBlue, fontSize: 20, decoration: TextDecoration.underline),
+                        ),
                       ),
                       TextButton(
                         onPressed: () {

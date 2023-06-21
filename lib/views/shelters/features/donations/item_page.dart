@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:myproject/constants/routes.dart';
 import 'package:myproject/views/shelters/features/donations/item_list.dart';
 import 'package:myproject/services/shelter_cloud/firebase_shelter_storage.dart';
 
@@ -153,7 +154,7 @@ class _CartPageState extends State<CartPage> {
                           children: [
                             TextButton(
                               onPressed: () {
-                                // _sheltersService.addDonation(documentId: _shelter.documentId, );
+                                Navigator.of(context).pushNamed(thankYouRoute);
                               },
                               child: const Text('Donate Now', style: TextStyle(color: Colors.white),)
                             ),

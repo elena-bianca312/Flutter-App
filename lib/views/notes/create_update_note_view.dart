@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:myproject/widgets/background_image.dart';
 import 'package:myproject/services/cloud/cloud_note.dart';
 import 'package:myproject/services/auth/auth_service.dart';
 import 'package:myproject/utilities/generics/get_arguments.dart';
@@ -94,10 +95,12 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        
+        const BackgroundImage(),
         Scaffold(
+          backgroundColor: Colors.transparent.withOpacity(0.5),
           appBar: AppBar(
             title: const Text('New Note'),
+            backgroundColor: Colors.transparent,
             actions: [
               IconButton(
                 icon: const Icon(Icons.share),
@@ -118,13 +121,20 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
               switch (snapshot.connectionState) {
                 case ConnectionState.done:
                   _setupTextControllerListener();
-                  return TextField(
-                    controller: _textController,
-                    keyboardType: TextInputType.multiline,
-                    maxLines: null,
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Start typing...',
+                  return Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: TextField(
+                      style: const TextStyle(color: Colors.white),
+                      controller: _textController,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Start typing...',
+                        hintStyle: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   );
                 default:

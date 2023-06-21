@@ -1,8 +1,8 @@
 import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:myproject/styles/styles.dart';
+import 'package:myproject/constants/routes.dart';
 import 'package:myproject/views/pages/custom.dart';
-import 'package:myproject/widgets/text_input.dart';
 
 
 class DonationPage extends StatefulWidget {
@@ -13,7 +13,22 @@ class DonationPage extends StatefulWidget {
 }
 
 class _DonationPageState extends State<DonationPage> {
+
+  late final TextEditingController _amountController;
+
+    @override
+  void initState() {
+    _amountController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _amountController.dispose();
+    super.dispose();
+  }
   var selectedPayment = "";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,10 +56,6 @@ class _DonationPageState extends State<DonationPage> {
                           style: header,
                         ),
                         const SizedBox(height: 10),
-                        Text(
-                          '.....',
-                          style: small,
-                        ),
                       ],
                     ),
                   ],
@@ -67,12 +78,9 @@ class _DonationPageState extends State<DonationPage> {
                 const SizedBox(height: 30),
                 Row(
                   children: [
-                    // Text(
-                    //   '\$100,000',
-                    //   style: price,
-                    // ),
                     Expanded(
                       child: TextField(
+                        controller: _amountController,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderSide: BorderSide(color: yellow)
@@ -80,11 +88,6 @@ class _DonationPageState extends State<DonationPage> {
                           hintText: 'Enter Amount',
                           prefixIcon: const Padding(
                             padding: EdgeInsets.symmetric(horizontal: 20,),
-                            // child: Icon(
-                            //   icon,
-                            //   color: Colors.white,
-                            //   size: 20,
-                            // ),
                           ),
                           hintStyle: p,
                         ),
@@ -111,7 +114,17 @@ class _DonationPageState extends State<DonationPage> {
                 const SizedBox(height: 50),
                 ElevatedButton(
                   style: buttonPrimary,
-                  onPressed: () {},
+                  onPressed: () {
+                    if (selectedPayment != "" && _amountController.text != "") {
+                      Navigator.of(context).pushNamed(thankYouRoute);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Please enter the desired amount and select a payment method.'),
+                        ),
+                      );
+                    }
+                  },
                   child: Text(
                     'Support Now',
                     style: labelPrimary,

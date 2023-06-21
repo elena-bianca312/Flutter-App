@@ -53,7 +53,7 @@ class EarthquakePlanView extends StatelessWidget {
                         GlassBox(
                           height: 50,
                           width: 300,
-                          addedOpacity: 0.1,
+                          addedOpacity: 0.3,
                           child: Text('Înainte de cutremur', style: labelPrimary,),
                         ),
                         const SizedBox(height: 30),
@@ -104,7 +104,7 @@ class EarthquakePlanView extends StatelessWidget {
                         GlassBox(
                           height: 50,
                           width: 300,
-                          addedOpacity: 0.1,
+                          addedOpacity: 0.3,
                           child: Text('În timpul cutremurului', style: labelPrimary,),
                         ),
                         const SizedBox(height: 30),
@@ -118,7 +118,7 @@ class EarthquakePlanView extends StatelessWidget {
                         GlassBox(
                           height: 50,
                           width: 240,
-                          addedOpacity: 0.1,
+                          addedOpacity: 0.3,
                           child: Text('Dacă vă aflați în interior', style: blacksubheader,),
                         ),
                         const SizedBox(height: 20),
@@ -167,7 +167,7 @@ class EarthquakePlanView extends StatelessWidget {
                         GlassBox(
                           height: 50,
                           width: 240,
-                          addedOpacity: 0.1,
+                          addedOpacity: 0.3,
                           child: Text('Dacă vă aflați afară', style: blacksubheader,),
                         ),
                         const SizedBox(height: 20),
@@ -215,7 +215,7 @@ class EarthquakePlanView extends StatelessWidget {
                         GlassBox(
                           height: 50,
                           width: 240,
-                          addedOpacity: 0.1,
+                          addedOpacity: 0.3,
                           child: Text('Dacă vă aflați într-o mașină', style: blacksubheader,),
                         ),
                         const SizedBox(height: 20),
@@ -264,7 +264,7 @@ class EarthquakePlanView extends StatelessWidget {
                         GlassBox(
                           height: 50,
                           width: 300,
-                          addedOpacity: 0.1,
+                          addedOpacity: 0.3,
                           child: Text('După cutremur', style: labelPrimary,),
                         ),
                         const SizedBox(height: 20),
