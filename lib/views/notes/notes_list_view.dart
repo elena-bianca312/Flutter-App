@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myproject/styles/styles.dart';
 import 'package:myproject/services/cloud/cloud_note.dart';
 import 'package:myproject/utilities/dialogs/delete_dialog.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
@@ -39,7 +40,7 @@ class NotesListView extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Container(
-                color: Colors.blue[100],
+                color: Colors.white,
                 child: ListTile(
                   onTap: () => onTap(note),
                   title: Text(note.text, maxLines: 1, softWrap: true, overflow: TextOverflow.ellipsis),

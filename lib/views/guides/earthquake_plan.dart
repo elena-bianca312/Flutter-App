@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:myproject/styles/glass_box.dart';
+import 'package:myproject/views/pages/custom.dart';
+import 'package:myproject/widgets/background_image.dart';
 
 class SelectableItem {
   final String title;
@@ -22,12 +25,6 @@ class SelectableItemsProvider extends ChangeNotifier {
   }
 }
 
-List<String> fixedListData = [
-  'Fixed Item 1',
-  'Fixed Item 2',
-  'Fixed Item 3',
-];
-
 class EarthquakePlanView extends StatelessWidget {
 
   const EarthquakePlanView({super.key});
@@ -36,130 +33,288 @@ class EarthquakePlanView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<SelectableItemsProvider>(
       create: (_) => SelectableItemsProvider(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Earthquake Plan'),
-        ),
-        body: Consumer<SelectableItemsProvider>(
-          builder: (_, provider, __) {
-            return CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 30),
-                      const Text('Înainte de cutremur'),
-                      const SizedBox(height: 30),
-                      SizedBox(
-                        height: 300,
-                        child: ListView.builder(
-                          itemCount: provider.items.length,
+      child: Stack (
+        children: [
+          const BackgroundImage(),
+          Scaffold(
+          backgroundColor: Colors.transparent.withOpacity(0.5),
+          appBar: AppBar(
+            title: const Text('Earthquake Plan'),
+            backgroundColor: Colors.transparent,
+          ),
+          body: Consumer<SelectableItemsProvider>(
+            builder: (_, provider, __) {
+              return CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 30),
+                        GlassBox(
+                          height: 50,
+                          width: 300,
+                          addedOpacity: 0.1,
+                          child: Text('Înainte de cutremur', style: labelPrimary,),
+                        ),
+                        const SizedBox(height: 30),
+                        SizedBox(
+                          height: 310,
+                          child: ListView.builder(
+                            itemCount: provider.items.length,
+                            itemBuilder: (context, index) {
+                              final item = provider.items[index];
+                              return Column(
+                                children: [
+                                  const Divider(
+                                    color: Colors.white,
+                                    thickness: 1.0,
+                                  ),
+                                  ListTile(
+                                    leading: item.isSelected
+                                        ? const Icon(
+                                            Icons.check_box_rounded,
+                                            color: Colors.white,
+                                          )
+                                        : const Icon(
+                                            Icons.check_box_outline_blank,
+                                            color: Colors.white,
+                                          ),
+                                    title: Text(
+                                      item.title,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    tileColor: null,
+                                    onTap: () {
+                                      provider.toggleSelection(index);
+                                    },
+                                  ),
+                                  if (index == provider.items.length - 1)
+                                    const Divider(
+                                      color: Colors.white,
+                                      thickness: 1.0,
+                                    ),
+                                ]
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 30),
+                        GlassBox(
+                          height: 50,
+                          width: 300,
+                          addedOpacity: 0.1,
+                          child: Text('În timpul cutremurului', style: labelPrimary,),
+                        ),
+                        const SizedBox(height: 30),
+                      ],
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 20),
+                        GlassBox(
+                          height: 50,
+                          width: 240,
+                          addedOpacity: 0.1,
+                          child: Text('Dacă vă aflați în interior', style: blacksubheader,),
+                        ),
+                        const SizedBox(height: 20),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: insideList.length,
                           itemBuilder: (context, index) {
-                            final item = provider.items[index];
-                            return ListTile(
-                              leading: item.isSelected ? const Icon(Icons.check_box_rounded) : const Icon(Icons.check_box_outline_blank),
-                              title: Text(item.title),
-                              tileColor: null,
-                              onTap: () {
-                                provider.toggleSelection(index);
-                              },
+                            final fixedItem = insideList[index];
+                            return Column(
+                              children: [
+                                const Divider(
+                                  color: Colors.white,
+                                  thickness: 1.0,
+                                ),
+                                ListTile(
+                                  leading: Text(
+                                    '${index + 1}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  title: Text(
+                                    fixedItem,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                if (index == provider.items.length)
+                                  const Divider(
+                                    color: Colors.white,
+                                    thickness: 1.0,
+                                  ),
+                              ],
                             );
                           },
                         ),
-                      ),
-                      const Text('În timpul cutremurului'),
-                      const SizedBox(height: 30),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                SliverToBoxAdapter(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 20), // Add spacing before the next ListView.builder
-                      const Text('Dacă vă aflați în interior'),
-                      const SizedBox(height: 20),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: insideList.length,
-                        itemBuilder: (context, index) {
-                          final fixedItem = insideList[index];
-                          return ListTile(
-                            title: Text(fixedItem),
-                          );
-                        },
-                      ),
-                    ],
+                  SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 20),
+                        GlassBox(
+                          height: 50,
+                          width: 240,
+                          addedOpacity: 0.1,
+                          child: Text('Dacă vă aflați afară', style: blacksubheader,),
+                        ),
+                        const SizedBox(height: 20),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: outsideList.length,
+                          itemBuilder: (context, index) {
+                            final fixedItem = outsideList[index];
+                            return Column(
+                              children: [
+                                const Divider(
+                                  color: Colors.white,
+                                  thickness: 1.0,
+                                ),
+                                ListTile(
+                                  leading: Text(
+                                    '${index + 1}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  title: Text(
+                                    fixedItem,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                const Divider(
+                                  color: Colors.white,
+                                  thickness: 1.0,
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                SliverToBoxAdapter(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 20), // Add spacing before the next ListView.builder
-                      const Text('Dacă vă aflați afară'),
-                      const SizedBox(height: 20),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: outsideList.length,
-                        itemBuilder: (context, index) {
-                          final fixedItem = outsideList[index];
-                          return ListTile(
-                            title: Text(fixedItem),
-                          );
-                        },
-                      ),
-                    ],
+                  SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 20),
+                        GlassBox(
+                          height: 50,
+                          width: 240,
+                          addedOpacity: 0.1,
+                          child: Text('Dacă vă aflați într-o mașină', style: blacksubheader,),
+                        ),
+                        const SizedBox(height: 20),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: vehicleList.length,
+                          itemBuilder: (context, index) {
+                            final fixedItem = vehicleList[index];
+                            return Column(
+                              children: [
+                                const Divider(
+                                  color: Colors.white,
+                                  thickness: 1.0,
+                                ),
+                                ListTile(
+                                  leading: Text(
+                                    '${index + 1}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  title: Text(
+                                    fixedItem,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                if (index == provider.items.length)
+                                  const Divider(
+                                    color: Colors.white,
+                                    thickness: 1.0,
+                                  ),
+                              ],
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                SliverToBoxAdapter(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 20), // Add spacing before the next ListView.builder
-                      const Text('Dacă vă aflați într-o mașină'),
-                      const SizedBox(height: 20),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: vehicleList.length,
-                        itemBuilder: (context, index) {
-                          final fixedItem = vehicleList[index];
-                          return ListTile(
-                            title: Text(fixedItem),
-                          );
-                        },
-                      ),
-                    ],
+                  SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 20),
+                        GlassBox(
+                          height: 50,
+                          width: 300,
+                          addedOpacity: 0.1,
+                          child: Text('După cutremur', style: labelPrimary,),
+                        ),
+                        const SizedBox(height: 20),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: afterwardList.length,
+                          itemBuilder: (context, index) {
+                            final fixedItem = afterwardList[index];
+                            return Column(
+                              children: [
+                                const Divider(
+                                  color: Colors.white,
+                                  thickness: 1.0,
+                                ),
+                                ListTile(
+                                  leading: Text(
+                                    '${index + 1}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  title: Text(
+                                    fixedItem,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                if (index == provider.items.length)
+                                  const Divider(
+                                    color: Colors.white,
+                                    thickness: 1.0,
+                                  ),
+                              ],
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                SliverToBoxAdapter(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 20), // Add spacing before the next ListView.builder
-                      const Text('După cutremur'),
-                      const SizedBox(height: 20),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: afterwardList.length,
-                        itemBuilder: (context, index) {
-                          final fixedItem = afterwardList[index];
-                          return ListTile(
-                            title: Text(fixedItem),
-                          );
-                        },
-                      ),
-                    ],
+                  const SliverToBoxAdapter(
+                    child: SizedBox(height: 30),
                   ),
-                ),
-                const SliverToBoxAdapter(
-                  child: SizedBox(height: 30),
-                ),
-              ],
-            );
-          },
+                ],
+              );
+            },
+          ),
         ),
-      ),
+      ]),
     );
   }
 }

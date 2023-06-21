@@ -92,42 +92,47 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('New Note'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.share),
-            onPressed: () async {
-              final text = _textController.text;
-              if (_note == null || text.isEmpty) {
-                await showCannotShareEmptyNoteDialog(context);
-              } else {
-                Share.share(text);
-              }
-            },
+    return Stack(
+      children: [
+        
+        Scaffold(
+          appBar: AppBar(
+            title: const Text('New Note'),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.share),
+                onPressed: () async {
+                  final text = _textController.text;
+                  if (_note == null || text.isEmpty) {
+                    await showCannotShareEmptyNoteDialog(context);
+                  } else {
+                    Share.share(text);
+                  }
+                },
+              ),
+            ],
           ),
-        ],
-      ),
-      body: FutureBuilder(
-        future: createOrGetExistingNote(context),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.done:
-              _setupTextControllerListener();
-              return TextField(
-                controller: _textController,
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-                decoration: const InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'Start typing...',
-                ),
-              );
-            default:
-              return const Center(child: CircularProgressIndicator());
-        }
-      },)
+          body: FutureBuilder(
+            future: createOrGetExistingNote(context),
+            builder: (context, snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.done:
+                  _setupTextControllerListener();
+                  return TextField(
+                    controller: _textController,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Start typing...',
+                    ),
+                  );
+                default:
+                  return const Center(child: CircularProgressIndicator());
+            }
+          },)
+        ),
+      ]
     );
   }
 }

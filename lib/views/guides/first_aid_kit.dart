@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:myproject/widgets/background_image.dart';
 
 class SelectableItem {
   final String title;
@@ -39,29 +40,42 @@ class FirstAidKitView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<SelectableItemsProvider>(
       create: (_) => SelectableItemsProvider(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('First Aid Kit'),
-        ),
-        body: Consumer<SelectableItemsProvider>(
-          builder: (_, provider, __) {
-            return ListView.builder(
-              itemCount: provider.items.length,
-              itemBuilder: (context, index) {
-                final item = provider.items[index];
-
-                return ListTile(
-                  leading: item.isSelected ? const Icon(Icons.check_box_rounded) : const Icon(Icons.check_box_outline_blank),
-                  title: Text(item.title),
-                  tileColor: null,
-                  onTap: () {
-                    provider.toggleSelection(index);
+      child: Stack(
+        children: [
+          const BackgroundImage(),
+          Scaffold(
+            backgroundColor: Colors.transparent.withOpacity(0.5),
+            appBar: AppBar(
+              title: const Text('First Aid Kit'),
+              backgroundColor: Colors.transparent,
+            ),
+            body: Consumer<SelectableItemsProvider>(
+              builder: (_, provider, __) {
+                return ListView.builder(
+                  itemCount: provider.items.length,
+                  itemBuilder: (context, index) {
+                    final item = provider.items[index];
+                    return ListTile(
+                      leading: item.isSelected ?
+                        const Icon(Icons.check_box_rounded, color: Colors.white,) :
+                        const Icon(Icons.check_box_outline_blank, color: Colors.white,),
+                      title: Text(
+                        item.title,
+                        style: const TextStyle(
+                          color: Colors.white
+                        ),
+                      ),
+                      tileColor: null,
+                      onTap: () {
+                        provider.toggleSelection(index);
+                      },
+                    );
                   },
                 );
               },
-            );
-          },
-        ),
+            ),
+          ),
+        ]
       ),
     );
   }
