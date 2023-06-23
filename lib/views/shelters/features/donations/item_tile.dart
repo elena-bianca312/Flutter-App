@@ -34,6 +34,7 @@ class _ItemTileState extends State<ItemTile> {
           });
         },
         child: Container(
+          alignment: Alignment.center,
           decoration: BoxDecoration(
             color: isSelected ? Colors.white.withOpacity(0.2) : Colors.transparent,
             border: Border.all(

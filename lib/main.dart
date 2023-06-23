@@ -22,6 +22,7 @@ import 'package:myproject/views/pages/thank_you_for_donation.dart';
 import 'package:myproject/views/notes/create_update_note_view.dart';
 import 'package:myproject/services/auth/firebase_auth_provider.dart';
 import 'package:myproject/views/shelters/features/donations/item_list.dart';
+import 'package:myproject/views/shelters/features/donations/category_list.dart';
 
 void main() {
   runApp(
@@ -30,6 +31,9 @@ void main() {
         ChangeNotifierProvider<ItemList>(
           create: (context) => ItemList(),
         ),
+        ChangeNotifierProvider<CategoryList>(
+          create: (context) => CategoryList(),
+        )
       ],
       child: const MyApp(),
     ),

@@ -13,10 +13,10 @@ class SelectableItem {
 
 class SelectableItemsProvider extends ChangeNotifier {
   List<SelectableItem> items = [
-    SelectableItem('Agățați articole grele, cum ar fi tablouri și oglinzi, departe de paturi, canapele și alte locuri în care se stă', false),
-    SelectableItem('Fixați corpurile de iluminat aeriene', false),
-    SelectableItem('Instalați șuruburi rezistente pe dulapuri', false),
-    SelectableItem('Asigurați-vă ca obiectele grele sunt cele mai apropiate de podea', false),
+    SelectableItem('Hang heavy items, such as paintings and mirrors, away from beds, sofas, and other sitting areas', false),
+    SelectableItem('Secure overhead lighting fixtures', false),
+    SelectableItem('Install sturdy screws on cabinets', false),
+    SelectableItem('Ensure that heavy objects are closest to the floor', false)
   ];
 
   void toggleSelection(int index) {
@@ -54,7 +54,7 @@ class EarthquakePlanView extends StatelessWidget {
                           height: 50,
                           width: 300,
                           addedOpacity: 0.3,
-                          child: Text('Înainte de cutremur', style: labelPrimary,),
+                          child: Text('Before Earthquake', style: labelPrimary,),
                         ),
                         const SizedBox(height: 30),
                         SizedBox(
@@ -105,7 +105,7 @@ class EarthquakePlanView extends StatelessWidget {
                           height: 50,
                           width: 300,
                           addedOpacity: 0.3,
-                          child: Text('În timpul cutremurului', style: labelPrimary,),
+                          child: Text('During Earthquake', style: labelPrimary,),
                         ),
                         const SizedBox(height: 30),
                       ],
@@ -119,7 +119,7 @@ class EarthquakePlanView extends StatelessWidget {
                           height: 50,
                           width: 240,
                           addedOpacity: 0.3,
-                          child: Text('Dacă vă aflați în interior', style: blacksubheader,),
+                          child: Text('If you are inside', style: blacksubheader,),
                         ),
                         const SizedBox(height: 20),
                         ListView.builder(
@@ -168,7 +168,7 @@ class EarthquakePlanView extends StatelessWidget {
                           height: 50,
                           width: 240,
                           addedOpacity: 0.3,
-                          child: Text('Dacă vă aflați afară', style: blacksubheader,),
+                          child: Text('If you are outside', style: blacksubheader,),
                         ),
                         const SizedBox(height: 20),
                         ListView.builder(
@@ -216,7 +216,7 @@ class EarthquakePlanView extends StatelessWidget {
                           height: 50,
                           width: 240,
                           addedOpacity: 0.3,
-                          child: Text('Dacă vă aflați într-o mașină', style: blacksubheader,),
+                          child: Text('If you are in a moivng vehicle', style: blacksubheader,),
                         ),
                         const SizedBox(height: 20),
                         ListView.builder(
@@ -265,7 +265,7 @@ class EarthquakePlanView extends StatelessWidget {
                           height: 50,
                           width: 300,
                           addedOpacity: 0.3,
-                          child: Text('După cutremur', style: labelPrimary,),
+                          child: Text('After Earthquake', style: labelPrimary,),
                         ),
                         const SizedBox(height: 20),
                         ListView.builder(
@@ -320,29 +320,29 @@ class EarthquakePlanView extends StatelessWidget {
 }
 
 List<String> insideList = [
-  'Lăsați-vă la podea și acoperiți-vă capul și gâtul cu mâinile. Dacă este posibil, încercați să vă deplasați sub o masă sau un birou rezistent.',
-  'Dacă sunteti în pat, rămâneți în pat și acoperiți-vă capul și gâtul cu o pernă.',
-  'Stați departe de ferestre, oglinzi și obiecte care se pot sparge sau prăbuși.',
-  'Rămâneți în interior până când se oprește mișcarea.',
-  'Nu uitați că alarmele de incendiu și sprinklerele pot fi declanșate de un cutremur.',
+  'Get down to the floor and cover your head and neck with your hands. If possible, try to move under a sturdy table or desk.',
+  'If you are in bed, stay in bed and cover your head and neck with a pillow.',
+  'Stay away from windows, mirrors, and objects that can shatter or collapse.',
+  'Remain indoors until the shaking stops.',
+  'Remember that fire alarms and sprinklers can be triggered by an earthquake.',
 ];
 
 List<String> outsideList = [
-  'Găsiți un spațiu deschis, departe de clădiri, copaci, stâlpi de iluminat și fire electrice. Lăsați-vă la pămant!',
+  'Find an open space, away from buildings, trees, streetlights, and power lines. Get down to the ground!'
 ];
 
 List<String> vehicleList = [
-  'Trageți pe dreapta într-un loc liber și opriți-vă. Evitați podurile, pasajele subterane, clădirile și copacii.',
-  'Rămâneți în mașină cu centura de siguranță fixată până când se oprește mișcarea.',
-  'Dacă o linie de electricitate cade pe mașină, stați înăuntru până când un profesionist o poate îndepărta.',
-  'Dacă sunteți într-o zonă cu risc de tsunami, mergeți la cel mai apropiat loc înalt sau la o zonă de evacuare.',
-  'Dacă vă aflați într-o zonă muntoasă sau în apropierea stâncilor instabile, fiți atenți la alunecările de teren.',
+  'Pull over to a safe location and stop. Avoid bridges, tunnels, buildings, and trees.',
+  'Stay in the car with your seatbelt fastened until the shaking stops.',
+  'If a power line falls on your car, stay inside until a professional can remove it.',
+  'If you are in a tsunami risk zone, go to the nearest high ground or evacuation area.',
+  'If you are in a mountainous area or near unstable cliffs, be cautious of landslides.'
 ];
 
 List<String> afterwardList = [
-  'Dacă sunteți plecat de acasă, întorceți-vă doar atunci când autoritățile vă permit.',
-  'Fiți pregătit pentru eventuale replici ale cutremurului. Dacă simțiți una, consultați pașii de mai sus.',
-  'Stați departe de clădiri avariate sau de zonele deteriorate din casă.',
-  'Căutați și stingeți incendiile mici, incendiul este cel mai frecvent pericol după un cutremur.',
-  'Verificați dacă sunteți rănit și ajutați-i pe cei din jurul vostru.',
+  'If you are away from home, return only when authorities allow it.',
+  'Be prepared for possible aftershocks. If you feel one, refer to the steps above.',
+  'Stay away from damaged buildings or areas of your house that are in disrepair.',
+  'Search for and extinguish small fires, as fire is the most common hazard after an earthquake.',
+  'Check yourself for injuries and assist those around you.'
 ];

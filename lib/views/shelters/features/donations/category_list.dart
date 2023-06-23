@@ -2,19 +2,24 @@ import 'package:flutter/material.dart';
 
 const kDefaultPadding = 20.0;
 
-class CategoryList extends StatefulWidget {
-  const CategoryList({super.key});
-
-  @override
-  // ignore: library_private_types_in_public_api
-  _CategoryListState createState() => _CategoryListState();
-}
-
-class _CategoryListState extends State<CategoryList> {
-  // by default first item will be selected
+class CategoryList extends ChangeNotifier {
   int selectedIndex = 0;
-  List categories = ['All', 'Fresh Items', 'Non-perishable Foods', 'Sanitary Items', 'Clothing', 'Toys', 'Other'];
-  @override
+  List<String> categories = [
+    'Fresh Foods',
+    'Non-perishable Foods',
+    'Sanitary Items',
+    'Clothing',
+    'Toys',
+    'Other',
+  ];
+
+  String get selectedCategory => categories[selectedIndex];
+
+  void selectCategory(int index) {
+    selectedIndex = index;
+    notifyListeners();
+  }
+
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: kDefaultPadding / 2),
@@ -24,9 +29,7 @@ class _CategoryListState extends State<CategoryList> {
         itemCount: categories.length,
         itemBuilder: (context, index) => GestureDetector(
           onTap: () {
-            setState(() {
-              selectedIndex = index;
-            });
+            selectCategory(index);
           },
           child: Container(
             alignment: Alignment.center,

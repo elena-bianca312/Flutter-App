@@ -60,7 +60,13 @@ class _AddItemPageState extends State<AddItemPage> {
 
                 const SizedBox(height: 24),
 
-                const CategoryList(),
+                Consumer<CategoryList>(
+                  builder: (context, categoryList, child) {
+                    return CategoryListWidget(
+                      categoryList: categoryList,
+                    );
+                  },
+                ),
 
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24.0),
@@ -72,33 +78,49 @@ class _AddItemPageState extends State<AddItemPage> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: Text(
-                    "Fresh Items",
+                    Provider.of<CategoryList>(context).selectedCategory,
                     style: header,
                   ),
                 ),
 
                 Consumer<ItemList>(
-                  builder: (context, value, child) {
+                  builder: (context, itemList, child) {
+                    final selectedCategory = Provider.of<CategoryList>(context).selectedCategory;
+                    List<dynamic> items;
+
+                    if (selectedCategory == 'Fresh Foods') {
+                      items = itemList.freshFoods;
+                    } else if (selectedCategory == 'Non-perishable Foods') {
+                      items = itemList.nonPerishableFoods;
+                    } else if (selectedCategory == 'Sanitary Items') {
+                      items = itemList.sanitaryItems;
+                    } else if (selectedCategory == 'Clothing') {
+                      items = itemList.clothingItems;
+                    } else if (selectedCategory == 'Toys') {
+                      items = itemList.toysItems;
+                    } else {
+                      items = itemList.otherItems;
+                    }
+
                     return GridView.builder(
                       shrinkWrap: true,
                       padding: const EdgeInsets.all(12),
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: value.shopItems.length,
+                      itemCount: items.length,
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 1,
                         childAspectRatio: 1 / 0.2,
                       ),
                       itemBuilder: (context, index) {
-                        final itemName = value.shopItems[index][0];
-                        final isSelected = value.isItemSelected(itemName);
-
+                        final itemName = items[index][0];
+                        final isSelected = itemList.isItemSelected(itemName);
                         return ItemTile(
                           itemName: itemName,
                           onPressed: () {
                             if (isSelected) {
-                              value.removeItem(itemName);
+                              itemList.removeItem(itemName);
                             } else {
-                              value.addItem(itemName);
+                              itemList.addItem(itemName);
                             }
                           },
                         );
@@ -111,6 +133,47 @@ class _AddItemPageState extends State<AddItemPage> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class CategoryListWidget extends StatelessWidget {
+  const CategoryListWidget({required this.categoryList});
+
+  final CategoryList categoryList;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: kDefaultPadding / 2),
+      height: 30,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: categoryList.categories.length,
+        itemBuilder: (context, index) => GestureDetector(
+          onTap: () {
+            categoryList.selectCategory(index);
+          },
+          child: Container(
+            alignment: Alignment.center,
+            margin: EdgeInsets.only(
+              left: kDefaultPadding,
+              right: index == categoryList.categories.length - 1 ? kDefaultPadding : 0,
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
+            decoration: BoxDecoration(
+              color: index == categoryList.selectedIndex
+                  ? Colors.white.withOpacity(0.4)
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(
+              categoryList.categories[index],
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

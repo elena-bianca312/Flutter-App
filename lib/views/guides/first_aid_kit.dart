@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:myproject/widgets/background_image.dart';
+import 'package:myproject/services/auth/auth_service.dart';
+import 'package:myproject/services/guide_cloud/firebase_guide_storage.dart';
 
 class SelectableItem {
   final String title;
@@ -10,73 +12,121 @@ class SelectableItem {
 }
 
 class SelectableItemsProvider extends ChangeNotifier {
-  List<SelectableItem> items = [
-    SelectableItem('Apă (pentru cel puțin 3 zile)', false),
-    SelectableItem('Alimente - produse neperisabile (pentru cel puțin 3 zile)', false),
-    SelectableItem('Lanternă', false),
-    SelectableItem('Radio', false),
-    SelectableItem('Baterii', false),
-    SelectableItem('Medicamente (pentru cel puțin 7 zile)', false),
-    SelectableItem('Trusă de prim ajutor', false),
-    SelectableItem('Obiecte de igienă personală', false),
-    SelectableItem('Copii ale documentelor personale importante', false),
-    SelectableItem('Telefon mobil cu încărcătoare', false),
-    SelectableItem('Numerar suplimentar', false),
-    SelectableItem('Pătură de urgență', false),
-    SelectableItem('Hartă a zonei', false),
-  ];
 
-  void toggleSelection(int index) {
+  late List<SelectableItem> items;
+
+  SelectableItemsProvider(List<bool> selectedItems) {
+    assert(selectedItems.length == 13, 'Invalid number of selected items.');
+
+    items = [
+      SelectableItem('Water (for at least 3 days)', selectedItems[0]),
+      SelectableItem('Non-perishable food (for at least 3 days)', selectedItems[1]),
+      SelectableItem('Flashlight', selectedItems[2]),
+      SelectableItem('Radio', selectedItems[3]),
+      SelectableItem('Batteries', selectedItems[4]),
+      SelectableItem('Medications (for at least 7 days)', selectedItems[5]),
+      SelectableItem('First aid kit', selectedItems[6]),
+      SelectableItem('Personal hygiene items', selectedItems[7]),
+      SelectableItem('Copies of important personal documents', selectedItems[8]),
+      SelectableItem('Mobile phone with chargers', selectedItems[9]),
+      SelectableItem('Extra cash', selectedItems[10]),
+      SelectableItem('Emergency blanket', selectedItems[11]),
+      SelectableItem('Map of the area', selectedItems[12]),
+    ];
+  }
+
+  Future<bool> toggleSelection(int index) async {
     items[index].isSelected = !items[index].isSelected;
     notifyListeners();
+    return items[index].isSelected;
   }
 }
 
 
-class FirstAidKitView extends StatelessWidget {
+class FirstAidKitView extends StatefulWidget {
   const FirstAidKitView({super.key});
 
   @override
+  State<FirstAidKitView> createState() => _FirstAidKitViewState();
+}
+
+class _FirstAidKitViewState extends State<FirstAidKitView> {
+
+  late final FirebaseGuideStorage _guideService;
+  final currentUser = AuthService.firebase().currentUser!;
+  late final userId = currentUser.id;
+
+  @override
+  void initState() {
+    _guideService = FirebaseGuideStorage();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<SelectableItemsProvider>(
-      create: (_) => SelectableItemsProvider(),
-      child: Stack(
-        children: [
-          const BackgroundImage(),
-          Scaffold(
-            backgroundColor: Colors.transparent.withOpacity(0.5),
-            appBar: AppBar(
-              title: const Text('First Aid Kit'),
-              backgroundColor: Colors.transparent,
-            ),
-            body: Consumer<SelectableItemsProvider>(
-              builder: (_, provider, __) {
-                return ListView.builder(
-                  itemCount: provider.items.length,
-                  itemBuilder: (context, index) {
-                    final item = provider.items[index];
-                    return ListTile(
-                      leading: item.isSelected ?
-                        const Icon(Icons.check_box_rounded, color: Colors.white,) :
-                        const Icon(Icons.check_box_outline_blank, color: Colors.white,),
-                      title: Text(
-                        item.title,
-                        style: const TextStyle(
-                          color: Colors.white
+
+    return FutureBuilder(
+      future: Future.wait([
+        _guideService.createNewGuide(ownerUserId: userId).then((value) => _guideService.getSelectionList(ownerUserId: userId)),
+        // _guideService.getSelectionList(ownerUserId: userId)
+      ]),
+      builder: (context, snapshot) {
+      if (!snapshot.hasData) {
+        return const SizedBox();
+      } else {
+      return ChangeNotifierProvider<SelectableItemsProvider> (
+        create: (_) => SelectableItemsProvider(snapshot.data![0]),
+        child: Stack(
+          children: [
+            const BackgroundImage(),
+            Scaffold(
+              backgroundColor: Colors.transparent.withOpacity(0.5),
+              appBar: AppBar(
+                title: const Text('First Aid Kit'),
+                backgroundColor: Colors.transparent,
+              ),
+              body: Consumer<SelectableItemsProvider>(
+                builder: (_, provider, __) {
+                  return ListView.builder(
+                    itemCount: provider.items.length,
+                    itemBuilder: (context, index) {
+                      final item = provider.items[index];
+                      return ListTile(
+                        leading: item.isSelected ?
+                          const Icon(Icons.check_box_rounded, color: Colors.white,) :
+                          const Icon(Icons.check_box_outline_blank, color: Colors.white,),
+                        title: Text(
+                          item.title,
+                          style: const TextStyle(
+                            color: Colors.white
+                          ),
                         ),
-                      ),
-                      tileColor: null,
-                      onTap: () {
-                        provider.toggleSelection(index);
-                      },
-                    );
-                  },
-                );
-              },
+                        tileColor: null,
+                        onTap: () async {
+                          bool isSelected = await provider.toggleSelection(index);
+                          if (isSelected) {
+                            await _guideService.selectItem(
+                              ownerUserId: userId,
+                              itemIndex: index + 1,
+                            );
+                          }
+                          else {
+                            await _guideService.deselectItem(
+                              ownerUserId: userId,
+                              itemIndex: index + 1,
+                            );
+                          }
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
             ),
-          ),
-        ]
-      ),
-    );
+          ]
+        ),
+      );
+      }
+    });
   }
 }

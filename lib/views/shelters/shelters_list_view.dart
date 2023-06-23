@@ -124,7 +124,7 @@ class SheltersListView extends StatelessWidget {
                             GlassBox(
                               height: 80,
                               width: 400,
-                              addedOpacity: 0.25,
+                              addedOpacity: 0.35,
                               child: ListTile(
                                 leading: Icon(Icons.arrow_drop_down_circle, color: black,),
                                 title: Text(shelter.title, style: blackheader),
@@ -141,7 +141,7 @@ class SheltersListView extends StatelessWidget {
                                 GlassBox(
                                   height: 40,
                                   width: 90,
-                                  addedOpacity: 0.25,
+                                  addedOpacity: 0.6,
                                   child: TextButton(
                                     child: Text('View', style: labelPrimary,),
                                     onPressed: () {
@@ -153,6 +153,7 @@ class SheltersListView extends StatelessWidget {
                                   GlassBox(
                                     height: 40,
                                     width: 50,
+                                    addedOpacity: 0.6,
                                     child: IconButton(
                                       icon: const Icon(Icons.delete, color: Colors.black,),
                                       onPressed: () async {
