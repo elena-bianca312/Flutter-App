@@ -98,6 +98,7 @@ class _CartPageState extends State<CartPage> {
                   child: TextButton(
                     child: Text('Donate', style: labelPrimary,),
                     onPressed: () {
+                      itemList.removeAllItems();
                       Navigator.of(context).pushNamed(thankYouRoute);
                     },
                   ),

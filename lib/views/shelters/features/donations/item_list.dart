@@ -119,6 +119,13 @@ class ItemList extends ChangeNotifier {
     notifyListeners();
   }
 
+  void removeAllItems() {
+    _cartItemQuantities.clear();
+
+    _selectedItems.clear();
+    notifyListeners();
+  }
+
   void increaseItemQuantity(String itemName) {
     if (_cartItemQuantities.containsKey(itemName)) {
       _cartItemQuantities[itemName] = _cartItemQuantities[itemName]! + 1;
