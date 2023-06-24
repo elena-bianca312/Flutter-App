@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:myproject/views/pages/custom.dart';
 import 'package:myproject/widgets/text_input.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:myproject/animation/fade_animation.dart';
@@ -32,6 +31,7 @@ class _AddShelterViewState extends State<AddShelterView> {
   late final TextEditingController _textController;
   PlatformFile? _pickedFile;
   UploadTask? uploadTask;
+  String? uploadedPhotoURL;
 
   Future<CloudShelterInfo> createOrGetExistingShelter(BuildContext context) async {
 
@@ -42,6 +42,7 @@ class _AddShelterViewState extends State<AddShelterView> {
       _titleController.text = widgetShelter.title;
       _addressController.text = widgetShelter.address;
       _photoURLController.text = widgetShelter.photoURL ?? '';
+      // uploadedPhotoURL = widgetShelter.photoURL ?? '';
       _textController.text = widgetShelter.text ?? '';
       return widgetShelter;
     }
@@ -133,14 +134,12 @@ class _AddShelterViewState extends State<AddShelterView> {
 
     if (result == null) return;
 
-    print("File selected: ${result.files.single.name}");
-
     setState(() {
       _pickedFile = result.files.first;
     });
   }
 
-  Future uploadFile() async {
+ Future<void> uploadFile() async {
     if (_pickedFile == null) return;
 
     final path = 'files/${_pickedFile!.name}';
@@ -151,46 +150,56 @@ class _AddShelterViewState extends State<AddShelterView> {
       uploadTask = ref.putFile(file);
     });
 
-    final snapshot = await uploadTask!.whenComplete(() {});
-    // ignore: unused_local_variable
-    final downloadURL = await snapshot.ref.getDownloadURL();
+    await uploadTask!.whenComplete(() {});
 
-    print(downloadURL);
+    final downloadURL = await ref.getDownloadURL();
 
     setState(() {
-      _photoURLController.text = downloadURL;
+      uploadedPhotoURL = downloadURL;
       uploadTask = null;
     });
   }
 
-  Widget buildProgress() => StreamBuilder<TaskSnapshot>(
-    stream: uploadTask?.snapshotEvents,
-    builder: (context, snapshot) {
-      if (snapshot.hasData) {
-        double progress = snapshot.data!.bytesTransferred / snapshot.data!.totalBytes;
-        return SizedBox(
-          height: 50,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              LinearProgressIndicator(
-                value: progress,
-                backgroundColor: Colors.grey,
-                color: Colors.green,
+  Widget buildProgress() {
+    if (uploadTask != null) {
+      return StreamBuilder<TaskSnapshot>(
+        stream: uploadTask?.snapshotEvents,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final progress =
+                snapshot.data!.bytesTransferred / snapshot.data!.totalBytes;
+            return SizedBox(
+              height: 50,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  LinearProgressIndicator(
+                    value: progress,
+                    backgroundColor: Colors.grey,
+                    color: Colors.green,
+                  ),
+                  Center(
+                    child: Text(
+                      '${(progress * 100).roundToDouble()} %',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
               ),
-              Center(
-                child: Text(
-                  '${(progress * 100).roundToDouble()} %',
-                  style: const TextStyle(color: Colors.white),
-              )),
-            ],
-          )
-        );
-      } else {
-        return const SizedBox(height: 70,);
-      }
+            );
+          } else {
+            return const LinearProgressIndicator(
+              value: 100,
+              backgroundColor: Colors.grey,
+              color: Colors.green,
+            );
+          }
+        },
+      );
+    } else {
+      return Container();
     }
-  );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -204,23 +213,22 @@ class _AddShelterViewState extends State<AddShelterView> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () async {
+            if (uploadedPhotoURL != null && uploadedPhotoURL != '') {
+              _photoURLController.text = uploadedPhotoURL!;
+            }
             if (_shelter == null || _titleController.text.isEmpty || _addressController.text.isEmpty) {
               final continueEditing = await showCannotSaveIncompleteShelterInfoDialog(context);
               if (!continueEditing) {
                 // ignore: use_build_context_synchronously
                 Navigator.of(context).pop();
-                // setState(() {});
               }
             }
-            // TODO: Add check for valid address
-            // Should also add check for valid photoURL
             else if (_shelter == null || _photoURLController.text.isEmpty) {
               // ignore: use_build_context_synchronously
               final continueWithoutPhoto = await showPhotoInvalidFormatDialog(context);
               if (continueWithoutPhoto) {
                 // ignore: use_build_context_synchronously
                 Navigator.of(context).pop();
-                // setState(() {});
               }
             } else {
               // ignore: use_build_context_synchronously
@@ -229,19 +237,17 @@ class _AddShelterViewState extends State<AddShelterView> {
           }
         ),
         actions: [
-          FadeAnimation(1, Axis.vertical,
-            IconButton(
-              icon: const Icon(Icons.share),
-              onPressed: () async {
-                final text = _textController.text;
-                if (_shelter == null || text.isEmpty) {
-                  await showCannotShareEmptyNoteDialog(context);
-                } else {
-                  Share.share(text);
-                }
-              },
-            )
-          ),
+          IconButton(
+            icon: const Icon(Icons.share),
+            onPressed: () async {
+              final text = _textController.text;
+              if (_shelter == null || text.isEmpty) {
+                await showCannotShareEmptyNoteDialog(context);
+              } else {
+                Share.share(text);
+              }
+            },
+          )
         ],
       ),
       body: SingleChildScrollView(
@@ -256,33 +262,27 @@ class _AddShelterViewState extends State<AddShelterView> {
                     alignment: Alignment.center,
                     child: Column(
                       children: [
-                        FadeAnimation(1, Axis.horizontal,
-                          TextInput(
-                            controller: _titleController,
-                            hint: 'Title...',
-                            icon: Icons.title,
-                            inputAction: TextInputAction.none,
-                            width: 350,
-                          )
+                        TextInput(
+                          controller: _titleController,
+                          hint: 'Title...',
+                          icon: Icons.title,
+                          inputAction: TextInputAction.none,
+                          width: 350,
                         ),
-                        FadeAnimation(1.8, Axis.horizontal,
-                          TextInput(
-                            controller: _addressController,
-                            hint: 'Address...',
-                            icon: Icons.location_city,
-                            inputAction: TextInputAction.none,
-                            width: 350,
-                          )
+                        TextInput(
+                          controller: _addressController,
+                          hint: 'Address...',
+                          icon: Icons.location_city,
+                          inputAction: TextInputAction.none,
+                          width: 350,
                         ),
-                        FadeAnimation(2.6, Axis.horizontal,
-                          TextInput(
-                            controller: _textController,
-                            keyboardType: TextInputType.multiline,
-                            hint: 'Type text...',
-                            icon: Icons.text_fields,
-                            width: 350,
-                            maxLines: 100,
-                          ),
+                        TextInput(
+                          controller: _textController,
+                          keyboardType: TextInputType.multiline,
+                          hint: 'Type text...',
+                          icon: Icons.text_fields,
+                          width: 350,
+                          maxLines: 100,
                         ),
                         const SizedBox(height: 30,),
                         ElevatedButton(
@@ -292,6 +292,8 @@ class _AddShelterViewState extends State<AddShelterView> {
                           ),
                           child: const Text("Select file", style: TextStyle(color: Colors.black)),
                         ),
+                        if (_pickedFile != null)
+                          const Text("File is selected"),
                         const SizedBox(height: 20,),
                         ElevatedButton(
                           onPressed: uploadFile,
@@ -301,16 +303,14 @@ class _AddShelterViewState extends State<AddShelterView> {
                           child: const Text("Upload file", style: TextStyle(color: Colors.black))
                         ),
                         uploadTask != null ? buildProgress() : Container(),
-                        // if (_pickedFile != null)
-                        //   Expanded(
-                        //     child: Container(
-                        //       color: Colors.blue[100],
-                        //       child: Image.file(
-                        //         File(_pickedFile!.path!),
-                        //         fit: BoxFit.cover,
-                        //       )
-                        //     ),
-                        //   ),
+                        const SizedBox(height: 70,),
+                        if (uploadedPhotoURL != null && uploadedPhotoURL != '')
+                          Image.network(
+                            uploadedPhotoURL!,
+                            height: 200.0,
+                            width: 200.0,
+                            fit: BoxFit.cover,
+                          ),
                         const SizedBox(height: 70,),
                       ],
                     ),

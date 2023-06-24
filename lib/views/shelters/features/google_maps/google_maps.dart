@@ -37,9 +37,9 @@ class _MapPageState extends State<MapPage> {
   final TextEditingController _originController = TextEditingController();
   late final TextEditingController _destinationController = TextEditingController(text: _shelter.address);
   late String dropDownValue =  _shelter.address;
-  late Set<String> _sheltersAddresses = {};
+  late final Set<String> _sheltersAddresses = {};
 
-  CustomInfoWindowController _customInfoWindowController = CustomInfoWindowController();
+  final CustomInfoWindowController _customInfoWindowController = CustomInfoWindowController();
 
   final Set<Marker> _markers = {};
   final Set<Polygon> _polygons = {};
@@ -162,6 +162,15 @@ class _MapPageState extends State<MapPage> {
                                 if (_originController.text == '' || _destinationController.text == '') return;
                                 _refreshState();
                                 var directions = await LocationService().getDirections(_originController.text, _destinationController.text);
+                                if (directions == null) {
+                                  // ignore: use_build_context_synchronously
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Please enter a valid address.'),
+                                    ),
+                                  );
+                                  return;
+                                }
                                 _drawLine(
                                   directions['start_location']['lat'],
                                   directions['start_location']['lng'],
@@ -186,10 +195,10 @@ class _MapPageState extends State<MapPage> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: TextFormField(
+                          // enabled: false,
                           controller: _destinationController,
                           textCapitalization: TextCapitalization.words,
                           decoration: InputDecoration(
-                            // hintText: 'Search',
                             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                             hintStyle: subheader,
                             border: InputBorder.none,
@@ -199,8 +208,9 @@ class _MapPageState extends State<MapPage> {
                                 _refreshState();
                                 var place = await LocationService().getPlace(_destinationController.text);
                                 _goToPlace(place: place);
+                                _setShelterMarker(place: place, markerId: place['place_id']);
                               },
-                              icon: const Icon(Icons.pin_drop)
+                              icon: const Icon(Icons.pin_drop, color: Colors.blue,)
                             ),
                           ),
                           style: subheader,
@@ -248,7 +258,7 @@ class _MapPageState extends State<MapPage> {
   }
 
   void _refreshState() {
-    // _markers.clear();
+    _markers.clear();
     _polygons.clear();
     _polylines.clear();
   }
@@ -279,7 +289,7 @@ class _MapPageState extends State<MapPage> {
       50.0
     ));
 
-    // _setMarker(point: LatLng(sourceLat, sourceLng), markerId: MarkerId(_originController.text));
+    _setMarker(point: LatLng(sourceLat, sourceLng), markerId: MarkerId(_originController.text));
     _setMarker(point: LatLng(destinationLat, destinationLng), markerId: MarkerId(_destinationController.text));
   }
 
@@ -312,10 +322,5 @@ class _MapPageState extends State<MapPage> {
     });
     var place = await LocationService().getPlace(_shelter.address);
     _goToPlace(place: place);
-    print('shelters ADDRESS');
-    print(_sheltersAddresses);
   }
-
-  @override
-  bool get wantKeepAlive => false;
 }
