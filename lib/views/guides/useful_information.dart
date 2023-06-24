@@ -30,13 +30,13 @@ class UsefulInformationView extends StatelessWidget {
                   width: 300,
                   addedOpacity: 0.3,
                   child: TextButton(
-                    child: Text('First-Aid Kit', style: labelPrimary,),
+                    child: Text('Earthquake Kit', style: labelPrimary,),
                     onPressed: () {
                       Navigator.of(context).pushNamed(firstAidKitRoute);
                     },
                   ),
                 ),
-                const SizedBox(height: 50),
+                const SizedBox(height: 70),
                 GlassBox(
                   height: 50,
                   width: 300,
@@ -48,7 +48,7 @@ class UsefulInformationView extends StatelessWidget {
                     },
                   ),
                 ),
-                const SizedBox(height: 50),
+                const SizedBox(height: 70),
                 GlassBox(
                   height: 50,
                   width: 300,
@@ -60,7 +60,7 @@ class UsefulInformationView extends StatelessWidget {
                     },
                   ),
                 ),
-                const SizedBox(height: 50),
+                const SizedBox(height: 70),
                 GlassBox(
                   height: 50,
                   width: 300,

@@ -81,7 +81,7 @@ class _FirstAidKitViewState extends State<FirstAidKitView> {
               Scaffold(
                 backgroundColor: Colors.transparent.withOpacity(0.5),
                 appBar: AppBar(
-                  title: const Text('First Aid Kit'),
+                  title: const Text('Earthquake Kit'),
                   backgroundColor: Colors.transparent,
                 ),
                 body: Consumer<SelectableItemsProvider>(

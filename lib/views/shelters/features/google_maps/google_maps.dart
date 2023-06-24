@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:myproject/styles/styles.dart';
 import 'package:myproject/views/pages/custom.dart';
 import 'package:custom_info_window/custom_info_window.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -110,142 +111,140 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
-    print("Addresses:\n");
-    print(_sheltersAddresses);
     return Scaffold(
-            backgroundColor: Colors.greenAccent,
-            appBar: AppBar(
-              title: const Text('Google Maps'),
-              backgroundColor: Colors.transparent,
-            ),
-            body: Stack(
+      backgroundColor: kCustomBlue,
+      appBar: AppBar(
+        title: const Text('Google Maps'),
+        backgroundColor: Colors.transparent,
+      ),
+      body: Stack(
+        children: [
+          GoogleMap(
+            mapType: MapType.normal,
+            markers: _markers,
+            polygons: _polygons,
+            polylines: _polylines,
+            initialCameraPosition: _kMapCenter,
+            onMapCreated: (GoogleMapController controller) {
+              _controller.complete(controller);
+              _customInfoWindowController.googleMapController = controller;
+            },
+            onTap: (LatLng point) {
+              if (!mounted) return;
+              setState(() {
+                _polygonLatLngs.add(point);
+                _setPolygon();
+              });
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+            child: Row(
               children: [
-                GoogleMap(
-                  mapType: MapType.normal,
-                  markers: _markers,
-                  polygons: _polygons,
-                  polylines: _polylines,
-                  initialCameraPosition: _kMapCenter,
-                  onMapCreated: (GoogleMapController controller) {
-                    _controller.complete(controller);
-                    _customInfoWindowController.googleMapController = controller;
-                  },
-                  onTap: (LatLng point) {
-                    if (!mounted) return;
-                    setState(() {
-                      _polygonLatLngs.add(point);
-                      _setPolygon();
-                    });
-                  },
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                  child: Row(
+                Expanded(
+                  child: Column(
                     children: [
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey[600]?.withOpacity(0.6),
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: TextFormField(
-                                controller: _originController,
-                                textCapitalization: TextCapitalization.words,
-                                decoration: InputDecoration(
-                                  hintText: 'Search',
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                                  hintStyle: subheader,
-                                  border: InputBorder.none,
-                                  suffixIcon: IconButton(
-                                    onPressed: () async {
-                                      if (_originController.text == '' || _destinationController.text == '') return;
-                                      _refreshState();
-                                      var directions = await LocationService().getDirections(_originController.text, _destinationController.text);
-                                      _drawLine(
-                                        directions['start_location']['lat'],
-                                        directions['start_location']['lng'],
-                                        directions['bounds_ne'],
-                                        directions['bounds_sw'],
-                                        directions['end_location']['lat'],
-                                        directions['end_location']['lng'],
-                                      );
-                                      _setPolyline(directions['polyline']);
-                                    },
-                                    icon: const Icon(Icons.search)
-                                  ),
-                                ),
-                                style: subheader,
-                                onChanged: (value) {},
-                              ),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[600]?.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: TextFormField(
+                          controller: _originController,
+                          textCapitalization: TextCapitalization.words,
+                          decoration: InputDecoration(
+                            hintText: 'Search',
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                            hintStyle: subheader,
+                            border: InputBorder.none,
+                            suffixIcon: IconButton(
+                              onPressed: () async {
+                                if (_originController.text == '' || _destinationController.text == '') return;
+                                _refreshState();
+                                var directions = await LocationService().getDirections(_originController.text, _destinationController.text);
+                                _drawLine(
+                                  directions['start_location']['lat'],
+                                  directions['start_location']['lng'],
+                                  directions['bounds_ne'],
+                                  directions['bounds_sw'],
+                                  directions['end_location']['lat'],
+                                  directions['end_location']['lng'],
+                                );
+                                _setPolyline(directions['polyline']);
+                              },
+                              icon: const Icon(Icons.search)
                             ),
-                            const SizedBox(height: 10),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey[600]?.withOpacity(0.6),
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: TextFormField(
-                                controller: _destinationController,
-                                textCapitalization: TextCapitalization.words,
-                                decoration: InputDecoration(
-                                  // hintText: 'Search',
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                                  hintStyle: subheader,
-                                  border: InputBorder.none,
-                                  suffixIcon: IconButton(
-                                    onPressed: () async {
-                                      if (_destinationController.text == '') return;
-                                      _refreshState();
-                                      var place = await LocationService().getPlace(_destinationController.text);
-                                      _goToPlace(place: place);
-                                    },
-                                    icon: const Icon(Icons.pin_drop)
-                                  ),
-                                ),
-                                style: subheader,
-                                onChanged: (value) {},
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            // TODO
-                            // doesnt work on reloading probably because it doesnt wait for
-                            // _setShelters() to finish so _sheltersAddresses is not complete
-                            // Container(
-                            //   decoration: BoxDecoration(
-                            //     color: Colors.grey[600]?.withOpacity(0.6),
-                            //     borderRadius: BorderRadius.circular(16),
-                            //   ),
-                            //   child: DropdownButton(
-                            //     value: dropDownValue,
-                            //     // items: <String>['Dog', 'Cat', 'Tiger', 'Lion']
-                            //     items: _sheltersAddresses
-                            //         .map<DropdownMenuItem<String>>((String value) {
-                            //       return DropdownMenuItem<String>(
-                            //         value: value,
-                            //         child: Text(
-                            //           value,
-                            //           style: const TextStyle(fontSize: 30),
-                            //         ),
-                            //       );
-                            //     }).toList(),
-                            //     onChanged: (String? newValue) {
-                            //       setState(() {
-                            //         dropDownValue = newValue!;
-                            //       });
-                            //     },
-                            //   )
-                            // ),
-                          ],
+                          ),
+                          style: subheader,
+                          onChanged: (value) {},
                         ),
                       ),
+                      const SizedBox(height: 10),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[600]?.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: TextFormField(
+                          controller: _destinationController,
+                          textCapitalization: TextCapitalization.words,
+                          decoration: InputDecoration(
+                            // hintText: 'Search',
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                            hintStyle: subheader,
+                            border: InputBorder.none,
+                            suffixIcon: IconButton(
+                              onPressed: () async {
+                                if (_destinationController.text == '') return;
+                                _refreshState();
+                                var place = await LocationService().getPlace(_destinationController.text);
+                                _goToPlace(place: place);
+                              },
+                              icon: const Icon(Icons.pin_drop)
+                            ),
+                          ),
+                          style: subheader,
+                          onChanged: (value) {},
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      // TODO
+                      // doesnt work on reloading probably because it doesnt wait for
+                      // _setShelters() to finish so _sheltersAddresses is not complete
+                      // Container(
+                      //   decoration: BoxDecoration(
+                      //     color: Colors.grey[600]?.withOpacity(0.6),
+                      //     borderRadius: BorderRadius.circular(16),
+                      //   ),
+                      //   child: DropdownButton(
+                      //     value: dropDownValue,
+                      //     // items: <String>['Dog', 'Cat', 'Tiger', 'Lion']
+                      //     items: _sheltersAddresses
+                      //         .map<DropdownMenuItem<String>>((String value) {
+                      //       return DropdownMenuItem<String>(
+                      //         value: value,
+                      //         child: Text(
+                      //           value,
+                      //           style: const TextStyle(fontSize: 30),
+                      //         ),
+                      //       );
+                      //     }).toList(),
+                      //     onChanged: (String? newValue) {
+                      //       setState(() {
+                      //         dropDownValue = newValue!;
+                      //       });
+                      //     },
+                      //   )
+                      // ),
                     ],
-                  )
+                  ),
                 ),
               ],
-            ),
-          );
+            )
+          ),
+        ],
+      ),
+    );
   }
 
   void _refreshState() {
