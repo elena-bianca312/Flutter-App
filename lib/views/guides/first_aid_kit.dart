@@ -68,64 +68,63 @@ class _FirstAidKitViewState extends State<FirstAidKitView> {
     return FutureBuilder(
       future: Future.wait([
         _guideService.createNewGuide(ownerUserId: userId).then((value) => _guideService.getSelectionList(ownerUserId: userId)),
-        // _guideService.getSelectionList(ownerUserId: userId)
       ]),
       builder: (context, snapshot) {
-      if (!snapshot.hasData) {
-        return const SizedBox();
-      } else {
-      return ChangeNotifierProvider<SelectableItemsProvider> (
-        create: (_) => SelectableItemsProvider(snapshot.data![0]),
-        child: Stack(
-          children: [
-            const BackgroundImage(),
-            Scaffold(
-              backgroundColor: Colors.transparent.withOpacity(0.5),
-              appBar: AppBar(
-                title: const Text('First Aid Kit'),
-                backgroundColor: Colors.transparent,
-              ),
-              body: Consumer<SelectableItemsProvider>(
-                builder: (_, provider, __) {
-                  return ListView.builder(
-                    itemCount: provider.items.length,
-                    itemBuilder: (context, index) {
-                      final item = provider.items[index];
-                      return ListTile(
-                        leading: item.isSelected ?
-                          const Icon(Icons.check_box_rounded, color: Colors.white,) :
-                          const Icon(Icons.check_box_outline_blank, color: Colors.white,),
-                        title: Text(
-                          item.title,
-                          style: const TextStyle(
-                            color: Colors.white
+        if (!snapshot.hasData) {
+          return const SizedBox();
+        } else {
+        return ChangeNotifierProvider<SelectableItemsProvider> (
+          create: (_) => SelectableItemsProvider(snapshot.data![0]),
+          child: Stack(
+            children: [
+              const BackgroundImage(),
+              Scaffold(
+                backgroundColor: Colors.transparent.withOpacity(0.5),
+                appBar: AppBar(
+                  title: const Text('First Aid Kit'),
+                  backgroundColor: Colors.transparent,
+                ),
+                body: Consumer<SelectableItemsProvider>(
+                  builder: (_, provider, __) {
+                    return ListView.builder(
+                      itemCount: provider.items.length,
+                      itemBuilder: (context, index) {
+                        final item = provider.items[index];
+                        return ListTile(
+                          leading: item.isSelected ?
+                            const Icon(Icons.check_box_rounded, color: Colors.white,) :
+                            const Icon(Icons.check_box_outline_blank, color: Colors.white,),
+                          title: Text(
+                            item.title,
+                            style: const TextStyle(
+                              color: Colors.white
+                            ),
                           ),
-                        ),
-                        tileColor: null,
-                        onTap: () async {
-                          bool isSelected = await provider.toggleSelection(index);
-                          if (isSelected) {
-                            await _guideService.selectItem(
-                              ownerUserId: userId,
-                              itemIndex: index + 1,
-                            );
-                          }
-                          else {
-                            await _guideService.deselectItem(
-                              ownerUserId: userId,
-                              itemIndex: index + 1,
-                            );
-                          }
-                        },
-                      );
-                    },
-                  );
-                },
+                          tileColor: null,
+                          onTap: () async {
+                            bool isSelected = await provider.toggleSelection(index);
+                            if (isSelected) {
+                              await _guideService.selectItem(
+                                ownerUserId: userId,
+                                itemIndex: index + 1,
+                              );
+                            }
+                            else {
+                              await _guideService.deselectItem(
+                                ownerUserId: userId,
+                                itemIndex: index + 1,
+                              );
+                            }
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
-            ),
-          ]
-        ),
-      );
+            ]
+          ),
+        );
       }
     });
   }
