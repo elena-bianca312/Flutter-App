@@ -14,7 +14,8 @@ import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
 typedef ShelterCallback = void Function(CloudShelterInfo shelter);
 typedef ViewShelterCallback = ShelterView Function(CloudShelterInfo shelter);
 
-class SheltersListView extends StatelessWidget {
+// ignore: must_be_immutable
+class SheltersListView extends StatefulWidget {
 
   final Iterable<CloudShelterInfo> shelters;
   // I can only delete it if it was posted by the current user
@@ -28,21 +29,22 @@ class SheltersListView extends StatelessWidget {
     required this.onTap,
   }) : super(key: key);
 
+  @override
+  State<SheltersListView> createState() => _SheltersListViewState();
+}
+
+class _SheltersListViewState extends State<SheltersListView> {
+  Iterable<CloudShelterInfo> results = [];
+  String enteredKeyword = '';
+
   Future<void> _handleRefresh() async {
     return await Future.delayed(const Duration(seconds: 1));
   }
 
-  void _runFilter(String enteredKeyword) {
-
-    Iterable<CloudShelterInfo> results = [];
-    if (enteredKeyword.isEmpty) {
-      results = shelters;
-    } else {
-      results = shelters
-          .where((shelter) =>
-              (shelter.title.toLowerCase().contains(enteredKeyword.toLowerCase())) || shelter.address.toLowerCase().contains(enteredKeyword.toLowerCase()))
-          .toList();
-    }
+  @override
+  void initState() {
+    results = widget.shelters;
+    super.initState();
   }
 
   @override
@@ -65,7 +67,11 @@ class SheltersListView extends StatelessWidget {
                 ),
                 child: TextField(
                   style: subheader,
-                  onChanged: (value) => _runFilter(value),
+                  onChanged: (value) {
+                    setState(() {
+                      enteredKeyword = value;
+                    });
+                  },
                   decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Search',
@@ -93,9 +99,15 @@ class SheltersListView extends StatelessWidget {
                 physics: const AlwaysScrollableScrollPhysics(),
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
-                itemCount: shelters.length,
+                itemCount: widget.shelters.where((shelter) =>
+                          (shelter.title.toLowerCase().contains(enteredKeyword.toLowerCase())) || shelter.address.toLowerCase().contains(enteredKeyword.toLowerCase()))
+                          .toList()
+                          .length,
                 itemBuilder: (context, index) {
-                  final shelter = shelters.elementAt(index);
+                final shelter = widget.shelters.where((shelter) =>
+                                (shelter.title.toLowerCase().contains(enteredKeyword.toLowerCase())) || shelter.address.toLowerCase().contains(enteredKeyword.toLowerCase()))
+                                .toList()
+                                .elementAt(index);
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     child: Card(
@@ -145,7 +157,7 @@ class SheltersListView extends StatelessWidget {
                                   child: TextButton(
                                     child: Text('View', style: labelPrimary,),
                                     onPressed: () {
-                                      onTap(shelter);
+                                      widget.onTap(shelter);
                                     },
                                   ),
                                 ),
@@ -159,7 +171,7 @@ class SheltersListView extends StatelessWidget {
                                       onPressed: () async {
                                         final shouldDelete = await showDeleteDialog(context);
                                         if (shouldDelete) {
-                                          onDeleteShelter(shelter);
+                                          widget.onDeleteShelter(shelter);
                                         }
                                       },
                                     ),
