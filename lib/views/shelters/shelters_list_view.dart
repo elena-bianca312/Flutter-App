@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:myproject/styles/styles.dart';
 import 'package:myproject/utilities/utils.dart';
 import 'package:myproject/constants/routes.dart';
@@ -90,15 +89,6 @@ class _SheltersListViewState extends State<SheltersListView> {
               },
               child: const Text(
                 'Useful Information',
-                style: TextStyle(color: Colors.white, fontSize: 20, decoration: TextDecoration.underline),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed(chatRoute);
-              },
-              child: const Text(
-                'Chat',
                 style: TextStyle(color: Colors.white, fontSize: 20, decoration: TextDecoration.underline),
               ),
             ),

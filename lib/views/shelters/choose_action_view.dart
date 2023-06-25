@@ -52,12 +52,14 @@ class _ChooseActionViewState extends State<ChooseActionView> {
                   icon: const Icon(Icons.add),
                 )
               ),
-              // FadeAnimation(2, Axis.vertical,
-              //   IconButton(
-              //     icon: SvgPicture.asset("assets/icons/notification.svg"),
-              //     onPressed: () {},
-              //   )
-              // ),
+              FadeAnimation(2, Axis.vertical,
+                IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(chatRoute);
+                  },
+                  icon: const Icon(Icons.message),
+                )
+              ),
               FadeAnimation(2, Axis.vertical,
                 PopupMenuButton<MenuAction>(
                   onSelected: (action) async {
