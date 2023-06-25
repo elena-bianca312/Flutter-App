@@ -1,71 +1,68 @@
-// import 'package:flutter/material.dart';
-// import 'package:myproject/services/auth/auth_service.dart';
-// import 'package:myproject/services/chat_cloud/cloud_chat_info.dart';
-// import 'package:myproject/views/shelters/features/chat/chat_page.dart';
-// import 'package:myproject/services/chat_cloud/firebase_chat_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:myproject/services/auth/auth_service.dart';
+import 'package:myproject/views/shelters/features/chat/chat_page.dart';
 
-// class ChatList extends StatefulWidget {
-//   const ChatList({Key? key}) : super(key: key);
+class ChatList extends StatefulWidget {
+  const ChatList({Key? key});
 
-//   @override
-//   State<ChatList> createState() => _ChatListState();
-// }
+  @override
+  State<ChatList> createState() => _ChatListState();
+}
 
-// class _ChatListState extends State<ChatList> {
-//   late final FirebaseChatStorage _chatService;
-//   final currentUser = AuthService.firebase().currentUser!;
-//   late final userId = currentUser.id;
+class _ChatListState extends State<ChatList> {
+  final currentUser = AuthService.firebase().currentUser!;
+  late final userId = currentUser.id;
 
-//   @override
-//   void initState() {
-//     _chatService = FirebaseChatStorage();
-//     super.initState();
-//   }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Chats'),
+      ),
+      body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+        stream: FirebaseFirestore.instance
+            .collection('chats')
+            .doc(userId)
+            .collection('users')
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return const Text('Error');
+          }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text('Chats'),
-//       ),
-//       body: FutureBuilder<List<Message>>(
-//         future: _chatService.getAllChatsForUser(userId),
-//         builder: (context, snapshot) {
-//           if (snapshot.hasError) {
-//             return const Text('Error');
-//           }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          }
 
-//           if (snapshot.connectionState == ConnectionState.waiting) {
-//             return const CircularProgressIndicator();
-//           }
+          final userDocs = snapshot.data!.docs;
 
-//           final chats = snapshot.data;
+          return ListView.builder(
+            itemCount: userDocs.length,
+            itemBuilder: (context, index) {
+              final userDoc = userDocs[index];
+              final recipientId = userDoc.id;
 
-//           return ListView.builder(
-//             itemCount: chats?.length ?? 0,
-//             itemBuilder: (context, index) {
-//               final chat = chats![index];
-
-//               return ListTile(
-//                 leading: const CircleAvatar(
-//                   // Replace with the profile image of the chat
-//                   backgroundImage: AssetImage('assets/images/ui/user2.jpg'),
-//                 ),
-//                 title: Text('Chat${chat.senderId}'),
-//                 subtitle: Text(chat.message), // Replace with the last message of the chat
-//                 onTap: () {
-//                   Navigator.push(
-//                     context,
-//                     MaterialPageRoute(
-//                       builder: (context) => ChatPage(recipientId: chat.chatId), // Pass the chat ID to the ChatPage
-//                     ),
-//                   );
-//                 },
-//               );
-//             },
-//           );
-//         },
-//       ),
-//     );
-//   }
-// }
+              return ListTile(
+                leading: const CircleAvatar(
+                  // Replace with the profile image of the chat
+                  backgroundImage: AssetImage('assets/images/ui/user2.jpg'),
+                ),
+                title: Text('Chat with $recipientId'),
+                // subtitle: const Text('Last message'), // Replace with the last message of the chat
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChatPage(recipientId: recipientId), // Pass the recipient's ID to the ChatPage
+                    ),
+                  );
+                },
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
