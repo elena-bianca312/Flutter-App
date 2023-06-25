@@ -93,6 +93,15 @@ class _SheltersListViewState extends State<SheltersListView> {
                 style: TextStyle(color: Colors.white, fontSize: 20, decoration: TextDecoration.underline),
               ),
             ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed(chatRoute);
+              },
+              child: const Text(
+                'Chat',
+                style: TextStyle(color: Colors.white, fontSize: 20, decoration: TextDecoration.underline),
+              ),
+            ),
             const SizedBox(height: 20),
             Expanded(
               child: ListView.builder(

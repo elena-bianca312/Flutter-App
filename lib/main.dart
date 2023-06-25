@@ -21,6 +21,7 @@ import 'package:myproject/views/shelters/choose_action_view.dart';
 import 'package:myproject/views/pages/thank_you_for_donation.dart';
 import 'package:myproject/views/notes/create_update_note_view.dart';
 import 'package:myproject/services/auth/firebase_auth_provider.dart';
+import 'package:myproject/views/shelters/features/chat/chat_list.dart';
 import 'package:myproject/views/shelters/features/donations/item_list.dart';
 import 'package:myproject/views/shelters/features/donations/category_list.dart';
 
@@ -64,6 +65,7 @@ class MyApp extends StatelessWidget {
         earthquakePlanRoute:(context) => const EarthquakePlanView(),
         emergencyContactsRoute:(context) => const EmergencyContactsView(),
         thankYouRoute:(context) => const ThankYouView(),
+        chatRoute:(context) => const ChatList(),
       },
     );
   }

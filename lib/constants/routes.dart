@@ -7,3 +7,4 @@ const firstAidKitRoute = 'guide/first-aid-kit';
 const earthquakePlanRoute = 'guide/earthquake-plan';
 const emergencyContactsRoute = 'guide/emergency-contacts';
 const thankYouRoute = 'donations/thank-you';
+const chatRoute = 'chat';

@@ -6,6 +6,7 @@ import 'package:myproject/constants/routes.dart';
 import 'package:myproject/views/pages/custom.dart';
 import 'package:myproject/views/pages/donation_page.dart';
 import 'package:myproject/services/auth/auth_service.dart';
+import 'package:myproject/views/shelters/features/chat/chat_page.dart';
 import 'package:myproject/views/shelters/features/reviews/reviews.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
 import 'package:myproject/views/shelters/features/reviews/review_list.dart';
@@ -385,11 +386,44 @@ class _ShelterViewState extends State<ShelterView> {
                           height: 4,
                         ),
                       ),
+                      (AuthService.firebase().currentUser!.id != _shelter.ownerUserId) ?
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Contact",
+                            style: superheader,
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                builder: (context) => ChatPage(recipientId: _shelter.ownerUserId)
+                              ));
+                            },
+                            child: const Text(
+                              'Leave us a message',
+                              style: TextStyle(color: kCustomBlue, fontSize: 20, decoration: TextDecoration.underline),
+                            ),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 15),
+                            child: Divider(
+                              color: Colors.white24,
+                              height: 4,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                        ],
+                      ) : const SizedBox(),
                     ],
                   ),
                 ),
               );
           }),
-    );
+        );
       }
 }
