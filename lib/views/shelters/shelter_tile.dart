@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:myproject/styles/styles.dart';
-import 'package:myproject/utilities/utils.dart';
 import 'package:myproject/views/pages/custom.dart';
-import 'package:myproject/services/auth/auth_service.dart';
-import 'package:myproject/utilities/dialogs/delete_dialog.dart';
 import 'package:myproject/services/shelter_cloud/cloud_shelter_info.dart';
 
 // Momentarily, this does nothing

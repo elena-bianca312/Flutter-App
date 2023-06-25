@@ -1,7 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:myproject/styles/styles.dart';
-import 'package:myproject/views/pages/custom.dart';
 import 'package:myproject/widgets/background_image.dart';
 import 'package:myproject/services/auth/auth_service.dart';
 import 'package:myproject/services/chat_cloud/cloud_chat_info.dart';
@@ -13,7 +12,7 @@ class ChatPage extends StatefulWidget {
   const ChatPage({Key? key, required this.recipientId}) : super(key: key);
 
   @override
-  _ChatPageState createState() => _ChatPageState();
+  State<ChatPage> createState() => _ChatPageState();
 }
 
 class _ChatPageState extends State<ChatPage> {

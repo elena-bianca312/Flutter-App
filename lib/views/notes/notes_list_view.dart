@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:myproject/styles/styles.dart';
 import 'package:myproject/services/cloud/cloud_note.dart';
 import 'package:myproject/utilities/dialogs/delete_dialog.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';

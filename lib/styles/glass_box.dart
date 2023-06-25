@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 final _borderRadius = BorderRadius.circular(20);
 
+// ignore: must_be_immutable
 class GlassBox extends StatelessWidget {
 
   final double? height;

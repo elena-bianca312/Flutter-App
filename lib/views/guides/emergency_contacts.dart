@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myproject/styles/styles.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:myproject/constants/routes.dart';
 import 'package:myproject/styles/glass_box.dart';
-import 'package:myproject/views/pages/custom.dart';
 import 'package:myproject/widgets/background_image.dart';
 
 
