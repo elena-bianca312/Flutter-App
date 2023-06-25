@@ -399,7 +399,7 @@ class _ShelterViewState extends State<ShelterView> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                builder: (context) => ChatPage(recipientId: _shelter.ownerUserId)
+                                builder: (context) => ChatPage(recipientId: _shelter.userName)
                               ));
                             },
                             child: const Text(

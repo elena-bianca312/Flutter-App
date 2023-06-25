@@ -12,7 +12,7 @@ class ChatList extends StatefulWidget {
 
 class _ChatListState extends State<ChatList> {
   final currentUser = AuthService.firebase().currentUser!;
-  late final userId = currentUser.id;
+  late final userId = currentUser.email;
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +36,7 @@ class _ChatListState extends State<ChatList> {
           }
 
           final userDocs = snapshot.data!.docs;
+          print(userDocs);
 
           return ListView.builder(
             itemCount: userDocs.length,

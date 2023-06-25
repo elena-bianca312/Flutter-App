@@ -18,7 +18,7 @@ class _ChatPageState extends State<ChatPage> {
 
   final FirebaseChatStorage _chatStorage = FirebaseChatStorage();
   final currentUser = AuthService.firebase().currentUser!;
-  late final userId = currentUser.id;
+  late final userId = currentUser.email;
 
   @override
   void initState() {
