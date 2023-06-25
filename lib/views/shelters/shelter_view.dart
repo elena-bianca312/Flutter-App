@@ -265,7 +265,7 @@ class _ShelterViewState extends State<ShelterView> {
                         ),
                       ),
                       Text(
-                        "Available Items",
+                        "Donations",
                         style: superheader,
                       ),
                       const SizedBox(
