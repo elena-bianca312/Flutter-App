@@ -1,21 +1,29 @@
-<<<<<<< HEAD
-# myproject
+# ShelterNow 🌐  
 
-A new Flutter project.
+A mobile app designed to help people find and access shelters during disasters.  
 
-## Getting Started
+## 🚀 Features  
 
-This project is a starting point for a Flutter application.
+### 🏠 Shelter Listings  
+- View and post shelters with names, addresses, and photos.  
+- Ensure transparency and informed decision-making.  
 
-A few resources to get you started if this is your first Flutter project:
+### ⭐ Ratings & Reviews  
+- Upvote/downvote shelters to assess credibility.  
+- Leave feedback for other users.  
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### 💬 Communication  
+- Direct chat with shelter owners or responsible parties.  
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-=======
-# Flutter-App
-Flutter mobile app
->>>>>>> 54ea3e582febb53b24ea8b1fed83b2139bea9672
+### 🎁 Donations  
+- Contribute goods or funds to support affected communities.  
+
+### 🗺️ Navigation  
+- Integrated with Google Maps for easy shelter access.  
+
+## 📱 User-Friendly Design  
+- Accessible to users of all experience levels.  
+- Fast access to key information during emergencies.  
+
+## 🌟 Purpose  
+ShelterNow empowers communities by providing a reliable tool to find, access, and support shelters during natural disasters, enhancing resilience and collaboration.  
